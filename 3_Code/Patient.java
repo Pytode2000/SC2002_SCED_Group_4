@@ -1,25 +1,36 @@
 
 public class Patient extends User {
 
-    private String patientId;
+    private String dateOfBirth;
+    private String bloodType;
+    // add more patient-specific attributes here if any.
 
     // Constructor
-    public Patient(String userId, String firstName, String lastName, String patientId) {
+    public Patient(String userId, String firstName, String lastName, String gender, String contactNumber, String emailAddress, String userRole, String dateOfBirth, String bloodType) {
         // Using the constructor of the abstract User class.
-        super(userId, firstName, lastName);
-        this.patientId = patientId; // temp. delete later
+        super(userId, firstName, lastName, gender, contactNumber, emailAddress, userRole);
+        this.dateOfBirth = dateOfBirth;
+        this.bloodType = bloodType;
     }
 
-    // Implement the abstract method from User to return the role.
+    public String getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public String getBloodType() {
+        return bloodType;
+    }
+
+    // Implement the abstract method from User.
     @Override
-    public String getRole() {
+    public String getUserRole() {
         return "Patient";
     }
 
-    // // Optional: Override toString() method for easy display
-    // @Override
-    // public String toString() {
-    //     return "Patient [ID=" + getUserId() + ", Name=" + getName() + ", Contact=" + getContactInfo()
-    //             + ", Medical History=" + medicalHistory + "]";
-    // }
+    @Override
+    public String toString() {
+        return getUserId() + "|" + getFirstName() + "|" + getLastName() + "|"
+                + getGender() + "|" + getContactNumber() + "|" + getEmailAddress() + "|"
+                + getUserRole() + "|" + dateOfBirth + "|" + bloodType;
+    }
 }

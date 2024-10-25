@@ -1,5 +1,6 @@
 
 public class Account {
+    // Create the person first (e.g., patient or doctor), then create the account. Link person to account.
 
     private String password; // Hashed.
     private final String userId; // Linked 1-to-1 with User entity, immutable.
@@ -16,7 +17,7 @@ public class Account {
     }
 
     public String getUserRole() {
-        return this.user.getRole();  // Get the role from the associated User
+        return this.user.getUserRole();  // Get the role from the associated User
     }
 
 }
