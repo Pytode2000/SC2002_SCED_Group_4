@@ -1,0 +1,3 @@
+DR00003|James|Ng|Male|99999999|James.Ng@hotmail.com|Doctor
+PH00004|Steph|Culli|Other|99999999|StephC@gmail.com|Pharmacist
+AM00005|Kobe|Bryant|Female|11111111|KobeBeef@hotmail.com|Administrator

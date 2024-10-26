@@ -11,17 +11,21 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 
 import utility.FileUtils;
-import entity.Patient;
 import entity.User;
+import entity.Patient;
+import entity.Doctor;
+import entity.Pharmacist;
+import entity.Administrator;
 
 public class AccountController {
 
     private static final String ACCOUNT_TXT = "data/account.txt";
     private static final String PATIENT_TXT = "data/patient.txt";
+    private static final String STAFF_TXT = "data/staff.txt";
+
     // private static final String DOCTOR_CSV = "data/doctor.txt";
     // private static final String PHARMACIST_CSV = "data/pharmacist.txt";
     // private static final String ADMINISTRATOR_CSV = "data/administrator.txt";
-
     // Register method to add new patient
     public boolean register() {
 
@@ -209,6 +213,7 @@ public class AccountController {
                     System.out.println("Login successful. Welcome, " + user.getFirstName());
                     return user;
                 }
+
             } else {
                 System.out.println("Incorrect User ID or Password, " + (3 - attempt) + " more attempts.");
             }
@@ -276,20 +281,57 @@ public class AccountController {
         return false;
     }
 
-    private User loadUserDetails(String userId) { // For now it only returns patient user.
+    private User loadUserDetails(String userId) {
+        // First, check in patient.txt for a Patient record
         try (BufferedReader br = new BufferedReader(new FileReader(PATIENT_TXT))) {
             String line;
             while ((line = br.readLine()) != null) {
-                String[] patientData = line.split("\\|");
-                if (patientData[0].equals(userId)) {
-                    return new Patient(userId, patientData[1], patientData[2], patientData[3],
-                            patientData[4], patientData[5], "Patient", patientData[6], patientData[7]);
+                String[] userData = line.split("\\|");
+                if (userData[0].equals(userId)) {
+                    // Assuming Patient has data fields that include specific fields such as bloodType and dateOfBirth
+                    return new Patient(userId, userData[1], userData[2], userData[3],
+                            userData[4], userData[5], "Patient", userData[6], userData[7]);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.print("TESTINGGGG123321");
+
+        }
+
+        // If not found in patient.txt, check in staff.txt for Staff records
+        try (BufferedReader br = new BufferedReader(new FileReader(STAFF_TXT))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] userData = line.split("\\|");
+                if (userData[0].equals(userId)) {
+                    String role = userData[6]; // Assuming role is at index 6
+
+                    switch (role) {
+                        case "Doctor":
+                            return new Doctor(userId, userData[1], userData[2], userData[3],
+                                    userData[4], userData[5], role);
+
+                        case "Administrator":
+                            return new Administrator(userId, userData[1], userData[2], userData[3],
+                                    userData[4], userData[5], role);
+
+                        case "Pharmacist":
+                            return new Pharmacist(userId, userData[1], userData[2], userData[3],
+                                    userData[4], userData[5], role);
+
+                        default:
+                            System.out.println("Unknown role: " + role);
+                            return null;
+                    }
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null; // User not found
+
+        // User not found in either file
+        return null;
     }
 
 }

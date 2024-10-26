@@ -1,1 +1,5 @@
 PA00001|Jacob|Ong|Male|98564272|ong.jc2000@gmail.com|Patient|04-08-2000|O+
+PA00002|Bobby|Ng|Female|99999999|bobbyng@hotmail.com|Patient|02-03-2000|B+
+PA00003|Bruce|Lee|Female|912344321|brucelee@gmail.com|Patient|01-01-2000|B-
+PA00004|Michael|Jordan|Female|321321321321|email@gmail.com|Patient|02-03-2000|A-
+PA00005|Fred|Chan|Male|98321234|fred@gmail.com|Patient|04-08-2000|B-
