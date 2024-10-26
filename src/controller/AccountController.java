@@ -1,9 +1,18 @@
+package controller;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Scanner;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
+import java.io.BufferedReader;
+import java.io.FileReader;
+
 import utility.FileUtils;
+import entity.Patient;
+import entity.User;
 
 public class AccountController {
 
@@ -14,7 +23,7 @@ public class AccountController {
     // private static final String ADMINISTRATOR_CSV = "data/administrator.txt";
 
     // Register method to add new patient
-    public boolean register() { // should take in an attribute called String type
+    public boolean register() {
 
         String firstName = "";
         String lastName = "";
@@ -95,6 +104,7 @@ public class AccountController {
         }
 
         // Day input
+        System.out.println("Enter date of birth: ");
         while (day.length() != 2 || !day.matches("\\d{2}")) {
             System.out.print("Enter day (DD): ");
             day = scanner.nextLine().trim();
@@ -124,29 +134,45 @@ public class AccountController {
         // Combine into final date format
         String dateOfBirth = day + "-" + month + "-" + year;
 
-        while (!(bloodType.equals("1") || bloodType.equals("2") || bloodType.equals("3") || bloodType.equals("4"))) {
+        while (!(bloodType.equals("A+") || bloodType.equals("A-") || bloodType.equals("B+") || bloodType.equals("B-") || bloodType.equals("AB+") || bloodType.equals("AB-") || bloodType.equals("O+") || bloodType.equals("O-"))) {
             System.out.println("Choose blood type:");
-            System.out.println("1. A");
-            System.out.println("2. B");
-            System.out.println("3. AB");
-            System.out.println("4. O");
-            System.out.print("Enter choice (1-4): ");
+            System.out.println("1. A+");
+            System.out.println("2. A-");
+            System.out.println("3. B+");
+            System.out.println("4. B-");
+            System.out.println("5. AB+");
+            System.out.println("6. AB-");
+            System.out.println("7. O+");
+            System.out.println("8. O-");
+            System.out.print("Enter choice (1-8): ");
             bloodType = scanner.nextLine().trim();
             switch (bloodType) {
                 case "1":
-                    bloodType = "A";
+                    bloodType = "A+";
                     break;
                 case "2":
-                    bloodType = "B";
+                    bloodType = "A-";
                     break;
                 case "3":
-                    bloodType = "AB";
+                    bloodType = "B+";
                     break;
                 case "4":
-                    bloodType = "O";
+                    bloodType = "B-";
+                    break;
+                case "5":
+                    bloodType = "AB+";
+                    break;
+                case "6":
+                    bloodType = "AB-";
+                    break;
+                case "7":
+                    bloodType = "O+";
+                    break;
+                case "8":
+                    bloodType = "O-";
                     break;
                 default:
-                    System.out.println("Invalid choice. Please enter a number from 1 to 4.");
+                    System.out.println("Invalid choice. Please enter a number from 1 to 8.");
             }
         }
 
@@ -155,13 +181,41 @@ public class AccountController {
         // Account newAccount = new Account(userId, "password", newPatient); // Or prompt for password if needed
         // Write to files
         FileUtils.writeToFile(PATIENT_TXT, newPatient.toString());
-        FileUtils.writeToFile(ACCOUNT_TXT, userId + "|" + "password");
+        FileUtils.writeToFile(ACCOUNT_TXT, userId + "|" + hashPassword("password"));
 
         System.out.println("Patient registered successfully! You may now log in.");
         System.out.println("Your account's credentials are: " + userId + " | \"password\".");
         System.out.println("Please remember to change your default password!");
 
         return true;
+    }
+
+    public User login() {
+        Scanner scanner = new Scanner(System.in);
+        int attempt = 0;
+        while (attempt < 3) {
+            attempt++;
+            System.out.print("Enter User ID (e.g., PA00001): ");
+            String inputUserId = scanner.nextLine().trim();
+
+            System.out.print("Enter Password: ");
+            String inputPassword = scanner.nextLine().trim();
+
+            // Step 1: Verify User ID and Password from account.txt
+            if (authenticate(inputUserId, hashPassword(inputPassword))) {
+                // Step 2: Load User details if authentication succeeds
+                User user = loadUserDetails(inputUserId);
+                if (user != null) {
+                    System.out.println("Login successful. Welcome, " + user.getFirstName());
+                    return user;
+                }
+            } else {
+                System.out.println("Incorrect User ID or Password, " + (3 - attempt) + " more attempts.");
+            }
+        }
+
+        System.out.println("Login failed.");
+        return null;
     }
 
     /* HELPER FUNCTIONS BELOW */
@@ -195,6 +249,47 @@ public class AccountController {
             e.printStackTrace();
             return false;
         }
+    }
+
+    private String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hashedBytes = md.digest(password.getBytes());
+            return HexFormat.of().formatHex(hashedBytes); // Convert bytes to hex string
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error hashing password!", e);
+        }
+    }
+
+    private boolean authenticate(String userId, String password) {
+        try (BufferedReader br = new BufferedReader(new FileReader(ACCOUNT_TXT))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] accountData = line.split("\\|");
+                if (accountData[0].equals(userId) && accountData[1].equals(password)) {
+                    return true; // Successful authentication
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private User loadUserDetails(String userId) { // For now it only returns patient user.
+        try (BufferedReader br = new BufferedReader(new FileReader(PATIENT_TXT))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] patientData = line.split("\\|");
+                if (patientData[0].equals(userId)) {
+                    return new Patient(userId, patientData[1], patientData[2], patientData[3],
+                            patientData[4], patientData[5], "Patient", patientData[6], patientData[7]);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null; // User not found
     }
 
 }

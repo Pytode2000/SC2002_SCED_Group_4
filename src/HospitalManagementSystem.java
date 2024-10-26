@@ -1,4 +1,6 @@
 
+import controller.AccountController;
+import entity.User;
 import java.util.Scanner;
 
 public class HospitalManagementSystem {
@@ -8,10 +10,11 @@ public class HospitalManagementSystem {
         AccountController accountController = new AccountController();
         Scanner scanner = new Scanner(System.in);
         String choice;
+        User currentUser;
 
         System.out.println("Welcome to the Hospital Management System.");
 
-        // Loop until user decides to exit with option 0
+        // Loop until user decides to exit with option 0.
         do {
             System.out.println("\nPlease choose an option:");
             System.out.println("1. Login");
@@ -22,9 +25,12 @@ public class HospitalManagementSystem {
 
             switch (choice) {
                 case "1":
-                    System.out.println("Login functionality is under construction.");
-                    // Should return a user type. then call the respective controllers
+                    currentUser = accountController.login();
+                    if (currentUser != null) {
+                        System.out.println(currentUser.getFirstName());
+                    }
                     break;
+
                 case "2":
                     accountController.register();
                     break;

@@ -1,5 +1,5 @@
 
-public interface MenuInterface {
+public interface MenuInterface { // havent used.
 
     // Method to display the menu.
     void displayMenu();

@@ -1,5 +1,6 @@
+package entity;
 
-public class Patient extends User {
+public class Patient extends entity.User {
 
     private String dateOfBirth;
     private String bloodType;

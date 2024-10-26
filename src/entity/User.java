@@ -1,3 +1,4 @@
+package entity;
 
 public abstract class User { // ABSTRACT CLASS, NO USER OBJECT WILL EVER BE INSTANTIATED!
 
@@ -46,5 +47,6 @@ public abstract class User { // ABSTRACT CLASS, NO USER OBJECT WILL EVER BE INST
     // Abstract toString method to be implemented in subclasses.
     // Force child classes to implement.
     public abstract String getUserRole();
+
     public abstract String toString();
 }

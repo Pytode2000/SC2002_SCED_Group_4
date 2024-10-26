@@ -1,3 +1,0 @@
-PA00001|Jacob|Ong|Male|98564272|ong.jc2000@gmail.com|Patient|04/08/2000|O+
-PA00002|jacob|ong|test|123|321|Patient|123|321
-PA00003|Test|Ong|F|M|W|Patient|d|r

@@ -1,3 +1,4 @@
+/*package entity; 
 
 public abstract class Staff extends User {
 
@@ -16,3 +17,4 @@ public abstract class Staff extends User {
     //             + ", Department=" + department + ", Job Title=" + jobTitle + "]";
     // }
 }
+*/

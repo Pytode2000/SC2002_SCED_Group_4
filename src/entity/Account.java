@@ -1,3 +1,4 @@
+package entity;
 
 public class Account {
     // Create the person first (e.g., patient or doctor), then create the account. Link person to account.
