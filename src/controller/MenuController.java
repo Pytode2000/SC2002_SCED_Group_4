@@ -1,16 +1,15 @@
 package controller;
 
-import interfaces.MenuInterface;
-import boundary.PatientMenu;
-import boundary.DoctorMenu;
-import boundary.PharmacistMenu;
 import boundary.AdministratorMenu;
-
-import entity.User;
-import entity.Patient;
-import entity.Doctor;
-import entity.Pharmacist;
+import boundary.DoctorMenu;
+import boundary.PatientMenu;
+import boundary.PharmacistMenu;
 import entity.Administrator;
+import entity.Doctor;
+import entity.Patient;
+import entity.Pharmacist;
+import entity.User;
+import interfaces.MenuInterface;
 
 public class MenuController implements MenuInterface {
 
@@ -22,27 +21,20 @@ public class MenuController implements MenuInterface {
 
     // Method to display the appropriate menu based on user role
     public void displayMenu() {
-        switch (user.getUserRole()) {
-            case "Patient":
-                PatientMenu patientMenu = new PatientMenu((Patient) user);
-                patientMenu.displayMenu();
-                break;
-
-            case "Doctor":
-                DoctorMenu doctorMenu = new DoctorMenu((Doctor) user);
-                doctorMenu.displayMenu();
-                break;
-            case "Pharmacist":
-                PharmacistMenu pharmacistMenu = new PharmacistMenu((Pharmacist) user);
-                pharmacistMenu.displayMenu();
-                break;
-            case "Administrator":
-                AdministratorMenu administratorMenu = new AdministratorMenu((Administrator) user);
-                administratorMenu.displayMenu();
-                break;
-            default:
-                System.out.println("Invalid user role. No menu available.");
-                break;
+        if (user instanceof Patient) {
+            PatientMenu patientMenu = new PatientMenu((Patient) user);
+            patientMenu.displayMenu();
+        } else if (user instanceof Doctor) {
+            DoctorMenu doctorMenu = new DoctorMenu((Doctor) user);
+            doctorMenu.displayMenu();
+        } else if (user instanceof Pharmacist) {
+            PharmacistMenu pharmacistMenu = new PharmacistMenu((Pharmacist) user);
+            pharmacistMenu.displayMenu();
+        } else if (user instanceof Administrator) {
+            AdministratorMenu administratorMenu = new AdministratorMenu((Administrator) user);
+            administratorMenu.displayMenu();
+        } else {
+            System.out.println("Invalid user role. No menu available.");
         }
     }
 }

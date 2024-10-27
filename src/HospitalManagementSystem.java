@@ -31,7 +31,7 @@ public class HospitalManagementSystem {
                     break;
 
                 case "2":
-                    accountController.register();
+                    accountController.register(false); // isAdmin = false.
                     break;
 
                 case "0":

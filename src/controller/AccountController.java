@@ -1,21 +1,20 @@
 package controller;
 
+import entity.Administrator;
+import entity.Doctor;
+import entity.Patient;
+import entity.Pharmacist;
+import entity.User;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Scanner;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
-import java.io.BufferedReader;
-import java.io.FileReader;
-
+import java.util.Scanner;
 import utility.FileUtils;
-import entity.User;
-import entity.Patient;
-import entity.Doctor;
-import entity.Pharmacist;
-import entity.Administrator;
 
 public class AccountController {
 
@@ -23,11 +22,8 @@ public class AccountController {
     private static final String PATIENT_TXT = "data/patient.txt";
     private static final String STAFF_TXT = "data/staff.txt";
 
-    // private static final String DOCTOR_CSV = "data/doctor.txt";
-    // private static final String PHARMACIST_CSV = "data/pharmacist.txt";
-    // private static final String ADMINISTRATOR_CSV = "data/administrator.txt";
     // Register method to add new patient
-    public boolean register() {
+    public boolean register(boolean isAdmin) {
 
         String firstName = "";
         String lastName = "";
@@ -38,8 +34,37 @@ public class AccountController {
         String day = "";
         String month = "";
         String year = "";
+        String dateOfBirth = "";
+        String userRole = "Patient";
 
         Scanner scanner = new Scanner(System.in);
+
+        if (isAdmin) {
+            while (!(userRole.equals("Doctor") || userRole.equals("Pharmacist") || userRole.equals("Administrator"))) {
+                System.out.println("Choose Role:");
+                System.out.println("1. Doctor");
+                System.out.println("2. Pharmacist");
+                System.out.println("3. Administrator");
+                System.out.print("Enter choice (1-3): ");
+                userRole = scanner.nextLine().trim();
+
+                switch (userRole) {
+                    case "1":
+                        userRole = "Doctor";
+                        break;
+                    case "2":
+                        userRole = "Pharmacist";
+                        break;
+                    case "3":
+                        userRole = "Administrator";
+                        break;
+                    default:
+                        System.out.println("Invalid choice. Please enter a number from 1 to 3.");
+                }
+            }
+        }
+        // Generate userId (starting from PA00001 for patient, differs for staff)
+        String userId = generateUserId(userRole);
 
         // Input and validation for first name
         while (firstName.length() < 1 || firstName.length() > 15) {
@@ -60,13 +85,15 @@ public class AccountController {
         }
 
         // Check if patient exists
-        if (checkIfPatientExists(firstName, lastName)) {
-            System.out.println("Patient already exists!");
+        if (checkIfUserExists(firstName, lastName, isAdmin)) {
+            if (isAdmin) {
+                System.out.println("Staff already exists!");
+
+            } else {
+                System.out.println("Patient already exists!");
+            }
             return false;
         }
-
-        // Generate userId (starting from Pa0001)
-        String userId = generateUserId();
 
         while (!(gender.equals("Male") || gender.equals("Female") || gender.equals("Other"))) {
             System.out.println("Choose gender:");
@@ -107,91 +134,117 @@ public class AccountController {
             }
         }
 
-        // Day input
-        System.out.println("Enter date of birth: ");
-        while (day.length() != 2 || !day.matches("\\d{2}")) {
-            System.out.print("Enter day (DD): ");
-            day = scanner.nextLine().trim();
-            if (day.length() != 2 || !day.matches("\\d{2}")) {
-                System.out.println("Invalid day. Please enter a two-digit day (e.g., 01, 15, 31).");
+        if (!isAdmin) {
+// Day input
+            System.out.println("Enter date of birth: ");
+            while (day.length() != 2 || !day.matches("\\d{2}")) {
+                System.out.print("Enter day (DD): ");
+                day = scanner.nextLine().trim();
+                if (day.length() != 2 || !day.matches("\\d{2}")) {
+                    System.out.println("Invalid day. Please enter a two-digit day (e.g., 01, 15, 31).");
+                }
+            }
+
+// Month input
+            while (month.length() != 2 || !month.matches("\\d{2}") || Integer.parseInt(month) < 1 || Integer.parseInt(month) > 12) {
+                System.out.print("Enter month (MM): ");
+                month = scanner.nextLine().trim();
+                if (month.length() != 2 || !month.matches("\\d{2}") || Integer.parseInt(month) < 1 || Integer.parseInt(month) > 12) {
+                    System.out.println("Invalid month. Please enter a valid two-digit month (e.g., 01 for January, 12 for December).");
+                }
+            }
+
+// Year input
+            while (year.length() != 4 || !year.matches("\\d{4}")) {
+                System.out.print("Enter year (YYYY): ");
+                year = scanner.nextLine().trim();
+                if (year.length() != 4 || !year.matches("\\d{4}")) {
+                    System.out.println("Invalid year. Please enter a four-digit year (e.g., 1990, 2023).");
+                }
+            }
+
+// Combine into final date format
+            dateOfBirth = day + "-" + month + "-" + year;
+
+            while (!(bloodType.equals("A+") || bloodType.equals("A-") || bloodType.equals("B+") || bloodType.equals("B-") || bloodType.equals("AB+") || bloodType.equals("AB-") || bloodType.equals("O+") || bloodType.equals("O-"))) {
+                System.out.println("Choose blood type:");
+                System.out.println("1. A+");
+                System.out.println("2. A-");
+                System.out.println("3. B+");
+                System.out.println("4. B-");
+                System.out.println("5. AB+");
+                System.out.println("6. AB-");
+                System.out.println("7. O+");
+                System.out.println("8. O-");
+                System.out.print("Enter choice (1-8): ");
+                bloodType = scanner.nextLine().trim();
+                switch (bloodType) {
+                    case "1":
+                        bloodType = "A+";
+                        break;
+                    case "2":
+                        bloodType = "A-";
+                        break;
+                    case "3":
+                        bloodType = "B+";
+                        break;
+                    case "4":
+                        bloodType = "B-";
+                        break;
+                    case "5":
+                        bloodType = "AB+";
+                        break;
+                    case "6":
+                        bloodType = "AB-";
+                        break;
+                    case "7":
+                        bloodType = "O+";
+                        break;
+                    case "8":
+                        bloodType = "O-";
+                        break;
+                    default:
+                        System.out.println("Invalid choice. Please enter a number from 1 to 8.");
+                }
             }
         }
 
-        // Month input
-        while (month.length() != 2 || !month.matches("\\d{2}") || Integer.parseInt(month) < 1 || Integer.parseInt(month) > 12) {
-            System.out.print("Enter month (MM): ");
-            month = scanner.nextLine().trim();
-            if (month.length() != 2 || !month.matches("\\d{2}") || Integer.parseInt(month) < 1 || Integer.parseInt(month) > 12) {
-                System.out.println("Invalid month. Please enter a valid two-digit month (e.g., 01 for January, 12 for December).");
-            }
-        }
+// Determine the file and object creation based on userRole
+        User newUser;
+        String roleFile;
 
-        // Year input
-        while (year.length() != 4 || !year.matches("\\d{4}")) {
-            System.out.print("Enter year (YYYY): ");
-            year = scanner.nextLine().trim();
-            if (year.length() != 4 || !year.matches("\\d{4}")) {
-                System.out.println("Invalid year. Please enter a four-digit year (e.g., 1990, 2023).");
-            }
-        }
-
-        // Combine into final date format
-        String dateOfBirth = day + "-" + month + "-" + year;
-
-        while (!(bloodType.equals("A+") || bloodType.equals("A-") || bloodType.equals("B+") || bloodType.equals("B-") || bloodType.equals("AB+") || bloodType.equals("AB-") || bloodType.equals("O+") || bloodType.equals("O-"))) {
-            System.out.println("Choose blood type:");
-            System.out.println("1. A+");
-            System.out.println("2. A-");
-            System.out.println("3. B+");
-            System.out.println("4. B-");
-            System.out.println("5. AB+");
-            System.out.println("6. AB-");
-            System.out.println("7. O+");
-            System.out.println("8. O-");
-            System.out.print("Enter choice (1-8): ");
-            bloodType = scanner.nextLine().trim();
-            switch (bloodType) {
-                case "1":
-                    bloodType = "A+";
+        if (userRole.equals("Patient")) {
+            // Create Patient object and set to PATIENT_TXT
+            newUser = new Patient(userId, firstName, lastName, gender, contactNumber, emailAddress, userRole, dateOfBirth, bloodType);
+            roleFile = PATIENT_TXT;
+        } else {
+            // Create a Staff object based on userRole and set to STAFF_TXT
+            switch (userRole) {
+                case "Doctor":
+                    newUser = new Doctor(userId, firstName, lastName, gender, contactNumber, emailAddress, userRole);
                     break;
-                case "2":
-                    bloodType = "A-";
+                case "Administrator":
+                    newUser = new Administrator(userId, firstName, lastName, gender, contactNumber, emailAddress, userRole);
                     break;
-                case "3":
-                    bloodType = "B+";
-                    break;
-                case "4":
-                    bloodType = "B-";
-                    break;
-                case "5":
-                    bloodType = "AB+";
-                    break;
-                case "6":
-                    bloodType = "AB-";
-                    break;
-                case "7":
-                    bloodType = "O+";
-                    break;
-                case "8":
-                    bloodType = "O-";
+                case "Pharmacist":
+                    newUser = new Pharmacist(userId, firstName, lastName, gender, contactNumber, emailAddress, userRole);
                     break;
                 default:
-                    System.out.println("Invalid choice. Please enter a number from 1 to 8.");
+                    throw new IllegalArgumentException("Invalid user role: " + userRole);
             }
+            roleFile = STAFF_TXT;
         }
 
-        // Create patient and account objects
-        Patient newPatient = new Patient(userId, firstName, lastName, gender, contactNumber, emailAddress, "Patient", dateOfBirth, bloodType);
-        // Account newAccount = new Account(userId, "password", newPatient); // Or prompt for password if needed
-        // Write to files
-        FileUtils.writeToFile(PATIENT_TXT, newPatient.toString());
+        // Write to the appropriate file based on the user role
+        FileUtils.writeToFile(roleFile, newUser.toString());
         FileUtils.writeToFile(ACCOUNT_TXT, userId + "|" + hashPassword("password"));
 
-        System.out.println("Patient registered successfully! You may now log in.");
-        System.out.println("Your account's credentials are: " + userId + " | \"password\".");
-        System.out.println("Please remember to change your default password!");
+        // Display success message
+        System.out.println(userRole + " registered successfully!");
+        System.out.println("The account's credentials are: " + userId + " | \"password\".");
 
         return true;
+
     }
 
     public User login() {
@@ -224,27 +277,61 @@ public class AccountController {
     }
 
     /* HELPER FUNCTIONS BELOW */
-    private String generateUserId() {
-        // Helper method to generate userId
-        int idCounter = 1;
-        String userId;
-        try {
-            long lineCount = Files.lines(Paths.get(PATIENT_TXT)).count();
-            idCounter += lineCount;
-            userId = String.format("PA%05d", idCounter);
+    private String generateUserId(String userRole) {
+        String prefix;
+        switch (userRole) {
+            case "Patient":
+                prefix = "PA";
+                break;
+            case "Doctor":
+                prefix = "DR";
+                break;
+            case "Administrator":
+                prefix = "AM";
+                break;
+            case "Pharmacist":
+                prefix = "PH";
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid user role: " + userRole);
+        }
+
+        int maxId = 0;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(ACCOUNT_TXT))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] accountData = line.split("\\|");
+                String userId = accountData[0];
+
+                // Check if userId starts with the prefix
+                if (userId.startsWith(prefix)) {
+                    int idNumber = Integer.parseInt(userId.substring(2)); // Extract the numeric part
+                    maxId = Math.max(maxId, idNumber); // Track the highest ID number
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
-            userId = "PA0001";
         }
-        return userId;
+
+        // Increment the highest found ID number by 1
+        int newIdNumber = maxId + 1;
+        return String.format("%s%05d", prefix, newIdNumber); // Format as "PREFIX00001"
     }
 
-    private boolean checkIfPatientExists(String firstName, String lastName) {
+    private boolean checkIfUserExists(String firstName, String lastName, boolean isAdmin) {
+
+        String fileToUse;
+        if (isAdmin) {
+            fileToUse = STAFF_TXT;
+        } else {
+            fileToUse = PATIENT_TXT;
+        }
         // Normalize the input by removing spaces and converting to lowercase
         String normalizedInput = (firstName + "|" + lastName).replaceAll("\\s+", "").toLowerCase();
 
         try {
-            return Files.lines(Paths.get(PATIENT_TXT))
+            return Files.lines(Paths.get(fileToUse))
                     // Normalize each line: remove spaces and convert to lowercase
                     .map(line -> line.replaceAll("\\s+", "").toLowerCase())
                     // Check if any normalized line matches the normalized input
@@ -295,8 +382,6 @@ public class AccountController {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.print("TESTINGGGG123321");
-
         }
 
         // If not found in patient.txt, check in staff.txt for Staff records

@@ -4,8 +4,8 @@ public class Patient extends entity.User {
 
     private String dateOfBirth;
     private String bloodType;
-    // add more patient-specific attributes here if any.
 
+    // add more patient-specific attributes here if any.
     // Constructor
     public Patient(String userId, String firstName, String lastName, String gender, String contactNumber, String emailAddress, String userRole, String dateOfBirth, String bloodType) {
         // Using the constructor of the abstract User class.

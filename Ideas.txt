@@ -1,4 +1,2 @@
-- Users first choose between registration or login.
-- Users can register (account type will be Patient).
-- Administrator can register new "Doctor", "Pharmacist", "Administrator".
+shag asf
 
