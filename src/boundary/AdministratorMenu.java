@@ -24,7 +24,7 @@ public class AdministratorMenu implements MenuInterface {
         while (!exit) {
             System.out.println("\n--- Administrator Menu ---");
             System.out.println("1. View and Manage Hospital Staff"); // AccountController
-            System.out.println("2. View Appointments details"); // AppointmentController
+            System.out.println("2. View Appointments Details"); // AppointmentController
             System.out.println("3. View and Manage Medication Inventory"); // InventoryController
             System.out.println("4. Approve Replenishment Requests"); // InventoryController
             System.out.println("0. Logout");

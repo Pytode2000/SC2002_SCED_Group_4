@@ -44,6 +44,15 @@ public abstract class User { // ABSTRACT CLASS, NO USER OBJECT WILL EVER BE INST
         return emailAddress;
     }
 
+    public void setContactNumber(String contactNumber) {
+        this.contactNumber = contactNumber;
+    }
+
+    // Setter for email address
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
     // Abstract toString method to be implemented in subclasses.
     // Force child classes to implement.
     public abstract String getUserRole();

@@ -30,8 +30,14 @@ public class Patient extends entity.User {
 
     @Override
     public String toString() {
-        return getUserId() + "|" + getFirstName() + "|" + getLastName() + "|"
-                + getGender() + "|" + getContactNumber() + "|" + getEmailAddress() + "|"
-                + getUserRole() + "|" + dateOfBirth + "|" + bloodType;
+        return "User ID: " + getUserId() + "\n"
+                + "First Name: " + getFirstName() + "\n"
+                + "Last Name: " + getLastName() + "\n"
+                + "Gender: " + getGender() + "\n"
+                + "Contact Number: " + getContactNumber() + "\n"
+                + "Email Address: " + getEmailAddress() + "\n"
+                + "User Role: " + getUserRole() + "\n"
+                + "Date of Birth: " + dateOfBirth + "\n"
+                + "Blood Type: " + bloodType;
     }
 }

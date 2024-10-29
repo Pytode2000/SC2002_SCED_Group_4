@@ -1,5 +1,6 @@
 package boundary;
 
+import controller.AccountController;
 import entity.Patient;
 import interfaces.MenuInterface;
 import java.util.Scanner;
@@ -16,6 +17,7 @@ public class PatientMenu implements MenuInterface {
 
     @Override
     public void displayMenu() {
+        AccountController accountController = new AccountController();
         Scanner scanner = new Scanner(System.in);
         boolean exit = false;
 
@@ -35,25 +37,27 @@ public class PatientMenu implements MenuInterface {
 
             switch (choice) {
                 case "1":
-                    // View Medical Record();
+                    // View Medical Record(); // MedicalRecordController Read
                     break;
                 case "2":
-                    // Update Personal Information();
+                    // Update Personal Information(); // AccountController Update
+                    accountController.updatePersonalInformation(this.patient);
                     break;
                 case "3":
-                    // Schedule an Appointment();
+                    // Schedule an Appointment(); // AppointmentController Create
                     break;
                 case "4":
-                    // Reschedule an Appointment();
+                    // Reschedule an Appointment(); // AppointmentController Update
                     break;
                 case "5":
-                    // Cancel an Appointment();
+                    // Cancel an Appointment(); // AppointmentController Delete/Update?
                     break;
                 case "6":
-                    // View Scheduled Appointment()
+                    // View Scheduled Appointment() // // AppointmentController Read
                     break;
                 case "7":
-                    // View Past Appointment Outcome Records();
+                    // View Past Appointment Outcome Records(); // Read 
+
                     break;
                 case "0":
                     System.out.println("Logging out...");

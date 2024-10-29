@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
+import java.util.List;
 import java.util.Scanner;
 import utility.FileUtils;
 
@@ -118,7 +119,7 @@ public class AccountController {
             }
         }
 
-        while (contactNumber.length() < 8 || contactNumber.length() > 15) {
+        while (!isValidContactNumber(contactNumber)) {
             System.out.print("Enter contact number (8-15 digits): ");
             contactNumber = scanner.nextLine().trim();
             if (contactNumber.length() < 8 || contactNumber.length() > 15) {
@@ -126,7 +127,7 @@ public class AccountController {
             }
         }
 
-        while (!emailAddress.contains("@") || !emailAddress.contains(".")) {
+        while (!isValidEmail(emailAddress)) {
             System.out.print("Enter a valid email address: ");
             emailAddress = scanner.nextLine().trim();
             if (!emailAddress.contains("@") || !emailAddress.contains(".")) {
@@ -242,9 +243,7 @@ public class AccountController {
         // Display success message
         System.out.println(userRole + " registered successfully!");
         System.out.println("The account's credentials are: " + userId + " | \"password\".");
-
         return true;
-
     }
 
     public User login() {
@@ -417,6 +416,219 @@ public class AccountController {
 
         // User not found in either file
         return null;
+    }
+
+    public void updatePersonalInformation(User user) {
+        Scanner scanner = new Scanner(System.in);
+        boolean updating = true;
+
+        while (updating) {
+            System.out.println("\n--- Update Personal Information ---");
+            System.out.println("User ID: " + user.getUserId());
+            if (user instanceof Patient) {
+                System.out.println("Current Contact Number: " + ((Patient) user).getContactNumber());
+                System.out.println("Current Email Address: " + ((Patient) user).getEmailAddress());
+            }
+
+            System.out.println("\nWhat would you like to update?");
+            System.out.println("1. Password");
+            if (user instanceof Patient) {
+                System.out.println("2. Contact Number");
+                System.out.println("3. Email Address");
+            }
+            System.out.println("0. Back to Main Menu");
+            System.out.print("Enter your choice: ");
+            String choice = scanner.nextLine().trim();
+
+            switch (choice) {
+                case "1":
+                    updatePasswordFlow(user, scanner);
+                    break;
+                case "2":
+                    if (user instanceof Patient) {
+                        updateContactNumberFlow((Patient) user, scanner);
+                    }
+                    break;
+                case "3":
+                    if (user instanceof Patient) {
+                        updateEmailAddressFlow((Patient) user, scanner);
+                    }
+                    break;
+                case "0":
+                    updating = false;
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    break;
+            }
+        }
+    }
+
+// Handles the update password flow for all users with a 3-attempt limit for both current and new passwords
+    private void updatePasswordFlow(User user, Scanner scanner) {
+        int currentPasswordAttempts = 0;
+        boolean currentPasswordCorrect = false;
+
+        // First, verify current password with up to 3 attempts
+        while (currentPasswordAttempts < 3 && !currentPasswordCorrect) {
+            System.out.print("Enter current password: ");
+            String currentPassword = scanner.nextLine().trim();
+
+            if (authenticate(user.getUserId(), hashPassword(currentPassword))) {
+                currentPasswordCorrect = true;
+            } else {
+                currentPasswordAttempts++;
+                System.out.println("Incorrect current password. " + (3 - currentPasswordAttempts) + " attempt(s) remaining.");
+            }
+        }
+
+        // If the current password is correct, proceed to update the password with a new one
+        if (currentPasswordCorrect) {
+            int newPasswordAttempts = 0;
+            boolean passwordUpdated = false;
+
+            while (newPasswordAttempts < 3 && !passwordUpdated) {
+                System.out.print("Enter new password (min 8 chars, 1 digit, 1 special char): ");
+                String newPassword = scanner.nextLine().trim();
+
+                if (isValidPassword(newPassword)) {
+                    passwordUpdated = updatePassword(user.getUserId(), newPassword);
+                    System.out.println(passwordUpdated ? "Password updated successfully." : "Password update failed.");
+                } else {
+                    newPasswordAttempts++;
+                    System.out.println("Invalid password format. " + (3 - newPasswordAttempts) + " attempt(s) remaining.");
+                }
+            }
+
+            // If user fails to enter a valid new password after 3 attempts
+            if (!passwordUpdated && newPasswordAttempts >= 3) {
+                System.out.println("Failed to update password. Exceeded maximum attempts.");
+            }
+        } else {
+            System.out.println("Password update failed. Exceeded maximum attempts for current password.");
+        }
+    }
+
+// Update password in the account file after current password authentication
+    public boolean updatePassword(String userId, String newPassword) {
+        try {
+            return updateAccountFile(userId, hashPassword(newPassword), ACCOUNT_TXT, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+// Handles updating contact number for patients only, with 3 attempts
+    private void updateContactNumberFlow(Patient patient, Scanner scanner) {
+        int attempts = 0;
+        boolean contactUpdated = false;
+
+        while (attempts < 3 && !contactUpdated) {
+            System.out.print("Enter new contact number (8-15 digits): ");
+            String newContactNumber = scanner.nextLine().trim();
+
+            if (isValidContactNumber(newContactNumber)) {
+                if (updateContactNumber(patient.getUserId(), newContactNumber)) {
+                    patient.setContactNumber(newContactNumber);
+                    System.out.println("Contact number updated successfully.");
+                    contactUpdated = true;
+                } else {
+                    System.out.println("Failed to update contact number. Please try again.");
+                }
+            } else {
+                attempts++;
+                System.out.println("Invalid contact number format. " + (3 - attempts) + " attempt(s) remaining.");
+            }
+        }
+
+        if (!contactUpdated && attempts >= 3) {
+            System.out.println("Failed to update contact number. Exceeded maximum attempts.");
+        }
+    }
+
+// Handles updating email address for patients only, with 3 attempts
+    private void updateEmailAddressFlow(Patient patient, Scanner scanner) {
+        int attempts = 0;
+        boolean emailUpdated = false;
+
+        while (attempts < 3 && !emailUpdated) {
+            System.out.print("Enter new valid email address: ");
+            String newEmail = scanner.nextLine().trim();
+
+            if (isValidEmail(newEmail)) {
+                if (updateEmailAddress(patient.getUserId(), newEmail)) {
+                    patient.setEmailAddress(newEmail);
+                    System.out.println("Email address updated successfully.");
+                    emailUpdated = true;
+                } else {
+                    System.out.println("Failed to update email address. Please try again.");
+                }
+            } else {
+                attempts++;
+                System.out.println("Invalid email format. " + (3 - attempts) + " attempt(s) remaining.");
+            }
+        }
+
+        if (!emailUpdated && attempts >= 3) {
+            System.out.println("Failed to update email address. Exceeded maximum attempts.");
+        }
+    }
+
+    public boolean updateContactNumber(String userId, String newContactNumber) {
+        try {
+            return updateAccountFile(userId, newContactNumber, PATIENT_TXT, 4);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean updateEmailAddress(String userId, String newEmailAddress) {
+        try {
+            return updateAccountFile(userId, newEmailAddress, PATIENT_TXT, 5);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // General method to update a specific field in a file by userId
+    private boolean updateAccountFile(String userId, String newValue, String filePath, int fieldIndex) throws IOException {
+        List<String> fileContent = Files.readAllLines(Paths.get(filePath));
+        boolean updated = false;
+
+        for (int i = 0; i < fileContent.size(); i++) {
+            String[] line = fileContent.get(i).split("\\|");
+            if (line[0].equals(userId)) {
+                line[fieldIndex] = newValue;
+                fileContent.set(i, String.join("|", line));
+                updated = true;
+                break;
+            }
+        }
+
+        if (updated) {
+            Files.write(Paths.get(filePath), fileContent);
+            System.out.println("Update successful for userId: " + userId);
+        } else {
+            System.out.println("User with userId: " + userId + " not found.");
+        }
+        return updated;
+    }
+
+    // Helper validation methods
+    private boolean isValidContactNumber(String contactNumber) {
+        return contactNumber.length() >= 8 && contactNumber.length() <= 15;
+    }
+
+    private boolean isValidEmail(String email) {
+        return email.contains("@") && email.contains(".");
+    }
+
+    private boolean isValidPassword(String password) {
+        String passwordPattern = "^(?=.*[0-9])(?=.*[!@#$%^&*()_+=-]).{8,}$";
+        return password.matches(passwordPattern);
     }
 
 }
