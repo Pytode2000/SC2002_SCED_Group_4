@@ -1,0 +1,2 @@
+appointmentId|doctorId|patientId|date|time|status|requestMessage
+AP00001|DR00003|PA00005|31-10-2024|1030|OPEN|
