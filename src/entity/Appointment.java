@@ -15,7 +15,7 @@ public class Appointment {
 
     // Enum for appointment status
     public enum Status {
-        AVAILABLE, PENDING, CONFIRMED;
+        AVAILABLE, PENDING, BOOKED;
     }
 
     public Appointment(String appointmentId, String doctorId, LocalDate date, LocalTime time) {
