@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -26,6 +27,15 @@ public class AppointmentController {
             System.out.println("No available appointments found.");
             return;
         }
+
+        // Sort appointments by date and time
+        availableAppointments.sort(Comparator.comparing((String line) -> {
+            String[] fields = line.split("\\|");
+            return LocalDate.parse(fields[3], dateFormatter);
+        }).thenComparing(line -> {
+            String[] fields = line.split("\\|");
+            return LocalTime.parse(fields[4], timeFormatter);
+        }));
 
         displayAppointmentsWithIndex(availableAppointments);
 
@@ -73,12 +83,21 @@ public class AppointmentController {
     // Get user selection for appointment
     private int getUserSelection(int maxIndex) {
         Scanner scanner = new Scanner(System.in);
-        int selection;
-        do {
+        int selection = -1;
+        while (true) {
             System.out.print("Please enter the number of the appointment you wish to select (or 0 to exit): ");
-            selection = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
-        } while (selection < 0 || selection > maxIndex);
+            String input = scanner.nextLine().trim();
+            try {
+                selection = Integer.parseInt(input);
+                if (selection >= 0 && selection <= maxIndex) {
+                    break;
+                } else {
+                    System.out.println("Invalid selection. Please enter a number between 0 and " + maxIndex + ".");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid number.");
+            }
+        }
         return selection;
     }
 
@@ -90,6 +109,9 @@ public class AppointmentController {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Anything you would like to tell the doctor? ");
         String requestMessage = scanner.nextLine();
+        if (requestMessage.length() == 0) {
+            requestMessage = "-"; // CANNOT LET IT BE EMPTY.
+        }
 
         // Update fields for the selected appointment
         fields[2] = patientId;
@@ -121,12 +143,8 @@ public class AppointmentController {
         }
     }
 
-// Method to display all booked appointments for a patient and allow selection to view doctor details
+    // Method to display all booked appointments for a patient and allow selection to view doctor details
     public void displayAndSelectBookedAppointments(String patientId) {
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-        Scanner scanner = new Scanner(System.in);
-
         while (true) {
             List<String[]> bookedAppointments = new ArrayList<>();
             System.out.println("\nYour Booked Appointments:");
@@ -143,43 +161,41 @@ public class AppointmentController {
                     // Check if the appointment is booked for the patient
                     if (fields.length >= 6 && fields[2].equals(patientId) && fields[5].equals("BOOKED")) {
                         bookedAppointments.add(fields);
-                        LocalDate date = LocalDate.parse(fields[3], dateFormatter);
-                        LocalTime time = LocalTime.parse(fields[4], timeFormatter);
-                        System.out.printf("%d. Date: %s | Time: %s%n", index++, date.format(dateFormatter), time.format(timeFormatter));
                     }
                 }
 
-                // If no booked appointments found, notify and exit
+                // Sort booked appointments by date and time
+                bookedAppointments.sort(Comparator.comparing((String[] fields) -> LocalDate.parse(fields[3], dateFormatter))
+                        .thenComparing(fields -> LocalTime.parse(fields[4], timeFormatter)));
+
+                // Display sorted appointments
                 if (bookedAppointments.isEmpty()) {
                     System.out.println("You have no upcoming appointments!");
                     return;
+                }
+                index = 1;
+                for (String[] fields : bookedAppointments) {
+                    LocalDate date = LocalDate.parse(fields[3], dateFormatter);
+                    LocalTime time = LocalTime.parse(fields[4], timeFormatter);
+                    System.out.printf("%d. Date: %s | Time: %s%n", index++, date.format(dateFormatter), time.format(timeFormatter));
                 }
 
                 System.out.println("0. Back to Main Menu");
                 System.out.println("--------------------------");
 
                 // Prompt user to select an appointment by index
-                System.out.print("Please enter the number of the appointment to view doctor details (or 0 to exit): ");
-                int selection = scanner.nextInt();
-                scanner.nextLine(); // Consume newline
-
-                // Check for exit option
+                int selection = getUserSelection(bookedAppointments.size());
                 if (selection == 0) {
                     System.out.println("Returning to main menu...");
                     return;
                 }
 
                 // Validate selection
-                if (selection > 0 && selection <= bookedAppointments.size()) {
-                    String[] selectedAppointment = bookedAppointments.get(selection - 1);
-                    String doctorId = selectedAppointment[1];
+                String[] selectedAppointment = bookedAppointments.get(selection - 1);
+                String doctorId = selectedAppointment[1];
 
-                    // Retrieve and display doctor details
-                    displayDoctorDetails(doctorId);
-
-                } else {
-                    System.out.println("Invalid selection. Please try again.");
-                }
+                // Retrieve and display doctor details
+                displayDoctorDetails(doctorId);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -188,7 +204,7 @@ public class AppointmentController {
         }
     }
 
-// Method to retrieve and display doctor details from staff.txt based on doctorId
+    // Method to retrieve and display doctor details from staff.txt based on doctorId
     private void displayDoctorDetails(String doctorId) {
         try (BufferedReader reader = new BufferedReader(new FileReader(STAFF_FILE))) {
             String line;
@@ -197,18 +213,15 @@ public class AppointmentController {
 
                 // Check if this is the correct doctor
                 if (fields[0].equals(doctorId)) {
-                    // Construct and display the doctor's details using Staff's attributes
                     System.out.println("\nDoctor Details:"
                             + "\nName: " + fields[1] + " " + fields[2]
                             + "\nGender: " + fields[3]
                             + "\nContact Number: " + fields[4]
                             + "\nEmail Address: " + fields[5]);
                 }
-
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 }
