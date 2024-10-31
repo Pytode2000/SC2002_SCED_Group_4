@@ -7,11 +7,11 @@ public class Appointment {
 
     private String appointmentId;                  // Unique identifier for the appointment
     private String doctorId;                       // Doctor assigned to the appointment
-    private String patientId = "";                 // Patient assigned to the appointment, defaults to empty
+    private String patientId = "-";                 // Patient assigned to the appointment, defaults to empty
     private LocalDate date;               // Date of the appointment
     private LocalTime time;               // Time of the appointment
     private Status status = Status.AVAILABLE;           // Default status as OPEN
-    private String requestMessage = "";            // Message for additional requests, defaults to empty
+    private String requestMessage = "-";            // Message for additional requests, defaults to empty
 
     // Enum for appointment status
     public enum Status {
