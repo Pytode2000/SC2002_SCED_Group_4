@@ -57,6 +57,7 @@ public class PatientMenu implements MenuInterface {
                     break;
                 case "6":
                     // View Scheduled Appointment() // // AppointmentController Read
+                    appointmentController.displayAndSelectBookedAppointments(this.patient.getUserId());
                     break;
                 case "7":
                     // View Past Appointment Outcome Records(); // Read 
