@@ -1,2 +1,1 @@
-MR0|PA00005|Wisdom tooh|painkiller
-MR1|PA00005|Stomach ache|pain killer
+

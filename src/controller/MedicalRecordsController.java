@@ -186,7 +186,7 @@ public class MedicalRecordsController {
         // Display records for user to choose from
         System.out.println("\n--- Medical Records for Patient ID: " + patientId + " ---");
         for (MedicalRecord record : recordsToUpdate) {
-            System.out.println(record.getMedicalRecordId() + ": " + record);
+            System.out.println(record);
         }
         System.out.print("Enter the ID of the record you want to update (or 0 to cancel): ");
     
@@ -314,14 +314,16 @@ public class MedicalRecordsController {
         if (user instanceof Patient) {
             displayMedicalRecords(user.getUserId());
         } else if (user instanceof Doctor) {
-            for (Patient patient : patients){
-                System.out.println("--------------------------------------");
-                displayMedicalRecords(patient.getUserId());
-                System.out.println("--------------------------------------");
-            }
             Scanner scanner = new Scanner(System.in);
             String patientId;
             while (true) {
+
+                for (Patient patient : patients){
+                    System.out.println("--------------------------------------");
+                    displayMedicalRecords(patient.getUserId());
+                    System.out.println("--------------------------------------");
+                }
+
                 System.out.println("Select an option:");
                 System.out.println("1: Create medical record");
                 System.out.println("2: Update medical record");
@@ -356,7 +358,6 @@ public class MedicalRecordsController {
                         System.out.println("Invalid choice. Please try again.");
                         continue;  // Restart the loop if the choice is invalid
                 }
-                break;  // Exit the inner loop if a valid option is selected
             }
 
         }
