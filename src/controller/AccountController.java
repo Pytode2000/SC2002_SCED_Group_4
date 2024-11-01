@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.Scanner;
@@ -141,7 +142,7 @@ public class AccountController {
             while (day.length() != 2 || !day.matches("\\d{2}")) {
                 System.out.print("Enter day (DD): ");
                 day = scanner.nextLine().trim();
-                if (day.length() != 2 || !day.matches("\\d{2}")) {
+                if (day.length() != 2 || !day.matches("\\d{2}") || Integer.parseInt(day) < 1 || Integer.parseInt(day) <= 31) {
                     System.out.println("Invalid day. Please enter a two-digit day (e.g., 01, 15, 31).");
                 }
             }
@@ -159,7 +160,7 @@ public class AccountController {
             while (year.length() != 4 || !year.matches("\\d{4}")) {
                 System.out.print("Enter year (YYYY): ");
                 year = scanner.nextLine().trim();
-                if (year.length() != 4 || !year.matches("\\d{4}")) {
+                if (year.length() != 4 || !year.matches("\\d{4}") || Integer.parseInt(year) < 1900 || Integer.parseInt(year) <= LocalDate.now().getYear()) {
                     System.out.println("Invalid year. Please enter a four-digit year (e.g., 1990, 2023).");
                 }
             }

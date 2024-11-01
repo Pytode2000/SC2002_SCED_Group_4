@@ -159,7 +159,7 @@ public class AppointmentController {
                     String[] fields = line.split("\\|");
 
                     // Check if the appointment is booked for the patient
-                    if (fields.length >= 6 && fields[2].equals(patientId) && (fields[5].equals("BOOKED") || fields[5].equals("RESCHEDULE"))) {
+                    if (fields.length >= 6 && fields[2].equals(patientId) && (fields[5].equals("BOOKED") || fields[5].equals("PENDING") || fields[5].equals("RESCHEDULE"))) {
                         bookedAppointments.add(fields);
                     }
                 }
@@ -180,8 +180,10 @@ public class AppointmentController {
                     LocalDate date = LocalDate.parse(fields[3], dateFormatter);
                     LocalTime time = LocalTime.parse(fields[4], timeFormatter);
                     String status = fields[5];
+                    String message = fields[6];
 
-                    System.out.printf("%d. Date: %s | Time: %s | Status: %s%n", index++, date.format(dateFormatter), time.format(timeFormatter), status);
+
+                    System.out.printf("%d. Date: %s | Time: %s | Status: %s | Message: %s%n", index++, date.format(dateFormatter), time.format(timeFormatter), status, message);
 
                     // If the status is RESCHEDULED, display rescheduled date, time, and message
                     if ("RESCHEDULE".equalsIgnoreCase(status) && fields.length >= 10) {
@@ -424,9 +426,9 @@ public class AppointmentController {
                 // Update the appointment in the file
                 String newLine = String.join("|", selectedAppointment);
                 updateAppointmentInFile(oldLine, newLine);
-                System.out.println("Appointment has been successfully rescheduled.");
+                System.out.println("Reschedule request submitted.");
             } else {
-                System.out.println("Reschedule action canceled.");
+                System.out.println("Reschedule request canceled.");
             }
         } catch (IOException e) {
             e.printStackTrace();
