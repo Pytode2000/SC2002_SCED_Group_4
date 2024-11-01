@@ -50,10 +50,11 @@ public class PatientMenu implements MenuInterface {
                     appointmentController.displayAndSelectAvailableAppointments(this.patient.getUserId());
                     break;
                 case "4":
-                    // Reschedule an Appointment(); // AppointmentController Update
+                    // Reschedule an Appointment(); // AppointmentController Update --> give up current, then choose another again.
                     break;
                 case "5":
-                    // Cancel an Appointment(); // AppointmentController Delete/Update?
+                    // Cancel an Appointment(); // AppointmentController Update?
+                    appointmentController.deleteBookedAppointment(this.patient.getUserId());
                     break;
                 case "6":
                     // View Scheduled Appointment() // // AppointmentController Read

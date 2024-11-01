@@ -173,6 +173,7 @@ public class AppointmentController {
                     System.out.println("You have no upcoming appointments!");
                     return;
                 }
+                System.out.println("Select index to view Doctor's details");
                 index = 1;
                 for (String[] fields : bookedAppointments) {
                     LocalDate date = LocalDate.parse(fields[3], dateFormatter);
@@ -224,4 +225,94 @@ public class AppointmentController {
             e.printStackTrace();
         }
     }
+
+    // Method to display all BOOKED appointments and allow deletion
+    public void deleteBookedAppointment(String patientId) {
+        List<String[]> bookedAppointments = new ArrayList<>();
+        System.out.println("\nYour Booked Appointments:");
+        System.out.println("--------------------------");
+
+        // Retrieve booked appointments
+        try (BufferedReader reader = new BufferedReader(new FileReader(APPOINTMENT_FILE))) {
+            String line;
+            int index = 1;
+
+            while ((line = reader.readLine()) != null) {
+                String[] fields = line.split("\\|");
+
+                // Check if the appointment is booked for the patient
+                if (fields.length >= 6 && fields[2].equals(patientId) && fields[5].equals("BOOKED")) {
+                    bookedAppointments.add(fields);
+                }
+            }
+
+            // Sort booked appointments by date and time
+            bookedAppointments.sort(Comparator.comparing((String[] fields) -> LocalDate.parse(fields[3], dateFormatter))
+                    .thenComparing(fields -> LocalTime.parse(fields[4], timeFormatter)));
+
+            // Display sorted appointments
+            if (bookedAppointments.isEmpty()) {
+                System.out.println("You have no booked appointments to delete!");
+                return;
+            }
+            System.out.println("Select index to delete appointment");
+
+            index = 1;
+            for (String[] fields : bookedAppointments) {
+                LocalDate date = LocalDate.parse(fields[3], dateFormatter);
+                LocalTime time = LocalTime.parse(fields[4], timeFormatter);
+                System.out.printf("%d. Date: %s | Time: %s%n", index++, date.format(dateFormatter), time.format(timeFormatter));
+            }
+
+            System.out.println("0. Back to Main Menu");
+            System.out.println("--------------------------");
+
+            // Prompt user to select an appointment by index
+            int selection = getUserSelection(bookedAppointments.size());
+            if (selection == 0) {
+                System.out.println("Returning to delete menu...");
+                return;
+            }
+
+            // Validate selection and confirm deletion
+            String[] selectedAppointment = bookedAppointments.get(selection - 1);
+            LocalDate date = LocalDate.parse(selectedAppointment[3], dateFormatter);
+            LocalTime time = LocalTime.parse(selectedAppointment[4], timeFormatter);
+            System.out.printf("Are you sure you want to delete the appointment on %s at %s?%n", date.format(dateFormatter), time.format(timeFormatter));
+
+            // Prompt for confirmation
+            Scanner scanner = new Scanner(System.in);
+            String confirmation;
+            while (true) {
+                System.out.println("1: Confirm");
+                System.out.println("0: Cancel");
+                System.out.print("Enter your choice: ");
+                confirmation = scanner.nextLine().trim();
+
+                if (confirmation.equals("1")) {
+                    String oldLine = String.join("|", selectedAppointment);
+                    selectedAppointment[2] = "-";           // Reset patientId to "-"
+                    selectedAppointment[5] = "AVAILABLE";   // Set status to AVAILABLE
+                    selectedAppointment[6] = "-";           // Clear requestMessage to "-"
+                    String newLine = String.join("|", selectedAppointment);
+
+                    // Update the file
+                    updateAppointmentInFile(oldLine, newLine);
+                    System.out.println("Appointment has been successfully deleted.");
+                    deleteBookedAppointment(patientId);
+                    break;
+                } else if (confirmation.equals("0")) {
+                    System.out.println("Action canceled.");
+                    deleteBookedAppointment(patientId); // Go back to the delete menu
+                    break;
+                } else {
+                    System.out.println("Invalid input. Please enter 1 to confirm or 0 to exit.");
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
