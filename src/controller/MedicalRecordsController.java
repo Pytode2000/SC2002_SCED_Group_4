@@ -21,7 +21,6 @@ public class MedicalRecordsController {
 
     private List<Patient> patients;
     private List<MedicalRecord> medicalRecords;
-
     private static final String MEDICALRECORDS_TXT = "data/medicalRecords.txt";
     private static final String PATIENT_TXT = "data/patient.txt";
 
@@ -72,20 +71,21 @@ public class MedicalRecordsController {
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split("\\|");
     
-                if (data.length < 3) {
+                if (data.length < 4) {
                     System.out.println("Skipping invalid medical record: " + line);
                     continue;
                 }
                 
-                String patientId = data[0];
-                String diagnosis = data[1];
-                String treatment = data[2];
+                String medicalRecordId = data[0];
+                String patientId = data[1];
+                String diagnosis = data[2];
+                String treatment = data[3];
                 
                 // Find the associated patient using patientId
                 Patient patient = findPatientById(patientId);
                 
                 if (patient != null) {
-                    MedicalRecord record = new MedicalRecord(patientId, diagnosis, treatment);
+                    MedicalRecord record = new MedicalRecord(medicalRecordId, patientId, diagnosis, treatment);
                     medicalRecords.add(record);
                 } else {
                     System.out.println("No matching patient found for ID: " + patientId);
@@ -130,9 +130,20 @@ public class MedicalRecordsController {
         }
     }
 
+    public String generateMedicalRecordId(){
+        int medicalRecordCount = medicalRecords.size() -1 ;
+        return "MR" + medicalRecordCount;
+    }
+
     // Method to create a medical record for a patient
     public void createMedicalRecord(String patientId) {
         Scanner scanner = new Scanner(System.in);
+
+        if (findPatientById(patientId) == null) {
+            System.out.println("Invalid patient ID.");
+            return;
+        }
+
         System.out.println("\n--- Creating Medical Record for Patient ID: " + patientId + " ---");
     
         System.out.print("Enter diagnosis (or NIL if none): ");
@@ -145,12 +156,12 @@ public class MedicalRecordsController {
             treatment = "";
         }
     
-        MedicalRecord newRecord = new MedicalRecord(patientId, diagnosis, treatment);
+        MedicalRecord newRecord = new MedicalRecord(generateMedicalRecordId(),patientId, diagnosis, treatment);
         medicalRecords.add(newRecord);
         System.out.println("Medical record created successfully for patient ID: " + patientId);
     
         // Write to file
-        FileUtils.writeToFile(MEDICALRECORDS_TXT, patientId + '|' + diagnosis + '|' + treatment);
+        FileUtils.writeToFile(MEDICALRECORDS_TXT, generateMedicalRecordId() + '|' + patientId + '|' + diagnosis + '|' + treatment);
     
         // Display success message
         System.out.println(patientId + " Created Medical record successfully!");
@@ -174,24 +185,34 @@ public class MedicalRecordsController {
     
         // Display records for user to choose from
         System.out.println("\n--- Medical Records for Patient ID: " + patientId + " ---");
-        for (int i = 0; i < recordsToUpdate.size(); i++) {
-            System.out.println((i + 1) + ". " + recordsToUpdate.get(i));
+        for (MedicalRecord record : recordsToUpdate) {
+            System.out.println(record.getMedicalRecordId() + ": " + record);
         }
-        System.out.print("Enter the which record you want to update (or 0 to cancel): ");
-        
+        System.out.print("Enter the ID of the record you want to update (or 0 to cancel): ");
+    
         // Get user's choice
         Scanner scanner = new Scanner(System.in);
-        int choice = scanner.nextInt();
-        scanner.nextLine();  // Consume newline
+        String choiceInput = scanner.nextLine().trim();
     
         // Validate choice
-        if (choice <= 0 || choice > recordsToUpdate.size()) {
+        if (choiceInput.equals("0")) {
             System.out.println("Update canceled.");
             return;
         }
     
-        // Get the selected record to update
-        MedicalRecord recordToUpdate = recordsToUpdate.get(choice - 1);
+        // Find the selected record to update
+        MedicalRecord recordToUpdate = null;
+        for (MedicalRecord record : recordsToUpdate) {
+            if (record.getMedicalRecordId().equals(choiceInput)) {
+                recordToUpdate = record;
+                break;
+            }
+        }
+    
+        if (recordToUpdate == null) {
+            System.out.println("No record found with the given ID: " + choiceInput);
+            return;
+        }
     
         // Update diagnosis
         System.out.print("Enter new diagnosis (or press Enter to keep current): ");
@@ -210,12 +231,13 @@ public class MedicalRecordsController {
     
         System.out.println("Medical record updated successfully for Patient ID: " + patientId);
     
-        // Write updated record to file
-        FileUtils.writeToFile(MEDICALRECORDS_TXT, patientId + '|' + recordToUpdate.getDiagnosis() + '|' + recordToUpdate.getTreatment());
+        // Write updated record to file (consider changing how you manage the file writing if needed)
+        FileUtils.updateToFile(MEDICALRECORDS_TXT, choiceInput + '|' + patientId + '|' + recordToUpdate.getDiagnosis() + '|' + recordToUpdate.getTreatment(), choiceInput);
     
         // Display success message
         System.out.println("Medical record for Patient ID " + patientId + " updated successfully!");
     }
+    
     
     
 

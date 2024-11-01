@@ -2,18 +2,24 @@ package entity;
 
 public class MedicalRecord {
 
+    private String medicalRecordId;
     private String patientId;
     private String diagnosis;
     private String treatment;
 
     // Constructor
-    public MedicalRecord(String patientId, String diagnosis, String treatment) {
+    public MedicalRecord(String medicalRecordId, String patientId, String diagnosis, String treatment) {
+        this.medicalRecordId = medicalRecordId;
         this.patientId = patientId;
         this.diagnosis = diagnosis;
         this.treatment = treatment;
     }
 
     // Getters
+    public String getMedicalRecordId() {
+        return medicalRecordId;
+    }
+
     public String getPatientId() {
         return patientId;
     }
@@ -27,6 +33,10 @@ public class MedicalRecord {
     }
 
     // Setters
+    public void medicalRecordIdId(String medicalRecordId) {
+        this.medicalRecordId = medicalRecordId;
+    }
+
     public void setPatientId(String patientId) {
         this.patientId = patientId;
     }
@@ -42,8 +52,9 @@ public class MedicalRecord {
     // toString method
     @Override
     public String toString() {
-        return "MedicalRecord: \n" +
-                "patientId='" + patientId + '\'' +
+        return "MedicalRecord : " +
+                "medicalRecordId=" + medicalRecordId + '\n' +
+                "patientId=" + patientId + 
                 ", diagnosis=" + diagnosis +
                 ", treatment=" + treatment;
     }
