@@ -7,10 +7,12 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+
 import utility.PrintUtils;
 
 import entity.MedicalRecord;
@@ -475,20 +477,20 @@ public class AppointmentController {
     }
 
     //View Appointments with logged in doctor's ID
-    public void viewPersonalSchedule(String doctorID) {
+    public void viewPersonalSchedule(String doctorId) {
 
         List<String> allAppointmentSlots = getAvailableAppointments();
         List<String> currentDoctorSchedule = new ArrayList<>();
         
         for (String appointment : allAppointmentSlots) {
             // Assuming each slot string contains doctor ID in a specific format, check if it matches
-            if (appointment.contains(doctorID)) {  // Modify as needed for exact matching logic
+            if (appointment.contains(doctorId)) {  // Modify as needed for exact matching logic
                 currentDoctorSchedule.add(appointment);
             }
         }
     
         // Print or return the currentDoctorSchedule if needed
-        System.out.println("=== Appointments for Doctor ID: " + doctorID + " ===");
+        System.out.println("=== Appointments for Doctor ID: " + doctorId + " ===");
 
         if (currentDoctorSchedule.isEmpty()) {
             System.out.println("No appointments scheduled.");
@@ -502,5 +504,60 @@ public class AppointmentController {
 
         System.out.println("===================================");
         PrintUtils.pause();
+    }
+
+    //Set Doctor's availablity
+    public void setAvailability(String doctorId) {
+        
+        // Prompt for date with error checking
+        LocalDate date;
+        Scanner scanner = new Scanner(System.in);
+        String appointmentId;
+
+        while (true) {
+            System.out.print("Enter appointment date (dd-MM-yyyy): ");
+            String dateInput = scanner.nextLine().trim();
+            if (!dateInput.isEmpty()) {
+                try {
+                    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                    date = LocalDate.parse(dateInput, dateFormatter);
+                    break;
+                } catch (DateTimeParseException e) {
+                    System.out.println("Invalid date format. Please use dd-MM-yyyy.");
+                }
+            } else {
+                System.out.println("Date cannot be empty. Please try again.");
+            }
+        }
+
+        // Prompt for time with error checking
+        LocalTime time;
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        while (true) {
+            System.out.print("Enter appointment time (HH:mm): ");
+            String timeInput = scanner.nextLine().trim();
+            if (!timeInput.isEmpty()) {
+                try {
+                    time = LocalTime.parse(timeInput, timeFormatter);
+                    break;
+                } catch (DateTimeParseException e) {
+                    System.out.println("Invalid time format. Please use HH:mm.");
+                }
+            } else {
+                System.out.println("Time cannot be empty. Please try again.");
+            }
+        }
+
+        // Create and return the new Appointment object
+        utility.FileUtils.writeToFile(APPOINTMENT_FILE, "-|" + doctorId + "|-|" + date + '|' + time + "|AVAILABLE|-|-|-|-");
+
+        System.out.println("\n--- Appointment Added Successfully ---");
+        System.out.println("Appointment ID  : " );
+        System.out.println("Doctor ID       : " + doctorId);
+        System.out.println("Date            : " + date);
+        System.out.println("Time            : " + time);
+        System.out.println("Status          : AVAILABLE");
+        System.out.println("--------------------------------------\n");
+        return;
     }
 }

@@ -51,6 +51,7 @@ public class DoctorMenu implements MenuInterface {
                     break;
                 case "3":
                     // Set Availability for Appointments();
+                    appointmentController.setAvailability(doctor.getUserId());
                     break;
                 case "4":
                     // Accept or Decline Appointment Requests();
