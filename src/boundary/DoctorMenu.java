@@ -4,18 +4,22 @@ import entity.Doctor;
 import interfaces.MenuInterface;
 import java.util.Scanner;
 
+import controller.AppointmentController;
 import controller.MedicalRecordsController;
 
 public class DoctorMenu implements MenuInterface {
 
     private final Doctor doctor;
     private MedicalRecordsController medicalRecordsController;
+    private AppointmentController appointmentController;
 
     // Import controller thats doctors need e.g., appointment, schedule etc.
     // All the functions should be in controller. this menu class just uses it.
     public DoctorMenu(Doctor doctor) {
         this.doctor = doctor;
         medicalRecordsController = new MedicalRecordsController();
+        appointmentController = new AppointmentController();
+
     }
 
     @Override
@@ -43,6 +47,7 @@ public class DoctorMenu implements MenuInterface {
                     break;
                 case "2":
                     // View Personal Schedule();
+                    appointmentController.viewPersonalSchedule(doctor.getUserId());
                     break;
                 case "3":
                     // Set Availability for Appointments();

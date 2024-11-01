@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+import utility.PrintUtils;
+
+import entity.MedicalRecord;
 
 public class AppointmentController {
 
@@ -471,4 +474,33 @@ public class AppointmentController {
         }
     }
 
+    //View Appointments with logged in doctor's ID
+    public void viewPersonalSchedule(String doctorID) {
+
+        List<String> allAppointmentSlots = getAvailableAppointments();
+        List<String> currentDoctorSchedule = new ArrayList<>();
+        
+        for (String appointment : allAppointmentSlots) {
+            // Assuming each slot string contains doctor ID in a specific format, check if it matches
+            if (appointment.contains(doctorID)) {  // Modify as needed for exact matching logic
+                currentDoctorSchedule.add(appointment);
+            }
+        }
+    
+        // Print or return the currentDoctorSchedule if needed
+        System.out.println("=== Appointments for Doctor ID: " + doctorID + " ===");
+
+        if (currentDoctorSchedule.isEmpty()) {
+            System.out.println("No appointments scheduled.");
+        } else {
+            int appointmentNumber = 1;
+            for (String appointment : currentDoctorSchedule) {
+                System.out.println(appointmentNumber + ". " + appointment);
+                appointmentNumber++;
+            }
+        }
+
+        System.out.println("===================================");
+        PrintUtils.pause();
+    }
 }
