@@ -39,7 +39,7 @@ public class DoctorMenu implements MenuInterface {
             switch (choice) {
                 case "1":
                     // Patient Medical Records();
-                    medicalRecordsController.viewMedicalRecords();
+                    medicalRecordsController.viewMedicalRecords(doctor);
                     break;
                 case "2":
                     // View Personal Schedule();

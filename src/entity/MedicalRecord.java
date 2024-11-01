@@ -1,20 +1,16 @@
 package entity;
 
-import java.util.List;
-
 public class MedicalRecord {
 
     private String patientId;
-    private String allergy;
-    private List<String> appointmentOutcomeId;
-    private String notes;
+    private String diagnosis;
+    private String treatment;
 
     // Constructor
-    public MedicalRecord(String patientId, String allergies, List<String> appointmentOutcomeId, String notes) {
+    public MedicalRecord(String patientId, String diagnosis, String treatment) {
         this.patientId = patientId;
-        this.allergy = allergies;
-        this.appointmentOutcomeId = appointmentOutcomeId;
-        this.notes = notes;
+        this.diagnosis = diagnosis;
+        this.treatment = treatment;
     }
 
     // Getters
@@ -22,16 +18,12 @@ public class MedicalRecord {
         return patientId;
     }
 
-    public String getAllergy() {
-        return allergy;
+    public String getDiagnosis() {
+        return diagnosis;
     }
 
-    public List<String> getAppointmentOutcomeId() {
-        return appointmentOutcomeId;
-    }
-
-    public String getNotes() {
-        return notes;
+    public String getTreatment() {
+        return treatment;
     }
 
     // Setters
@@ -39,16 +31,12 @@ public class MedicalRecord {
         this.patientId = patientId;
     }
 
-    public void setAllergy(String allergy) {
-        this.allergy = allergy;
+    public void setDiagnosis(String diagnosis) {
+        this.diagnosis = diagnosis;
     }
 
-    public void setAppointmentOutcomeId(List<String> appointmentOutcomeId) {
-        this.appointmentOutcomeId = appointmentOutcomeId;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
+    public void setTreatment(String treatment) {
+        this.treatment = treatment;
     }
 
     // toString method
@@ -56,8 +44,7 @@ public class MedicalRecord {
     public String toString() {
         return "MedicalRecord: \n" +
                 "patientId='" + patientId + '\'' +
-                ", allergy=" + allergy +
-                ", appointmentOutcomeId=" + appointmentOutcomeId +
-                ", notes=" + notes ;
+                ", diagnosis=" + diagnosis +
+                ", treatment=" + treatment;
     }
 }

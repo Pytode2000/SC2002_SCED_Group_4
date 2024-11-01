@@ -1,1 +1,5 @@
 
+PA00001|null|Paracetamol
+PA00005|Covid-19|5 Days mc
+PA00005|Stomach ache|painkillers
+PA00005|Covid-19|3 days extended mc
