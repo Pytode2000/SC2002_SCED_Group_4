@@ -65,4 +65,35 @@ public class FileUtils {
             e.printStackTrace();
         }
     }
+
+    public static void deleteFromFile(String filePath, String id) {
+        File file = new File(filePath);
+        List<String> lines = new ArrayList<>();
+
+        // Read the existing content of the file
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Add lines that do not start with the specified ID
+                if (!line.startsWith(id)) {
+                    lines.add(line);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading the file: " + e.getMessage());
+            e.printStackTrace();
+            return; // Exit if reading fails
+        }
+
+        // Write the updated content back to the file (overwrite file with remaining lines)
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            for (String updatedLine : lines) {
+                writer.write(updatedLine);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Error writing to the file: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 }

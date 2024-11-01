@@ -171,6 +171,11 @@ public class MedicalRecordsController {
 
     public void updateMedicalRecord(String patientId) {
         // Find all medical records associated with the patient ID
+
+        if (findPatientById(patientId) == null) {
+            System.out.println("Invalid patient ID.");
+            return;
+        }
         List<MedicalRecord> recordsToUpdate = new ArrayList<>();
         for (MedicalRecord record : medicalRecords) {
             if (record.getPatientId().equals(patientId)) {
@@ -244,6 +249,12 @@ public class MedicalRecordsController {
 
     public void deleteMedicalRecord(String patientId) {
         // Find all medical records associated with the patient ID
+
+        if (findPatientById(patientId) == null) {
+            System.out.println("Invalid patient ID.");
+            return;
+        }
+
         List<MedicalRecord> recordsToDelete = new ArrayList<>();
         for (MedicalRecord record : medicalRecords) {
             if (record.getPatientId().equals(patientId)) {
@@ -260,29 +271,37 @@ public class MedicalRecordsController {
         // Display records for user to choose from
         System.out.println("\n--- Medical Records for Patient ID: " + patientId + " ---");
         for (int i = 0; i < recordsToDelete.size(); i++) {
-            System.out.println((i + 1) + ". " + recordsToDelete.get(i));
+            System.out.println(recordsToDelete.get(i));
         }
-        System.out.print("Enter the number of the record you want to delete (or 0 to cancel): ");
+        System.out.print("Enter the id of the record you want to delete (or 0 to cancel): ");
         
         // Get user's choice
         Scanner scanner = new Scanner(System.in);
-        int choice = scanner.nextInt();
-        scanner.nextLine();  // Consume newline
-    
+        String choiceInput = scanner.nextLine().trim();
+
         // Validate choice
-        if (choice <= 0 || choice > recordsToDelete.size()) {
-            System.out.println("Deletion canceled.");
+        MedicalRecord recordToDelete = null;
+        for (MedicalRecord record : recordsToDelete) {
+            if (record.getMedicalRecordId().equals(choiceInput)) {
+                recordToDelete = record;
+                break;
+            }
+        }
+
+        if (recordToDelete == null) {
+            System.out.println("Invalid choice. Deletion canceled.");
             return;
         }
+
     
         // Confirm deletion with the user
-        MedicalRecord recordToDelete = recordsToDelete.get(choice - 1);
         System.out.print("Are you sure you want to delete this medical record? (yes/no): ");
         String confirmation = scanner.nextLine().trim().toLowerCase();
     
         if (confirmation.equals("yes")) {
             medicalRecords.remove(recordToDelete);  // Remove the selected medical record from the list
             System.out.println("Medical record for Patient ID: " + patientId + " has been deleted successfully.");
+            FileUtils.deleteFromFile(MEDICALRECORDS_TXT, choiceInput);
         } else {
             System.out.println("Deletion canceled for Patient ID: " + patientId);
         }
