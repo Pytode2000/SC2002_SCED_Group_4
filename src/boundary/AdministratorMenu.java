@@ -34,7 +34,7 @@ public class AdministratorMenu implements MenuInterface {
             switch (choice) {
                 case "1":
                     // View and Manage Hospital Staff();
-                    accountController.register(true); // isAdmin = false.
+                    manageStaff(scanner);
                     break;
                 case "2":
                     // View Appointments details();
@@ -48,6 +48,46 @@ public class AdministratorMenu implements MenuInterface {
                 case "0":
                     System.out.println("Logging out...");
                     exit = true;
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    break;
+            }
+        }
+    }
+
+    private void manageStaff(Scanner scanner) {
+        boolean backToMenu = false;
+
+        while (!backToMenu) {
+            System.out.println("\n--- Staff Management ---");
+            System.out.println("1. View Staff");
+            System.out.println("2. Add Staff");
+            System.out.println("3. Update Staff");
+            System.out.println("4. Remove Staff");
+            System.out.println("0. Back to Main Menu");
+            System.out.print("Enter your choice: ");
+            String choice = scanner.nextLine().trim();
+
+            switch (choice) {
+                case "1":
+                    // Call a method to view staff
+                    accountController.viewStaff();
+                    break;
+                case "2":
+                    // Call a method to add staff
+                    accountController.register(true); // isAdmin = false.
+                    break;
+                case "3":
+                    // Call a method to update staff
+                    accountController.updateStaff(scanner);
+                    break;
+                case "4":
+                    // Call a method to remove staff
+                    accountController.removeStaff(scanner);
+                    break;
+                case "0":
+                    backToMenu = true; // Go back to the main menu
                     break;
                 default:
                     System.out.println("Invalid choice. Please try again.");

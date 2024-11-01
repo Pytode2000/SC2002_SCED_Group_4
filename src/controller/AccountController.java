@@ -137,38 +137,45 @@ public class AccountController {
         }
 
         if (!isAdmin) {
-// Day input
+            // Day input
             System.out.println("Enter date of birth: ");
             while (day.length() != 2 || !day.matches("\\d{2}")) {
                 System.out.print("Enter day (DD): ");
                 day = scanner.nextLine().trim();
-                if (day.length() != 2 || !day.matches("\\d{2}") || Integer.parseInt(day) < 1 || Integer.parseInt(day) <= 31) {
+                if (day.length() != 2 || !day.matches("\\d{2}") || Integer.parseInt(day) < 1
+                        || Integer.parseInt(day) <= 31) {
                     System.out.println("Invalid day. Please enter a two-digit day (e.g., 01, 15, 31).");
                 }
             }
 
-// Month input
-            while (month.length() != 2 || !month.matches("\\d{2}") || Integer.parseInt(month) < 1 || Integer.parseInt(month) > 12) {
+            // Month input
+            while (month.length() != 2 || !month.matches("\\d{2}") || Integer.parseInt(month) < 1
+                    || Integer.parseInt(month) > 12) {
                 System.out.print("Enter month (MM): ");
                 month = scanner.nextLine().trim();
-                if (month.length() != 2 || !month.matches("\\d{2}") || Integer.parseInt(month) < 1 || Integer.parseInt(month) > 12) {
-                    System.out.println("Invalid month. Please enter a valid two-digit month (e.g., 01 for January, 12 for December).");
+                if (month.length() != 2 || !month.matches("\\d{2}") || Integer.parseInt(month) < 1
+                        || Integer.parseInt(month) > 12) {
+                    System.out.println(
+                            "Invalid month. Please enter a valid two-digit month (e.g., 01 for January, 12 for December).");
                 }
             }
 
-// Year input
+            // Year input
             while (year.length() != 4 || !year.matches("\\d{4}")) {
                 System.out.print("Enter year (YYYY): ");
                 year = scanner.nextLine().trim();
-                if (year.length() != 4 || !year.matches("\\d{4}") || Integer.parseInt(year) < 1900 || Integer.parseInt(year) <= LocalDate.now().getYear()) {
+                if (year.length() != 4 || !year.matches("\\d{4}") || Integer.parseInt(year) < 1900
+                        || Integer.parseInt(year) <= LocalDate.now().getYear()) {
                     System.out.println("Invalid year. Please enter a four-digit year (e.g., 1990, 2023).");
                 }
             }
 
-// Combine into final date format
+            // Combine into final date format
             dateOfBirth = day + "-" + month + "-" + year;
 
-            while (!(bloodType.equals("A+") || bloodType.equals("A-") || bloodType.equals("B+") || bloodType.equals("B-") || bloodType.equals("AB+") || bloodType.equals("AB-") || bloodType.equals("O+") || bloodType.equals("O-"))) {
+            while (!(bloodType.equals("A+") || bloodType.equals("A-") || bloodType.equals("B+")
+                    || bloodType.equals("B-") || bloodType.equals("AB+") || bloodType.equals("AB-")
+                    || bloodType.equals("O+") || bloodType.equals("O-"))) {
                 System.out.println("Choose blood type:");
                 System.out.println("1. A+");
                 System.out.println("2. A-");
@@ -211,13 +218,14 @@ public class AccountController {
             }
         }
 
-// Determine the file and object creation based on userRole
+        // Determine the file and object creation based on userRole
         User newUser;
         String roleFile;
 
         if (userRole.equals("Patient")) {
             // Create Patient object and set to PATIENT_TXT
-            newUser = new Patient(userId, firstName, lastName, gender, contactNumber, emailAddress, userRole, dateOfBirth, bloodType);
+            newUser = new Patient(userId, firstName, lastName, gender, contactNumber, emailAddress, userRole,
+                    dateOfBirth, bloodType);
             roleFile = PATIENT_TXT;
         } else {
             // Create a Staff object based on userRole and set to STAFF_TXT
@@ -226,10 +234,12 @@ public class AccountController {
                     newUser = new Doctor(userId, firstName, lastName, gender, contactNumber, emailAddress, userRole);
                     break;
                 case "Administrator":
-                    newUser = new Administrator(userId, firstName, lastName, gender, contactNumber, emailAddress, userRole);
+                    newUser = new Administrator(userId, firstName, lastName, gender, contactNumber, emailAddress,
+                            userRole);
                     break;
                 case "Pharmacist":
-                    newUser = new Pharmacist(userId, firstName, lastName, gender, contactNumber, emailAddress, userRole);
+                    newUser = new Pharmacist(userId, firstName, lastName, gender, contactNumber, emailAddress,
+                            userRole);
                     break;
                 default:
                     throw new IllegalArgumentException("Invalid user role: " + userRole);
@@ -375,7 +385,8 @@ public class AccountController {
             while ((line = br.readLine()) != null) {
                 String[] userData = line.split("\\|");
                 if (userData[0].equals(userId)) {
-                    // Assuming Patient has data fields that include specific fields such as bloodType and dateOfBirth
+                    // Assuming Patient has data fields that include specific fields such as
+                    // bloodType and dateOfBirth
                     return new Patient(userId, userData[1], userData[2], userData[3],
                             userData[4], userData[5], "Patient", userData[6], userData[7]);
                 }
@@ -465,7 +476,8 @@ public class AccountController {
         }
     }
 
-// Handles the update password flow for all users with a 3-attempt limit for both current and new passwords
+    // Handles the update password flow for all users with a 3-attempt limit for
+    // both current and new passwords
     private void updatePasswordFlow(User user, Scanner scanner) {
         int currentPasswordAttempts = 0;
         boolean currentPasswordCorrect = false;
@@ -479,11 +491,13 @@ public class AccountController {
                 currentPasswordCorrect = true;
             } else {
                 currentPasswordAttempts++;
-                System.out.println("Incorrect current password. " + (3 - currentPasswordAttempts) + " attempt(s) remaining.");
+                System.out.println(
+                        "Incorrect current password. " + (3 - currentPasswordAttempts) + " attempt(s) remaining.");
             }
         }
 
-        // If the current password is correct, proceed to update the password with a new one
+        // If the current password is correct, proceed to update the password with a new
+        // one
         if (currentPasswordCorrect) {
             int newPasswordAttempts = 0;
             boolean passwordUpdated = false;
@@ -497,7 +511,8 @@ public class AccountController {
                     System.out.println(passwordUpdated ? "Password updated successfully." : "Password update failed.");
                 } else {
                     newPasswordAttempts++;
-                    System.out.println("Invalid password format. " + (3 - newPasswordAttempts) + " attempt(s) remaining.");
+                    System.out.println(
+                            "Invalid password format. " + (3 - newPasswordAttempts) + " attempt(s) remaining.");
                 }
             }
 
@@ -510,7 +525,7 @@ public class AccountController {
         }
     }
 
-// Update password in the account file after current password authentication
+    // Update password in the account file after current password authentication
     public boolean updatePassword(String userId, String newPassword) {
         try {
             return updateAccountFile(userId, hashPassword(newPassword), ACCOUNT_TXT, 1);
@@ -520,7 +535,7 @@ public class AccountController {
         }
     }
 
-// Handles updating contact number for patients only, with 3 attempts
+    // Handles updating contact number for patients only, with 3 attempts
     private void updateContactNumberFlow(Patient patient, Scanner scanner) {
         int attempts = 0;
         boolean contactUpdated = false;
@@ -548,7 +563,7 @@ public class AccountController {
         }
     }
 
-// Handles updating email address for patients only, with 3 attempts
+    // Handles updating email address for patients only, with 3 attempts
     private void updateEmailAddressFlow(Patient patient, Scanner scanner) {
         int attempts = 0;
         boolean emailUpdated = false;
@@ -595,7 +610,8 @@ public class AccountController {
     }
 
     // General method to update a specific field in a file by userId
-    private boolean updateAccountFile(String userId, String newValue, String filePath, int fieldIndex) throws IOException {
+    private boolean updateAccountFile(String userId, String newValue, String filePath, int fieldIndex)
+            throws IOException {
         List<String> fileContent = Files.readAllLines(Paths.get(filePath));
         boolean updated = false;
 
@@ -616,6 +632,156 @@ public class AccountController {
             System.out.println("User with userId: " + userId + " not found.");
         }
         return updated;
+    }
+
+    public void viewStaff() {
+        try {
+            List<String> staff = Files.readAllLines(Paths.get(STAFF_TXT));
+            System.out.println(
+                    "| User ID    | First Name          | Last Name           | Gender   | Contact Number   | Email Address                  | Role            |");
+            System.out.println(
+                    "-------------------------------------------------------------------------------------------------------------------------------------------");
+            for (String line : staff) {
+                String[] fields = line.split("\\|");
+                System.out.printf("| %-10s | %-19s | %-19s | %-8s | %-16s | %-30s | %-15s |\n",
+                        fields[0], fields[1], fields[2], fields[3], fields[4], fields[5], fields[6]);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateStaff(Scanner scanner) { // Pass the scanner as a parameter
+        try {
+            System.out.print("Enter staff ID to update: ");
+            String staffId = scanner.nextLine().trim();
+            if (staffId.isEmpty()) {
+                System.out.println("Staff ID cannot be empty.");
+                return;
+            }
+
+            if (!isValidStaffId(staffId)) {
+                System.out.println("Invalid staff ID. Please try again.");
+                return; // Exit early if the staff ID is invalid
+            }
+
+            String firstName = "", lastName = "", gender = "", contactNumber = "", emailAddress = "", role = "";
+
+            System.out.print("Enter your new First Name (leave blank to keep current value): ");
+            String input = scanner.nextLine();
+            if (!input.trim().isEmpty()) {
+                firstName = input.trim();
+            }
+
+            System.out.print("Enter your new Last Name (leave blank to keep current value): ");
+            input = scanner.nextLine();
+            if (!input.trim().isEmpty()) {
+                lastName = input.trim();
+            }
+
+            System.out.print("Enter your new Gender (M/F/O) (leave blank to keep current value): ");
+            input = scanner.nextLine();
+            if (!input.trim().isEmpty()) {
+                gender = input.trim();
+            }
+
+            System.out.print("Enter your new Contact Number (leave blank to keep current value): ");
+            input = scanner.nextLine();
+            if (!input.trim().isEmpty()) {
+                contactNumber = input.trim();
+            }
+
+            System.out.print("Enter your new Email Address (leave blank to keep current value): ");
+            input = scanner.nextLine();
+            if (!input.trim().isEmpty()) {
+                emailAddress = input.trim();
+            }
+
+            System.out.print(
+                    "Enter your new Role (Doctor/Pharmacist/Administrator) (leave blank to keep current value): ");
+            input = scanner.nextLine();
+            if (!input.trim().isEmpty()) {
+                role = input.trim();
+            }
+
+            boolean updated = false;
+            // Update only if the new values are provided
+            if (!firstName.isEmpty() && updateAccountFile(staffId, firstName, STAFF_TXT, 1)) {
+                updated = true;
+            }
+            if (!lastName.isEmpty() && updateAccountFile(staffId, lastName, STAFF_TXT, 2)) {
+                updated = true;
+            }
+            if (!gender.isEmpty() && updateAccountFile(staffId, gender, STAFF_TXT, 3)) {
+                updated = true;
+            }
+            if (!contactNumber.isEmpty() && updateAccountFile(staffId, contactNumber, STAFF_TXT, 4)) {
+                updated = true;
+            }
+            if (!emailAddress.isEmpty() && updateAccountFile(staffId, emailAddress, STAFF_TXT, 5)) {
+                updated = true;
+            }
+            if (!role.isEmpty() && updateAccountFile(staffId, role, STAFF_TXT, 6)) {
+                updated = true;
+            }
+
+            if (updated) {
+                System.out.println("Update successful for userId: " + staffId);
+            } else {
+                System.out.println("Update failed for userId: " + staffId);
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred while updating the staff information.");
+            System.out.println("Please make sure the staff ID is valid.");
+            e.printStackTrace();
+        }
+    }
+
+    private boolean isValidStaffId(String staffId) {
+        try {
+            List<String> staff = Files.readAllLines(Paths.get(STAFF_TXT));
+            for (String line : staff) {
+                String[] fields = line.split("\\|");
+                if (fields[0].equals(staffId)) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void removeStaff(Scanner scanner) {
+        try {
+            System.out.print("Enter staff ID to remove: ");
+            String staffId = scanner.nextLine().trim();
+            if (staffId.isEmpty()) {
+                System.out.println("Staff ID cannot be empty.");
+                return;
+            }
+
+            if (!isValidStaffId(staffId)) {
+                System.out.println("Invalid staff ID. Please try again.");
+                return; // Exit early if the staff ID is invalid
+            }
+
+            List<String> staff = Files.readAllLines(Paths.get(STAFF_TXT));
+            for (int i = 0; i < staff.size(); i++) {
+                String[] fields = staff.get(i).split("\\|");
+                if (fields[0].equals(staffId)) {
+                    staff.remove(i);
+                    Files.write(Paths.get(STAFF_TXT), staff);
+                    System.out.println("Remove successful for userId: " + staffId);
+                    return;
+                }
+            }
+            System.out.println("User with userId: " + staffId + " not found.");
+        } catch (IOException e) {
+            System.out.println("An error occurred while removing the staff information.");
+            System.out.println("Please make sure the staff ID is valid.");
+            e.printStackTrace();
+        }
     }
 
     // Helper validation methods
