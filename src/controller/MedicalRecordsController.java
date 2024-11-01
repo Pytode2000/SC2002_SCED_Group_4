@@ -131,7 +131,7 @@ public class MedicalRecordsController {
     }
 
     public String generateMedicalRecordId(){
-        int medicalRecordCount = medicalRecords.size() -1 ;
+        int medicalRecordCount = medicalRecords.size() ;
         return "MR" + medicalRecordCount;
     }
 
@@ -155,13 +155,14 @@ public class MedicalRecordsController {
         if (treatment.equalsIgnoreCase("NIL")) {
             treatment = "";
         }
+        String medicalRecordID = generateMedicalRecordId(); 
     
-        MedicalRecord newRecord = new MedicalRecord(generateMedicalRecordId(),patientId, diagnosis, treatment);
+        MedicalRecord newRecord = new MedicalRecord(medicalRecordID,patientId, diagnosis, treatment);
         medicalRecords.add(newRecord);
         System.out.println("Medical record created successfully for patient ID: " + patientId);
     
         // Write to file
-        FileUtils.writeToFile(MEDICALRECORDS_TXT, generateMedicalRecordId() + '|' + patientId + '|' + diagnosis + '|' + treatment);
+        FileUtils.writeToFile(MEDICALRECORDS_TXT, medicalRecordID + '|' + patientId + '|' + diagnosis + '|' + treatment);
     
         // Display success message
         System.out.println(patientId + " Created Medical record successfully!");

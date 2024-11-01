@@ -1,1 +1,2 @@
-
+MR0|PA00005|Wisdomtooth|painkillers
+MR1|PA00004|Toothache|Surgery
