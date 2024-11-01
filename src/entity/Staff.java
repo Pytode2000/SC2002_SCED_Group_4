@@ -6,4 +6,6 @@ public abstract class Staff extends User {
         super(userId, firstName, lastName, gender, contactNumber, emailAddress, userRole);
         // Add staff specific attributes here.
     }
+
+
 }

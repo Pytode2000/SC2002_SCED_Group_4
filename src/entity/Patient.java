@@ -14,6 +14,7 @@ public class Patient extends entity.User {
         this.bloodType = bloodType;
     }
 
+
     public String getDateOfBirth() {
         return dateOfBirth;
     }

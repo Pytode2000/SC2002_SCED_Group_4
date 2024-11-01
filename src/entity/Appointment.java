@@ -3,39 +3,77 @@ package entity;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class Appointment { // tentative
+public class Appointment {
 
-    private static int idCounter = 1;        // Static counter for auto-incrementing ID
-    private String appointmentId;            // Unique identifier for the appointment
-    private String doctorId;                 // Doctor assigned to the appointment
-    private LocalDate scheduledDate;         // Date of the appointment
-    private LocalTime scheduledTime;         // Time of the appointment
-    private String status;                   // Current status, e.g., "Scheduled", "Completed", "Cancelled"
-    private String roomNumber;               // Room or location where the appointment is scheduled
+    private String appointmentId;                  // Unique identifier for the appointment
+    private String doctorId;                       // Doctor assigned to the appointment
+    private String patientId = "-";                 // Patient assigned to the appointment, defaults to empty
+    private LocalDate date;               // Date of the appointment
+    private LocalTime time;               // Time of the appointment
+    private Status status = Status.AVAILABLE;           // Default status as OPEN
+    private String requestMessage = "-";            // Message for additional requests, defaults to empty
 
-    // Constructor (with auto-generated appointment ID)
-    public Appointment(String doctorId, LocalDate scheduledDate, LocalTime scheduledTime, String status, String roomNumber) {
-        this.appointmentId = generateAppointmentId(); // Auto-generate ID
+    private String rescheduleDate = "-";
+    private String rescheduleTime = "-";
+    private String rescheduleMessage = "-";
+
+    // Enum for appointment status
+    public enum Status {
+        AVAILABLE, PENDING, BOOKED, RESCHEDULE;
+    }
+
+    public Appointment(String appointmentId, String doctorId, LocalDate date, LocalTime time) {
+        this.appointmentId = appointmentId;
         this.doctorId = doctorId;
-        this.scheduledDate = scheduledDate;
-        this.scheduledTime = scheduledTime;
-        this.status = status;
-        this.roomNumber = roomNumber;
+        this.date = date;
+        this.time = time;
     }
 
-    // Method to generate appointment ID
-    private static String generateAppointmentId() {
-        return String.format("AP%05d", idCounter++);  // AP followed by a zero-padded 5-digit number
-    }
-    /*
-    // Example toString method for displaying appointment details
     @Override
     public String toString() {
         return "Appointment ID: " + appointmentId
-                + "\nDoctor: " + doctor.getName() dwadaw dwad wa
-                + "\nScheduled Date: " + scheduledDate
-                + "\nScheduled Time: " + scheduledTime
-                + "\nStatus: " + status
-                + "\nRoom Number: " + roomNumber;
-    }*/
+                + "\nDoctor ID: " + doctorId
+                + "\nPatient ID: " + patientId
+                + "\nDate: " + date
+                + "\nTime: " + time
+                + "\nStatus: " + status;
+        //+ "\nRequest Message: " + requestMessage;
+    }
+
+    // Getters and setters (optional, if you plan to update fields later)
+    public String getAppointmentId() {
+        return appointmentId;
+    }
+
+    public String getDoctorId() {
+        return doctorId;
+    }
+
+    public String getPatientId() {
+        return patientId;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public LocalTime getTime() {
+        return time;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public String getRequestMessage() {
+        return requestMessage;
+    }
+
+    public void setRequestMessage(String requestMessage) {
+        this.requestMessage = requestMessage;
+    }
 }
