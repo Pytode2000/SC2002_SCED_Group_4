@@ -10,12 +10,16 @@ import java.util.Scanner;
 
 import entity.MedicalRecord;
 import entity.Patient;
+import utility.FileUtils;
 import utility.PrintUtils;
 
 public class MedicalRecordsController {
 
     private List<Patient> patients;
     private List<MedicalRecord> medicalRecords;
+
+    private static final String ACCOUNT_TXT = "data/account.txt";
+    private static final String MEDICALRECORDS_TXT = "data/medicalRecords.txt";
 
     public MedicalRecordsController() {
         this.patients = new ArrayList<>();
@@ -144,6 +148,11 @@ public class MedicalRecordsController {
         MedicalRecord newRecord = new MedicalRecord(patientId, allergies, appointmentOutcomeIds, notes);
         medicalRecords.add(newRecord);
         System.out.println("Medical record created successfully for patient ID: " + patientId);
+
+        FileUtils.writeToFile(MEDICALRECORDS_TXT, patientId +'|'+ allergies +'|'+ appointmentOutcomeIds +'|'+ notes);
+
+        // Display success message
+        System.out.println(patientId + " Created Medical record successfully!");
     }
 
     public void updateMedicalRecord(String patientId, List<String> appointmentOutcomeIds) {
@@ -186,6 +195,11 @@ public class MedicalRecordsController {
         }
     
         System.out.println("Medical record updated successfully for Patient ID: " + patientId);
+
+        FileUtils.writeToFile(MEDICALRECORDS_TXT, patientId +'|'+ allergiesInput +'|'+ appointmentOutcomeIds +'|'+ notesInput);
+
+        // Display success message
+        System.out.println(patientId + " Update Medical record successfully!");
     }
 
     public void deleteMedicalRecord(String patientId) {
