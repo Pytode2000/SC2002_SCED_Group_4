@@ -143,7 +143,7 @@ public class AppointmentController {
         }
     }
 
-    // Method to display all booked appointments for a patient and allow selection to view doctor details
+// Method to display all booked appointments for a patient and allow selection to view doctor details
     public void displayAndSelectBookedAppointments(String patientId) {
         while (true) {
             List<String[]> bookedAppointments = new ArrayList<>();
@@ -159,7 +159,7 @@ public class AppointmentController {
                     String[] fields = line.split("\\|");
 
                     // Check if the appointment is booked for the patient
-                    if (fields.length >= 6 && fields[2].equals(patientId) && fields[5].equals("BOOKED")) {
+                    if (fields.length >= 6 && fields[2].equals(patientId) && (fields[5].equals("BOOKED") || fields[5].equals("RESCHEDULE"))) {
                         bookedAppointments.add(fields);
                     }
                 }
@@ -173,12 +173,24 @@ public class AppointmentController {
                     System.out.println("You have no upcoming appointments!");
                     return;
                 }
+
                 System.out.println("Select index to view Doctor's details");
                 index = 1;
                 for (String[] fields : bookedAppointments) {
                     LocalDate date = LocalDate.parse(fields[3], dateFormatter);
                     LocalTime time = LocalTime.parse(fields[4], timeFormatter);
-                    System.out.printf("%d. Date: %s | Time: %s%n", index++, date.format(dateFormatter), time.format(timeFormatter));
+                    String status = fields[5];
+
+                    System.out.printf("%d. Date: %s | Time: %s | Status: %s%n", index++, date.format(dateFormatter), time.format(timeFormatter), status);
+
+                    // If the status is RESCHEDULED, display rescheduled date, time, and message
+                    if ("RESCHEDULE".equalsIgnoreCase(status) && fields.length >= 10) {
+                        String rescheduleDate = fields[7];
+                        String rescheduleTime = fields[8];
+                        String rescheduleMessage = fields[9];
+                        System.out.printf("   - Rescheduling in progress to: %s at %s%n", rescheduleDate, rescheduleTime);
+                        System.out.printf("   - Message: %s%n", rescheduleMessage);
+                    }
                 }
 
                 System.out.println("0. Back to Main Menu");
@@ -312,6 +324,148 @@ public class AppointmentController {
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void requestRescheduleAppointment(String patientId) {
+        List<String[]> bookedAppointments = new ArrayList<>();
+        System.out.println("\nYour Booked Appointments:");
+        System.out.println("--------------------------");
+
+        // Retrieve booked appointments
+        try (BufferedReader reader = new BufferedReader(new FileReader(APPOINTMENT_FILE))) {
+            String line;
+            int index = 1;
+
+            while ((line = reader.readLine()) != null) {
+                String[] fields = line.split("\\|");
+
+                // Check if the appointment is booked for the patient
+                if (fields.length >= 6 && fields[2].equals(patientId) && fields[5].equals("BOOKED")) {
+                    bookedAppointments.add(fields);
+                }
+            }
+
+            // Display appointments with index
+            if (bookedAppointments.isEmpty()) {
+                System.out.println("You have no appointments available to request rescheduling!");
+                return;
+            }
+            System.out.println("Select appointment to request for a reschedule");
+
+            index = 1;
+            for (String[] fields : bookedAppointments) {
+                LocalDate date = LocalDate.parse(fields[3], dateFormatter);
+                LocalTime time = LocalTime.parse(fields[4], timeFormatter);
+                System.out.printf("%d. Date: %s | Time: %s%n", index++, date.format(dateFormatter), time.format(timeFormatter));
+            }
+
+            System.out.println("0. Back to Main Menu");
+            System.out.println("--------------------------");
+
+            // Prompt user to select an appointment by index
+            int selection = getUserSelection(bookedAppointments.size());
+            if (selection == 0) {
+                System.out.println("Returning to main menu...");
+                return;
+            }
+
+            // Selected appointment
+            String[] selectedAppointment = bookedAppointments.get(selection - 1);
+            Scanner scanner = new Scanner(System.in);
+
+            // Prompt for reschedule date with validation
+            String day = promptForInput("Enter new day (DD): ", scanner, 1, 31);
+            if (day.equals("0")) {
+                return;
+            }
+            String month = promptForInput("Enter new month (MM): ", scanner, 1, 12);
+            if (month.equals("0")) {
+                return;
+            }
+            String year = promptForInput("Enter new year (YYYY): ", scanner, 1900, 2100);
+            if (year.equals("0")) {
+                return;
+            }
+            String rescheduleDate = String.format("%02d-%02d-%d", Integer.parseInt(day), Integer.parseInt(month), Integer.parseInt(year));
+
+            // Prompt for reschedule time with validation
+            String hour = promptForInput("Enter new hour (HH, 24-hour format): ", scanner, 0, 23);
+            if (hour.equals("0")) {
+                return;
+            }
+            String minutes = promptForInput("Enter new minutes (MM): ", scanner, 0, 59);
+            if (minutes.equals("0")) {
+                return;
+            }
+            String rescheduleTime = String.format("%02d:%02d", Integer.parseInt(hour), Integer.parseInt(minutes));
+
+            // Prompt for reschedule message
+            System.out.print("Enter reschedule message: ");
+            String rescheduleMessage = scanner.nextLine().trim();
+            if (rescheduleMessage.isEmpty()) {
+                rescheduleMessage = "-";
+            }
+
+            // Confirmation before updating
+            System.out.println("\nConfirm reschedule:");
+            System.out.println("New Date: " + rescheduleDate);
+            System.out.println("New Time: " + rescheduleTime);
+            System.out.println("Message: " + rescheduleMessage);
+            String confirmation = promptForConfirmation(scanner);
+
+            if (confirmation.equals("1")) {
+                String oldLine = String.join("|", selectedAppointment);
+                selectedAppointment[5] = "RESCHEDULE";
+                selectedAppointment[7] = rescheduleDate;
+                selectedAppointment[8] = rescheduleTime;
+                selectedAppointment[9] = rescheduleMessage;
+
+                // Update the appointment in the file
+                String newLine = String.join("|", selectedAppointment);
+                updateAppointmentInFile(oldLine, newLine);
+                System.out.println("Appointment has been successfully rescheduled.");
+            } else {
+                System.out.println("Reschedule action canceled.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Utility method for input with validation and exit option
+    private String promptForInput(String prompt, Scanner scanner, int min, int max) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+            if (input.equals("0")) {
+                return "0";
+            }
+            try {
+                int value = Integer.parseInt(input);
+                if (value >= min && value <= max) {
+                    return input;
+                } else {
+                    System.out.printf("Please enter a valid number between %d and %d.%n", min, max);
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid number.");
+            }
+        }
+    }
+
+    // Utility method for confirmation with '1' to confirm and '0' to cancel
+    private String promptForConfirmation(Scanner scanner) {
+        while (true) {
+            System.out.println("1: Confirm");
+            System.out.println("0: Cancel");
+            System.out.print("Enter your choice: ");
+            String confirmation = scanner.nextLine().trim();
+            if (confirmation.equals("1") || confirmation.equals("0")) {
+                return confirmation;
+            } else {
+                System.out.println("Invalid input. Please enter 1 to confirm or 0 to cancel.");
+            }
         }
     }
 

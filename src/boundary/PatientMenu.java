@@ -51,6 +51,7 @@ public class PatientMenu implements MenuInterface {
                     break;
                 case "4":
                     // Reschedule an Appointment(); // AppointmentController Update --> give up current, then choose another again.
+                    appointmentController.requestRescheduleAppointment(this.patient.getUserId());
                     break;
                 case "5":
                     // Cancel an Appointment(); // AppointmentController Update?

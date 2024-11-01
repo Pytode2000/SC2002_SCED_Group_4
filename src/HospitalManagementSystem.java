@@ -17,7 +17,7 @@ public class HospitalManagementSystem {
             System.out.println("\n--- Hospital Management System ---");
             System.out.println("1. Login");
             System.out.println("2. Register");
-            System.out.println("0. Exit");
+            System.out.println("0. Exit Program");
             System.out.print("\nEnter your choice: ");
             choice = scanner.nextLine();
 

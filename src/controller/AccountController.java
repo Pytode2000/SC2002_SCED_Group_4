@@ -258,9 +258,9 @@ public class AccountController {
             String inputPassword = scanner.nextLine().trim();
 
             // Step 1: Verify User ID and Password from account.txt
-            if (authenticate(inputUserId, hashPassword(inputPassword))) {
+            if (authenticate(inputUserId.toUpperCase(), hashPassword(inputPassword))) {
                 // Step 2: Load User details if authentication succeeds
-                User user = loadUserDetails(inputUserId);
+                User user = loadUserDetails(inputUserId.toUpperCase());
                 if (user != null) {
                     System.out.println("Login successful. Welcome, " + user.getFirstName());
                     return user;

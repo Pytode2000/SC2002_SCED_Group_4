@@ -13,9 +13,13 @@ public class Appointment {
     private Status status = Status.AVAILABLE;           // Default status as OPEN
     private String requestMessage = "-";            // Message for additional requests, defaults to empty
 
+    private String rescheduleDate = "-";
+    private String rescheduleTime = "-";
+    private String rescheduleMessage = "-";
+
     // Enum for appointment status
     public enum Status {
-        AVAILABLE, PENDING, BOOKED;
+        AVAILABLE, PENDING, BOOKED, RESCHEDULE;
     }
 
     public Appointment(String appointmentId, String doctorId, LocalDate date, LocalTime time) {
