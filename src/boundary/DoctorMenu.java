@@ -25,13 +25,12 @@ public class DoctorMenu implements MenuInterface {
 
         while (!exit) {
             System.out.println("\n--- Doctor Menu ---");
-            System.out.println("1. View Patient Medical Records"); // MedicalRecordController
-            System.out.println("2. Update Patient Medical Records"); // MedicalRecordController
-            System.out.println("3. View Personal Schedule"); // DoctorScheduleController
-            System.out.println("4. Set Availability for Appointments"); // DoctorScheduleController (?)
-            System.out.println("5. Accept or Decline Appointment Requests"); // AppointmentController
-            System.out.println("6. View Upcoming Appointments"); // AppointmentController
-            System.out.println("7. Record Appointment Outcome"); // AppointmentOutcomeController
+            System.out.println("1. Patient Medical Records"); // MedicalRecordController
+            System.out.println("2. View Personal Schedule"); // DoctorScheduleController
+            System.out.println("3. Set Availability for Appointments"); // DoctorScheduleController (?)
+            System.out.println("4. Accept or Decline Appointment Requests"); // AppointmentController
+            System.out.println("5. View Upcoming Appointments"); // AppointmentController
+            System.out.println("6. Record Appointment Outcome"); // AppointmentOutcomeController
             System.out.println("0. Logout");
 
             System.out.print("Enter your choice: ");
@@ -39,25 +38,22 @@ public class DoctorMenu implements MenuInterface {
 
             switch (choice) {
                 case "1":
-                    // View Patient Medical Records();
-                    medicalRecordsController.displayMedicalRecordsMenu();
+                    // Patient Medical Records();
+                    medicalRecordsController.viewMedicalRecords();
                     break;
                 case "2":
-                    // Update Patient Medical Records();
-                    break;
-                case "3":
                     // View Personal Schedule();
                     break;
-                case "4":
+                case "3":
                     // Set Availability for Appointments();
                     break;
-                case "5":
+                case "4":
                     // Accept or Decline Appointment Requests();
                     break;
-                case "6":
+                case "5":
                     // View Upcoming Appointments()
                     break;
-                case "7":
+                case "6":
                     // Record Appointment Outcome();
                     break;
                 case "0":

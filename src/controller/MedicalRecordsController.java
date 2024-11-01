@@ -106,7 +106,6 @@ public class MedicalRecordsController {
             System.out.println("------------------------------------------------------");
             System.out.println(patient);  // Assuming Patient class has a meaningful toString() method
             System.out.println("------------------------------------------------------");
-            PrintUtils.pause();
         }
         
         System.out.print("Enter the patient ID to view medical records (or 0 to exit): ");
@@ -147,10 +146,79 @@ public class MedicalRecordsController {
         System.out.println("Medical record created successfully for patient ID: " + patientId);
     }
 
+    public void updateMedicalRecord(String patientId, List<String> appointmentOutcomeIds) {
+        // Find the medical record associated with the patient ID
+        MedicalRecord recordToUpdate = null;
+        for (MedicalRecord record : medicalRecords) {
+            if (record.getPatientId().equals(patientId)) {
+                recordToUpdate = record;
+                break;
+            }
+        }
+    
+        // If no record is found, print a message and return
+        if (recordToUpdate == null) {
+            System.out.println("No medical record found for Patient ID: " + patientId);
+            return;
+        }
+    
+        // Create a new Scanner for input
+        Scanner scanner = new Scanner(System.in);
+        
+        // Update allergies
+        System.out.print("Enter new allergies (or press Enter to keep current): ");
+        String allergiesInput = scanner.nextLine().trim();
+        if (!allergiesInput.isEmpty()) {
+            String allergies = allergiesInput.equalsIgnoreCase("NIL") ? null : allergiesInput; // Set to null if NIL
+            recordToUpdate.setAllergy(allergies); // Assuming there's a setter for allergies
+        }
+    
+        // Update appointment outcomes
+        if (appointmentOutcomeIds != null) {
+            recordToUpdate.setAppointmentOutcomeId(appointmentOutcomeIds); // Assuming there's a setter for appointment outcome IDs
+        }
+    
+        // Update notes
+        System.out.print("Enter new notes (or press Enter to keep current): ");
+        String notesInput = scanner.nextLine().trim();
+        if (!notesInput.isEmpty()) {
+            recordToUpdate.setNotes(notesInput.equalsIgnoreCase("NIL") ? "" : notesInput); // Assuming there's a setter for notes
+        }
+    
+        System.out.println("Medical record updated successfully for Patient ID: " + patientId);
+    }
 
-
+    public void deleteMedicalRecord(String patientId) {
+        // Find the medical record associated with the patient ID
+        MedicalRecord recordToDelete = null;
+        for (MedicalRecord record : medicalRecords) {
+            if (record.getPatientId().equals(patientId)) {
+                recordToDelete = record;
+                break;  // Exit loop after finding the record
+            }
+        }
+    
+        // If no record is found, print a message and return
+        if (recordToDelete == null) {
+            System.out.println("No medical record found for Patient ID: " + patientId);
+            return;
+        }
+    
+        // Confirm deletion with the user
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Are you sure you want to delete the medical record for Patient ID: " + patientId + "? (yes/no): ");
+        String confirmation = scanner.nextLine().trim().toLowerCase();
+    
+        if (confirmation.equals("yes")) {
+            medicalRecords.remove(recordToDelete);  // Remove the medical record from the list
+            System.out.println("Medical record for Patient ID: " + patientId + " has been deleted successfully.");
+        } else {
+            System.out.println("Deletion cancelled for Patient ID: " + patientId);
+        }
+    }
+    
     // Method to view all medical records with associated patient information 
-    public void displayMedicalRecordsMenu() {
+    public void viewMedicalRecords() {
         Scanner scanner = new Scanner(System.in);
         String patientId;
         while (true) {
@@ -181,9 +249,38 @@ public class MedicalRecordsController {
                 System.out.println("\n--- Medical Record for Patient ID: " + patientId + " ---");
                 System.out.println(patientRecord);  // Assuming MedicalRecord class has a meaningful toString() method
                 System.out.println("--------------------------------------");
-                PrintUtils.pause();
+                // Promt user to 1: Update medical records 2: Delete medical records 0: return;
+                while (true) {
+                    System.out.println("Select an option:");
+                    System.out.println("1: Update medical record");
+                    System.out.println("2: Delete medical record");
+                    System.out.println("0: Return to patient selection");
+                    System.out.print("Your choice: ");
+                    String option = scanner.nextLine().trim();
+    
+                    switch (option) {
+                        case "1":
+                            // Call the updateMedicalRecord method with patientId and the current appointmentOutcomeIds
+                            updateMedicalRecord(patientId, patientRecord.getAppointmentOutcomeId()); // Assuming getAppointmentOutcomeId() returns the current list
+                            break;
+                        case "2":
+                            // Call the deleteMedicalRecord method (you will need to implement this)
+                            deleteMedicalRecord(patientId);
+                            break;
+                        case "0":
+                            System.out.println("Returning to patient selection...");
+                            break;
+                        default:
+                            System.out.println("Invalid choice. Please try again.");
+                            continue;  // Restart the loop if the choice is invalid
+                    }
+                    break;  // Exit the inner loop if a valid option is selected
+                }
 
             }
         }
     }
+
+
+    
 }
