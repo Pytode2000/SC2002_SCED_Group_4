@@ -41,10 +41,13 @@ public class PharmacistMenu implements MenuInterface {
                     break;
                 case "3":
                     // View Medication Inventory;
-                    //testing some stuff
-                    inventoryController.addMedicine(new Medicine("MD00001", "Aspirin", "Pain relief", 100, 20, "Medication"));
-                    inventoryController.addMedicine(new Medicine("MD00002", "Ibuprofen", "Anti-inflammatory", 5, 10, "Medication"));
-                    inventoryController.addMedicine(new Medicine("MD00003", "Paracetamol", "Fever reducer", 50, 15, "Medication")); 
+                    // testing some stuff
+                    // inventoryController.addMedicine(new Medicine("MD00001", "Aspirin", "Pain
+                    // relief", 100, 20, "Medication"));
+                    // inventoryController.addMedicine(new Medicine("MD00002", "Ibuprofen",
+                    // "Anti-inflammatory", 5, 10, "Medication"));
+                    // inventoryController.addMedicine(new Medicine("MD00003", "Paracetamol", "Fever
+                    // reducer", 50, 15, "Medication"));
                     inventoryController.displayInventory();
                     break;
                 case "4":
