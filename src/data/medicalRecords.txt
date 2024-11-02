@@ -1,2 +1,6 @@
-MR0|PA00005|Wisdomtooth|painkillers
+MR0|PA00005|Wisdomtooth|Dispensed Painkillers
 MR1|PA00004|Toothache|Surgery
+MR2|PA00001|Headache|Dispensed Painkillers
+MR3|PA00001|Knee pain|-
+MR4|PA00001|Fever|Dispensed Painkillers
+

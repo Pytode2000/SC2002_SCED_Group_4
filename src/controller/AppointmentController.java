@@ -580,7 +580,7 @@ public void setAvailability(String doctorId) {
     // Date Assembly and Validation
     while (true) {
         try {
-            date = LocalDate.of(year, month, day);
+            date = LocalDate.of(day, month, year);
             break;
         } catch (DateTimeParseException e) {
             System.out.println("Invalid date. Please check day, month, and year values.");

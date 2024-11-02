@@ -2,11 +2,11 @@ package boundary;
 
 import controller.AccountController;
 import controller.AppointmentController;
+import controller.AppointmentOutcomeController;
 import controller.MedicalRecordsController;
 import entity.Patient;
 import interfaces.MenuInterface;
 import java.util.Scanner;
-
 
 public class PatientMenu implements MenuInterface {
 
@@ -23,6 +23,8 @@ public class PatientMenu implements MenuInterface {
         AccountController accountController = new AccountController();
         AppointmentController appointmentController = new AppointmentController();
         MedicalRecordsController medicalRecordsController = new MedicalRecordsController();
+        AppointmentOutcomeController appointmentOutcomeController = new AppointmentOutcomeController();
+
         Scanner scanner = new Scanner(System.in);
         boolean exit = false;
 
@@ -67,6 +69,7 @@ public class PatientMenu implements MenuInterface {
                     break;
                 case "7":
                     // View Past Appointment Outcome Records(); // Read 
+                    appointmentOutcomeController.displayAppointmentOutcomesByPatientId(this.patient.getUserId());
 
                     break;
                 case "0":

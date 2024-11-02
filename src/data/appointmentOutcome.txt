@@ -1,0 +1,3 @@
+AP00001|PA00001|DR00003|02-11-2024|Consultation|Paracetamol,PENDING;Morphine,DISPENSED|-
+AP00002|PA00001|DR00003|13-10-2024|Consultation|Morphine,DISPENSED|It's morphine time.
+AP00003|PA00001|DR00003|24-07-2024|Consultation|-|-
