@@ -59,6 +59,7 @@ public class DoctorMenu implements MenuInterface {
                     break;
                 case "5":
                     // View Upcoming Appointments()
+                    appointmentController.viewUpcomingAppointments(doctor.getUserId());
                     break;
                 case "6":
                     // Record Appointment Outcome();

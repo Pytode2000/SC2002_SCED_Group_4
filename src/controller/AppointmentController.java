@@ -760,5 +760,31 @@ public class AppointmentController {
         return;
     }
 
+    public void viewUpcomingAppointments(String doctorId) {
+        List<String> upcomingAppointments = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(APPOINTMENT_FILE))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] fields = line.split("\\|");
+                if (fields.length >= 6 && fields[5].equals("ACCEPTED")  && fields[1].equals(doctorId)) {
+                    upcomingAppointments.add(line);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        if (upcomingAppointments.isEmpty()) {
+            System.out.println("No upcoming appointments for doctor ID: " + doctorId);
+            return;
+        }
+    
+        // Print the list of upcoming appointments
+        System.out.println("Upcoming appointments:");
+        for (String appointment : upcomingAppointments) {
+            System.out.println(appointment);
+        }
 
+        PrintUtils.pause();
+    }
 }
