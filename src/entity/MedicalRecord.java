@@ -3,13 +3,15 @@ package entity;
 public class MedicalRecord {
 
     private String medicalRecordId;
+    private String doctorId;
     private String patientId;
     private String diagnosis;
     private String treatment;
 
     // Constructor
-    public MedicalRecord(String medicalRecordId, String patientId, String diagnosis, String treatment) {
+    public MedicalRecord(String medicalRecordId, String doctorId, String patientId, String diagnosis, String treatment) {
         this.medicalRecordId = medicalRecordId;
+        this.doctorId = doctorId;
         this.patientId = patientId;
         this.diagnosis = diagnosis;
         this.treatment = treatment;
@@ -18,6 +20,10 @@ public class MedicalRecord {
     // Getters
     public String getMedicalRecordId() {
         return medicalRecordId;
+    }
+
+    public String getDoctorId() {
+        return doctorId;
     }
 
     public String getPatientId() {
@@ -33,8 +39,12 @@ public class MedicalRecord {
     }
 
     // Setters
-    public void medicalRecordIdId(String medicalRecordId) {
+    public void setMedicalRecordId(String medicalRecordId) {
         this.medicalRecordId = medicalRecordId;
+    }
+
+    public void setDoctorId(String doctorId) {
+        this.doctorId = doctorId;
     }
 
     public void setPatientId(String patientId) {
@@ -52,10 +62,11 @@ public class MedicalRecord {
     // toString method
     @Override
     public String toString() {
-        return "MedicalRecord : " +
-                "medicalRecordId=" + medicalRecordId + '\n' +
-                "patientId=" + patientId + 
-                ", diagnosis=" + diagnosis +
-                ", treatment=" + treatment;
+        return "Medical Record : \n" +
+                "Medical Record Id: " + medicalRecordId + '\n' +
+                "Doctor Id: " + patientId+ '\n' + 
+                "Patient Id: " + patientId + '\n' + 
+                "Diagnosis:" + diagnosis + '\n' + 
+                "Treatment:" + treatment +'\n'  ;
     }
 }

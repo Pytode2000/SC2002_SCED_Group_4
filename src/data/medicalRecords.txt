@@ -1,6 +1,7 @@
-MR0|PA00005|Wisdomtooth|Arrange Surgery
-MR1|PA00004|Toothache|Surgery
-MR2|PA00001|Headache|Dispensed Painkillers
-MR3|PA00001|Knee pain|-
-MR4|PA00001|Fever|Dispensed Painkillers
+MR0|DR00003|PA00005|Wisdomtooth|Arrange Surgery
+MR1|DR00003|PA00004|Toothache|Surgery
+MR2|DR00003|PA00001|Headache|Dispensed Painkillers
+MR3|DR00001|PA00001|Knee pain|-
+MR4|DR00001|PA00001|Fever|Dispensed Painkillers
 
+MR5|DR00003|PA00001|Headache|Painkillers
