@@ -1,6 +1,8 @@
 package boundary;
 
 import entity.Pharmacist;
+import controller.InventoryController;
+import entity.Medicine;
 import interfaces.MenuInterface;
 import java.util.Scanner;
 
@@ -16,6 +18,7 @@ public class PharmacistMenu implements MenuInterface {
 
     @Override
     public void displayMenu() {
+        InventoryController inventoryController = new InventoryController();
         Scanner scanner = new Scanner(System.in);
         boolean exit = false;
 
@@ -38,9 +41,15 @@ public class PharmacistMenu implements MenuInterface {
                     break;
                 case "3":
                     // View Medication Inventory;
+                    //testing some stuff
+                    inventoryController.addMedicine(new Medicine("MD00001", "Aspirin", "Pain relief", 100, 20, "Medication"));
+                    inventoryController.addMedicine(new Medicine("MD00002", "Ibuprofen", "Anti-inflammatory", 5, 10, "Medication"));
+                    inventoryController.addMedicine(new Medicine("MD00003", "Paracetamol", "Fever reducer", 50, 15, "Medication")); 
+                    inventoryController.displayInventory();
                     break;
                 case "4":
                     // Submit Replenishment Request();
+                    inventoryController.requestReplenishment();
                     break;
                 case "0":
                     System.out.println("Logging out...");
