@@ -1,6 +1,8 @@
 package boundary;
 
 import controller.AccountController;
+import controller.AppointmentController;
+import controller.InventoryController;
 import entity.Administrator;
 import interfaces.MenuInterface;
 import java.util.Scanner;
@@ -9,6 +11,8 @@ public class AdministratorMenu implements MenuInterface {
 
     private final Administrator administrator;
     AccountController accountController = new AccountController(); // For Login and Register methods.
+    AppointmentController appointmentController = new AppointmentController();
+    InventoryController inventoryController = new InventoryController();
 
     // Import controller thats patient need e.g., appointment etc.
     // All the functions should be in controller. this menu class just uses it.
@@ -38,9 +42,11 @@ public class AdministratorMenu implements MenuInterface {
                     break;
                 case "2":
                     // View Appointments details();
+                    appointmentController.displayDoctorAppointmentDetails();
                     break;
                 case "3":
                     // View and Manage Medication Inventory();
+                    inventoryController.displayInventory();
                     break;
                 case "4":
                     // Approve Replenishment Requests();
