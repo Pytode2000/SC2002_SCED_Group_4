@@ -53,7 +53,7 @@ public class PatientMenu implements MenuInterface {
                     break;
                 case "3":
                     // Schedule an Appointment(); // AppointmentController Create
-                    appointmentController.displayAndSelectAvailableAppointments(this.patient.getUserId());
+                    appointmentController.scheduleAppointment(this.patient.getUserId());
                     break;
                 case "4":
                     // Reschedule an Appointment(); // AppointmentController Update --> give up current, then choose another again.
