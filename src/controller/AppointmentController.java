@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+
+import utility.FileUtils;
 import utility.PrintUtils;
 
 public class AppointmentController {
@@ -520,130 +522,243 @@ public class AppointmentController {
     }
 
     // Set Doctor's availability
-public void setAvailability(String doctorId) {
-    Scanner scanner = new Scanner(System.in);
+    public void setAvailability(String doctorId) {
+        Scanner scanner = new Scanner(System.in);
 
-    System.out.println("\nWould you like to set availability for an appointment?");
-    String confirmation = promptForConfirmation(scanner);
+        System.out.println("\nWould you like to set availability for an appointment?");
+        String confirmation = promptForConfirmation(scanner);
 
-    if (confirmation.equals("0")) {
-        System.out.println("Action canceled. Returning to main menu.");
+        if (confirmation.equals("0")) {
+            System.out.println("Action canceled. Returning to main menu.");
+            return;
+        }
+
+        String appointmentId = generateAppointmentId();
+        LocalDate date;
+        LocalTime time;
+
+        // Day Input
+        String dayInput;
+        int day;
+        System.out.println("\nSet Availability for Appointment: ");
+        System.out.println("--------------------------");
+        while (true) {
+            System.out.print("Enter day (DD): ");
+            dayInput = scanner.nextLine().trim();
+            if (dayInput.matches("\\d{2}") && (day = Integer.parseInt(dayInput)) >= 1 && day <= 31) {
+                break;
+            } else {
+                System.out.println("Invalid day. Please enter a two-digit day between 01 and 31.");
+            }
+        }
+
+        // Month Input
+        String monthInput;
+        int month;
+        while (true) {
+            System.out.print("Enter month (MM): ");
+            monthInput = scanner.nextLine().trim();
+            if (monthInput.matches("\\d{2}") && (month = Integer.parseInt(monthInput)) >= 1 && month <= 12) {
+                break;
+            } else {
+                System.out.println("Invalid month. Please enter a valid two-digit month between 01 and 12.");
+            }
+        }
+
+        // Year Input
+        String yearInput;
+        int year;
+        while (true) {
+            System.out.print("Enter year (YYYY): ");
+            yearInput = scanner.nextLine().trim();
+            if (yearInput.matches("\\d{4}")) {
+                year = Integer.parseInt(yearInput);
+                break;
+            } else {
+                System.out.println("Invalid year. Please enter a four-digit year (e.g., 1990, 2023).");
+            }
+        }
+
+        // Date Assembly and Validation
+        while (true) {
+            try {
+                date = LocalDate.of(year, month, day);
+                break;
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date. Please check day, month, and year values.");
+                return;
+            }
+        }
+
+        // Hour Input
+        String hourInput;
+        int hour;
+        while (true) {
+            System.out.print("Enter hour (HH): ");
+            hourInput = scanner.nextLine().trim();
+            if (hourInput.matches("\\d{2}") && (hour = Integer.parseInt(hourInput)) >= 0 && hour <= 23) {
+                break;
+            } else {
+                System.out.println("Invalid hour. Please enter a two-digit hour between 00 and 23.");
+            }
+        }
+
+        // Minute Input
+        String minuteInput;
+        int minute;
+        while (true) {
+            System.out.print("Enter minute (MM): ");
+            minuteInput = scanner.nextLine().trim();
+            if (minuteInput.matches("\\d{2}") && (minute = Integer.parseInt(minuteInput)) >= 0 && minute <= 59) {
+                break;
+            } else {
+                System.out.println("Invalid minute. Please enter a two-digit minute between 00 and 59.");
+            }
+        }
+
+        // Time Assembly
+        time = LocalTime.of(hour, minute);
+
+        // Save the appointment to file
+        String appointmentRecord = String.join("|",
+                appointmentId,
+                doctorId,
+                "-",
+                date.format(dateFormatter),
+                time.format(timeFormatter),
+                "AVAILABLE",
+                "-",
+                "-",
+                "-",
+                "-"
+        );
+
+        try (FileWriter writer = new FileWriter(APPOINTMENT_FILE, true)) {
+            writer.write(appointmentRecord + System.lineSeparator());
+        } catch (IOException e) {
+            System.out.println("Error writing to appointment file: " + e.getMessage());
+        }
+
+        System.out.println("\n--- Appointment Added Successfully ---");
+        System.out.println("Appointment ID  : " + appointmentId);
+        System.out.println("Doctor ID       : " + doctorId);
+        System.out.println("Date            : " + date.format(dateFormatter));
+        System.out.println("Time            : " + time.format(timeFormatter));
+        System.out.println("Status          : AVAILABLE");
+        System.out.println("--------------------------------------\n");
+    }
+
+    public List<String> getAppointmentRequests(String doctorId) {
+        List<String> appointmentsRequests = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(APPOINTMENT_FILE))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] fields = line.split("\\|");
+                if (fields.length >= 6 && (fields[5].equals("PENDING") || fields[5].equals("RESCHEDULE")) && fields[1].equals(doctorId)) {
+                    appointmentsRequests.add(line);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return appointmentsRequests;
+    }
+
+    public void printAppointmentRequest(String doctorId) {
+
+        // for each appointment in appointment request print the details
+        List<String> appointmentRequests = getAppointmentRequests(doctorId);
+        
+        if (appointmentRequests.isEmpty()) {
+            System.out.println("No pending appointment requests for doctor ID: " + doctorId);
+            return;
+        }
+
+        System.out.println("Pending appointment requests for doctor ID: " + doctorId + ":");
+        for (String request : appointmentRequests) {
+            System.out.println(request);
+        }
         return;
     }
 
-    String appointmentId = generateAppointmentId();
-    LocalDate date;
-    LocalTime time;
-
-    // Day Input
-    String dayInput;
-    int day;
-    System.out.println("\nSet Availability for Appointment: ");
-    System.out.println("--------------------------");
-    while (true) {
-        System.out.print("Enter day (DD): ");
-        dayInput = scanner.nextLine().trim();
-        if (dayInput.matches("\\d{2}") && (day = Integer.parseInt(dayInput)) >= 1 && day <= 31) {
-            break;
-        } else {
-            System.out.println("Invalid day. Please enter a two-digit day between 01 and 31.");
-        }
-    }
-
-    // Month Input
-    String monthInput;
-    int month;
-    while (true) {
-        System.out.print("Enter month (MM): ");
-        monthInput = scanner.nextLine().trim();
-        if (monthInput.matches("\\d{2}") && (month = Integer.parseInt(monthInput)) >= 1 && month <= 12) {
-            break;
-        } else {
-            System.out.println("Invalid month. Please enter a valid two-digit month between 01 and 12.");
-        }
-    }
-
-    // Year Input
-    String yearInput;
-    int year;
-    while (true) {
-        System.out.print("Enter year (YYYY): ");
-        yearInput = scanner.nextLine().trim();
-        if (yearInput.matches("\\d{4}")) {
-            year = Integer.parseInt(yearInput);
-            break;
-        } else {
-            System.out.println("Invalid year. Please enter a four-digit year (e.g., 1990, 2023).");
-        }
-    }
-
-    // Date Assembly and Validation
-    while (true) {
-        try {
-            date = LocalDate.of(year, month, day);
-            break;
-        } catch (DateTimeParseException e) {
-            System.out.println("Invalid date. Please check day, month, and year values.");
+    public void acceptDeclineAppointment(String doctorId) {
+        Scanner scanner = new Scanner(System.in);
+        String decision, appointmentId;
+        String selectedAppointment = null;
+        
+        // Step 1: Display pending or rescheduled appointments for the doctor
+        List<String> appointmentRequests = getAppointmentRequests(doctorId);
+        if (appointmentRequests.isEmpty()) {
             return;
         }
-    }
-
-    // Hour Input
-    String hourInput;
-    int hour;
-    while (true) {
-        System.out.print("Enter hour (HH): ");
-        hourInput = scanner.nextLine().trim();
-        if (hourInput.matches("\\d{2}") && (hour = Integer.parseInt(hourInput)) >= 0 && hour <= 23) {
-            break;
-        } else {
-            System.out.println("Invalid hour. Please enter a two-digit hour between 00 and 23.");
+    
+        // Step 2: Get the appointment ID from the user
+        while (true) {
+            System.out.print("Enter the Appointment ID (or press 0 to return): ");
+            appointmentId = scanner.nextLine();
+        
+            // Check if the user wants to exit
+            if (appointmentId.equals("0")) {
+                System.out.println("Returning to the previous menu.");
+                return;
+            }
+        
+            // Search for the appointment with the given ID
+            for (String request : appointmentRequests) {
+                if (request.startsWith(appointmentId + "|")) {
+                    selectedAppointment = request;
+                    break;
+                }
+            }
+        
+            // Check if a valid appointment was found
+            if (selectedAppointment != null) {
+                break;  // Exit the loop if a matching appointment is found
+            } else {
+                System.out.println("Appointment ID not found. Please try again.");
+            }
         }
-    }
 
-    // Minute Input
-    String minuteInput;
-    int minute;
-    while (true) {
-        System.out.print("Enter minute (MM): ");
-        minuteInput = scanner.nextLine().trim();
-        if (minuteInput.matches("\\d{2}") && (minute = Integer.parseInt(minuteInput)) >= 0 && minute <= 59) {
-            break;
-        } else {
-            System.out.println("Invalid minute. Please enter a two-digit minute between 00 and 59.");
+        // Step 4: Prompt user to accept or decline the appointment
+        while (true) {
+            System.out.print("Do you want to accept or decline this appointment? (type 'accept', 'decline', or '0' to return): ");
+            decision = scanner.nextLine().trim().toLowerCase();
+        
+            if (decision.equals("0")) {
+                System.out.println("Returning to the previous menu.");
+                return;
+            } else if (decision.equals("accept") || decision.equals("decline")) {
+                break;  // Exit the loop if a valid choice is made
+            } else {
+                System.out.println("Invalid choice. Please enter 'accept', 'decline', or '0' to return.");
+            }
         }
+    
+        // Step 5: Prompt for any notes to add to the appointment
+        System.out.print("Enter any additional notes (or press Enter to skip): ");
+        String notes = scanner.nextLine();
+    
+        // Step 6: Update the status and add notes in the data
+        String[] fields = selectedAppointment.split("\\|");
+        fields[5] = decision.equals("accept") ? "ACCEPTED" : "DECLINED";
+        if (!notes.isEmpty()) {
+            fields[9] = notes; // Assuming the notes field is at index 9
+        }
+        String updatedData = String.join("|", fields);
+    
+        // Step 7: Update the file
+        FileUtils.updateToFile(APPOINTMENT_FILE, updatedData, appointmentId);
+        System.out.println("Appointment " + (decision.equals("accept") ? "accepted" : "declined") + " successfully.");
     }
 
-    // Time Assembly
-    time = LocalTime.of(hour, minute);
+    public void viewAppointmentRequest(String doctorId) {
 
-    // Save the appointment to file
-    String appointmentRecord = String.join("|",
-            appointmentId,
-            doctorId,
-            "-",
-            date.format(dateFormatter),
-            time.format(timeFormatter),
-            "AVAILABLE",
-            "-",
-            "-",
-            "-",
-            "-"
-    );
+        printAppointmentRequest(doctorId);
+        acceptDeclineAppointment(doctorId);
+        PrintUtils.pause();
 
-    try (FileWriter writer = new FileWriter(APPOINTMENT_FILE, true)) {
-        writer.write(appointmentRecord + System.lineSeparator());
-    } catch (IOException e) {
-        System.out.println("Error writing to appointment file: " + e.getMessage());
+        return;
     }
 
-    System.out.println("\n--- Appointment Added Successfully ---");
-    System.out.println("Appointment ID  : " + appointmentId);
-    System.out.println("Doctor ID       : " + doctorId);
-    System.out.println("Date            : " + date.format(dateFormatter));
-    System.out.println("Time            : " + time.format(timeFormatter));
-    System.out.println("Status          : AVAILABLE");
-    System.out.println("--------------------------------------\n");
-}
 
 }
