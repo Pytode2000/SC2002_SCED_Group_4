@@ -2,3 +2,5 @@ DR00003|James|Ng|Male|99999999|James.Ng@hotmail.com|Doctor
 PH00004|Steph|Culli|Other|99999999|StephC@gmail.com|Pharmacist
 AM00005|Kobe|Bryant|Female|11111111|KobeBeef@hotmail.com|Administrator
 AM00006|Bryan|Tan|Other|12344321|valid@gmail.com|Administrator
+DR00007|Jacob|Ong|Male|1233214444|Jacob.Bobo@hotmail.com|Doctor
+DR00008|Micky|Tan|Male|92381239|Micky.Tan@hotmail.com|Doctor

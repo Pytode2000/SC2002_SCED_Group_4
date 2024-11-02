@@ -9,8 +9,11 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import utility.PrintUtils;
 
@@ -20,6 +23,125 @@ public class AppointmentController {
     private static final String STAFF_FILE = "data/staff.txt";
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
+    public void scheduleAppointment(String patientId) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("\n--- Schedule an Appointment ---");
+        System.out.println("1. See all available appointment slots");
+        System.out.println("2. Select appointment by doctor");
+        System.out.print("Choose an option (1 or 2, 0 to exit): ");
+
+        String choice = scanner.nextLine().trim();
+
+        switch (choice) {
+            case "1":
+                displayAndSelectAvailableAppointments(patientId);
+                break;
+            case "2":
+                displayAppointmentsByDoctor(patientId);
+                break;
+            case "0":
+                System.out.println("Returning to main menu...");
+                return;
+            default:
+                System.out.println("Invalid option. Please choose 1, 2, or 0.");
+                scheduleAppointment(patientId);
+        }
+    }
+
+    private void displayAppointmentsByDoctor(String patientId) {
+        Map<String, List<String>> doctorAppointments = new HashMap<>();
+        Scanner scanner = new Scanner(System.in);
+
+        // Retrieve doctor details and group their appointments
+        try (BufferedReader staffReader = new BufferedReader(new FileReader(STAFF_FILE)); BufferedReader appointmentReader = new BufferedReader(new FileReader(APPOINTMENT_FILE))) {
+
+            String line;
+            Map<String, String[]> doctorDetails = new HashMap<>();
+
+            // Read doctor details
+            while ((line = staffReader.readLine()) != null) {
+                String[] fields = line.split("\\|");
+                if ("Doctor".equalsIgnoreCase(fields[6])) {
+                    doctorDetails.put(fields[0], new String[]{fields[1] + " " + fields[2], fields[4], fields[5]});
+                    doctorAppointments.put(fields[0], new ArrayList<>());
+                }
+            }
+
+            // Group available appointments by doctor and sort by date and time
+            while ((line = appointmentReader.readLine()) != null) {
+                String[] fields = line.split("\\|");
+                if (fields.length >= 6 && "AVAILABLE".equalsIgnoreCase(fields[5])) {
+                    String doctorId = fields[1];
+                    if (doctorAppointments.containsKey(doctorId)) {
+                        doctorAppointments.get(doctorId).add(line);
+                    }
+                }
+            }
+
+            // Sort each doctor's appointments by date and time
+            doctorAppointments.forEach((doctorId, appointments)
+                    -> appointments.sort(Comparator.comparing((String appointment) -> {
+                        String[] fields = appointment.split("\\|");
+                        return LocalDate.parse(fields[3], dateFormatter);
+                    }).thenComparing(appointment -> {
+                        String[] fields = appointment.split("\\|");
+                        return LocalTime.parse(fields[4], timeFormatter);
+                    }))
+            );
+
+            // Display appointments by doctor
+            System.out.println("\n--- Available Appointments by Doctor ---");
+            int globalIndex = 1;
+            Map<Integer, String> indexToAppointment = new HashMap<>();
+
+            for (Map.Entry<String, List<String>> entry : doctorAppointments.entrySet()) {
+                String doctorId = entry.getKey();
+                String[] details = doctorDetails.get(doctorId);
+                List<String> appointments = entry.getValue();
+
+                System.out.printf("Doctor: %s | Contact: %s | Email: %s%n", details[0], details[1], details[2]);
+                if (appointments.isEmpty()) {
+                    System.out.println("- No appointment slots available");
+                } else {
+                    for (String appointment : appointments) {
+                        String[] fields = appointment.split("\\|");
+                        String date = fields[3];
+                        String time = fields[4];
+                        System.out.printf("%d - Date: %s | Time: %s%n", globalIndex, date, time);
+                        indexToAppointment.put(globalIndex++, appointment);
+                    }
+                }
+                System.out.println("-----------------------------------");
+            }
+
+            // Prompt user to select an appointment
+            while (true) {
+                System.out.print("Enter the number of the appointment slot to select, or 0 to exit: ");
+                String input = scanner.nextLine().trim();
+                try {
+                    int selection = Integer.parseInt(input);
+                    if (selection == 0) {
+                        System.out.println("Returning to main menu...");
+                        return;
+                    }
+                    if (indexToAppointment.containsKey(selection)) {
+                        String selectedAppointment = indexToAppointment.get(selection);
+                        processAppointmentSelection(1, Collections.singletonList(selectedAppointment), patientId); // Simplified slot handling
+                        break;
+                    } else {
+                        System.out.println("Invalid selection. Please enter a valid number from the list.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter a valid number.");
+                }
+            }
+
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
+        }
+    }
 
     // Main method to retrieve, display, and select AVAILABLE appointments
     public void displayAndSelectAvailableAppointments(String patientId) {
