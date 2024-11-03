@@ -607,9 +607,7 @@ public class AppointmentController {
         }
     }
 
-    // View Appointments with logged in doctor's ID
-    public void viewPersonalSchedule(String doctorId) {
-
+    public List<String> getPersonalSchedule(String doctorId) {
         List<String> allAppointmentSlots = getAvailableAppointments();
         List<String> currentDoctorSchedule = new ArrayList<>();
 
@@ -620,6 +618,14 @@ public class AppointmentController {
                 currentDoctorSchedule.add(appointment);
             }
         }
+
+        return currentDoctorSchedule;
+    }
+
+    // View Appointments with logged in doctor's ID
+    public void viewPersonalSchedule(String doctorId) {
+
+        List<String> currentDoctorSchedule = getPersonalSchedule(doctorId);
 
         // Print or return the currentDoctorSchedule if needed
         System.out.println("=== Appointments for Doctor ID: " + doctorId + " ===");
@@ -656,63 +662,54 @@ public class AppointmentController {
         return String.format("AP%05d", lastNum + 1);
     }
 
-    // Set Doctor's availability
-        public void setAvailability(String doctorId) {
-            Scanner scanner = new Scanner(System.in);
+    public void createAvailability(String doctorId) {
 
-            System.out.println("\nWould you like to set availability for an appointment?");
-            String confirmation = promptForConfirmation(scanner);
+        Scanner scanner = new Scanner(System.in);
+        String appointmentId = generateAppointmentId();
+        LocalDate date;
+        LocalTime time;
 
-            if (confirmation.equals("0")) {
-                System.out.println("Action canceled. Returning to main menu.");
-                return;
+        // Day Input
+        String dayInput;
+        int day;
+        System.out.println("\nSet Availability for Appointment: ");
+        System.out.println("--------------------------");
+        while (true) {
+            System.out.print("Enter day (DD): ");
+            dayInput = scanner.nextLine().trim();
+            if (dayInput.matches("\\d{2}") && (day = Integer.parseInt(dayInput)) >= 1 && day <= 31) {
+                break;
+            } else {
+                System.out.println("Invalid day. Please enter a two-digit day between 01 and 31.");
             }
+        }
 
-            String appointmentId = generateAppointmentId();
-            LocalDate date;
-            LocalTime time;
-
-            // Day Input
-            String dayInput;
-            int day;
-            System.out.println("\nSet Availability for Appointment: ");
-            System.out.println("--------------------------");
-            while (true) {
-                System.out.print("Enter day (DD): ");
-                dayInput = scanner.nextLine().trim();
-                if (dayInput.matches("\\d{2}") && (day = Integer.parseInt(dayInput)) >= 1 && day <= 31) {
-                    break;
-                } else {
-                    System.out.println("Invalid day. Please enter a two-digit day between 01 and 31.");
-                }
+        // Month Input
+        String monthInput;
+        int month;
+        while (true) {
+            System.out.print("Enter month (MM): ");
+            monthInput = scanner.nextLine().trim();
+            if (monthInput.matches("\\d{2}") && (month = Integer.parseInt(monthInput)) >= 1 && month <= 12) {
+                break;
+            } else {
+                System.out.println("Invalid month. Please enter a valid two-digit month between 01 and 12.");
             }
+        }
 
-            // Month Input
-            String monthInput;
-            int month;
-            while (true) {
-                System.out.print("Enter month (MM): ");
-                monthInput = scanner.nextLine().trim();
-                if (monthInput.matches("\\d{2}") && (month = Integer.parseInt(monthInput)) >= 1 && month <= 12) {
-                    break;
-                } else {
-                    System.out.println("Invalid month. Please enter a valid two-digit month between 01 and 12.");
-                }
+        // Year Input
+        String yearInput;
+        int year;
+        while (true) {
+            System.out.print("Enter year (YYYY): ");
+            yearInput = scanner.nextLine().trim();
+            if (yearInput.matches("\\d{4}")) {
+                year = Integer.parseInt(yearInput);
+                break;
+            } else {
+                System.out.println("Invalid year. Please enter a four-digit year (e.g., 1990, 2023).");
             }
-
-            // Year Input
-            String yearInput;
-            int year;
-            while (true) {
-                System.out.print("Enter year (YYYY): ");
-                yearInput = scanner.nextLine().trim();
-                if (yearInput.matches("\\d{4}")) {
-                    year = Integer.parseInt(yearInput);
-                    break;
-                } else {
-                    System.out.println("Invalid year. Please enter a four-digit year (e.g., 1990, 2023).");
-                }
-            }
+        }
 
         // Date Assembly and Validation
         while (true) {
@@ -725,34 +722,34 @@ public class AppointmentController {
             }
         }
 
-            // Hour Input
-            String hourInput;
-            int hour;
-            while (true) {
-                System.out.print("Enter hour (HH): ");
-                hourInput = scanner.nextLine().trim();
-                if (hourInput.matches("\\d{2}") && (hour = Integer.parseInt(hourInput)) >= 0 && hour <= 23) {
-                    break;
-                } else {
-                    System.out.println("Invalid hour. Please enter a two-digit hour between 00 and 23.");
-                }
+        // Hour Input
+        String hourInput;
+        int hour;
+        while (true) {
+            System.out.print("Enter hour (HH): ");
+            hourInput = scanner.nextLine().trim();
+            if (hourInput.matches("\\d{2}") && (hour = Integer.parseInt(hourInput)) >= 0 && hour <= 23) {
+                break;
+            } else {
+                System.out.println("Invalid hour. Please enter a two-digit hour between 00 and 23.");
             }
+        }
 
-            // Minute Input
-            String minuteInput;
-            int minute;
-            while (true) {
-                System.out.print("Enter minute (MM): ");
-                minuteInput = scanner.nextLine().trim();
-                if (minuteInput.matches("\\d{2}") && (minute = Integer.parseInt(minuteInput)) >= 0 && minute <= 59) {
-                    break;
-                } else {
-                    System.out.println("Invalid minute. Please enter a two-digit minute between 00 and 59.");
-                }
+        // Minute Input
+        String minuteInput;
+        int minute;
+        while (true) {
+            System.out.print("Enter minute (MM): ");
+            minuteInput = scanner.nextLine().trim();
+            if (minuteInput.matches("\\d{2}") && (minute = Integer.parseInt(minuteInput)) >= 0 && minute <= 59) {
+                break;
+            } else {
+                System.out.println("Invalid minute. Please enter a two-digit minute between 00 and 59.");
             }
+        }
 
-            // Time Assembly
-            time = LocalTime.of(hour, minute);
+        // Time Assembly
+        time = LocalTime.of(hour, minute);
 
         // Save the appointment to file
         String appointmentRecord = String.join("|",
@@ -768,20 +765,86 @@ public class AppointmentController {
                 "-"
         );
 
-            try (FileWriter writer = new FileWriter(APPOINTMENT_FILE, true)) {
-                writer.write(appointmentRecord + System.lineSeparator());
-            } catch (IOException e) {
-                System.out.println("Error writing to appointment file: " + e.getMessage());
+        try (FileWriter writer = new FileWriter(APPOINTMENT_FILE, true)) {
+            writer.write(appointmentRecord + System.lineSeparator());
+        } catch (IOException e) {
+            System.out.println("Error writing to appointment file: " + e.getMessage());
+        }
+
+        System.out.println("\n--- Appointment Added Successfully ---");
+        System.out.println("Appointment ID  : " + appointmentId);
+        System.out.println("Doctor ID       : " + doctorId);
+        System.out.println("Date            : " + date.format(dateFormatter));
+        System.out.println("Time            : " + time.format(timeFormatter));
+        System.out.println("Status          : AVAILABLE");
+        System.out.println("--------------------------------------\n");
+
+    }
+
+    public void deleteAvailability(String doctorId) {
+
+        List<String> currentDoctorSchedule = getPersonalSchedule(doctorId);
+        viewPersonalSchedule(doctorId);
+
+        if (currentDoctorSchedule.isEmpty()) {
+            System.out.println("No available slots found for deletion.");
+            return;
+        }
+    
+        Scanner scanner = new Scanner(System.in);
+        String appointmentId;
+    
+        // Prompt the user to enter the appointment ID to delete
+        while (true) {
+            // Prompt the user to enter the appointment ID to delete
+            System.out.print("Enter the ID of the slot you wish to delete (or type '0' to cancel): ");
+            appointmentId = scanner.nextLine().trim();
+    
+            // Check if the user wants to cancel
+            if (appointmentId.equals("0")) {
+                System.out.println("Deletion canceled.");
+                return;
             }
 
-            System.out.println("\n--- Appointment Added Successfully ---");
-            System.out.println("Appointment ID  : " + appointmentId);
-            System.out.println("Doctor ID       : " + doctorId);
-            System.out.println("Date            : " + date.format(dateFormatter));
-            System.out.println("Time            : " + time.format(timeFormatter));
-            System.out.println("Status          : AVAILABLE");
-            System.out.println("--------------------------------------\n");
+            for (String appointmentToDelete : currentDoctorSchedule) {
+                if (appointmentToDelete.startsWith(appointmentId + "|")) {
+                    FileUtils.deleteFromFile(APPOINTMENT_FILE, appointmentId);
+                    System.out.println("Appointment ID " + appointmentId + " deleted successfully.");
+                    return; // Exit the loop after successful deletion
+                }
+            }
+
+            System.out.println("Invalid ID. Please check and try again.");
         }
+    }
+
+    // Set Doctor's availability
+    public void setAvailability(String doctorId) {
+
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("\nSet availability menu: \n1. Create availability slot \n2. Delete availability slot \n0. Return");
+            String choice = scanner.nextLine().trim();
+    
+            switch (choice) {
+                case "1":
+                    createAvailability(doctorId);
+                    break;
+                case "2":
+                    deleteAvailability(doctorId);
+                    break;
+                case "0":
+                    System.out.println("Action canceled. Returning to main menu.");
+                    return;
+                default:
+                    System.out.println("Invalid input. Please select 1, 2, or 0.");
+                    break;
+            }
+        }
+
+        
+    }
 
     public List<String> getAppointmentRequests(String doctorId) {
         List<String> appointmentsRequests = new ArrayList<>();
