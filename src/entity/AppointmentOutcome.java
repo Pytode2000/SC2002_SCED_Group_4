@@ -37,29 +37,27 @@ public class AppointmentOutcome {
         this.consultationNotes = consultationNotes;
     }
 
-    public String getDoctorId()
-    {
+    public String getDoctorId() {
         return this.doctorId;
     }
-    public String getAppointmentId()
-    {
+
+    public String getAppointmentId() {
         return this.appointmentId;
     }
-    public LocalDate getDateOfAppointment()
-    {
+
+    public LocalDate getDateOfAppointment() {
         return this.dateOfAppointment;
     }
-    public String getServiceType()
-    {
+
+    public String getServiceType() {
         return this.serviceType;
     }
-    public String getConsultationNotes()
-    {
+
+    public String getConsultationNotes() {
         return this.consultationNotes;
     }
 
-    public List<String> getPrescribedMedications()
-    {
+    public List<String> getPrescribedMedications() {
         return this.prescribedMedications;
     }
 
