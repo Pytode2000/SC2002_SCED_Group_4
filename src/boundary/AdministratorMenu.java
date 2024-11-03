@@ -1,6 +1,8 @@
 package boundary;
 
 import controller.AccountController;
+import controller.AppointmentController;
+import controller.InventoryController;
 import entity.Administrator;
 import interfaces.MenuInterface;
 import java.util.Scanner;
@@ -9,6 +11,8 @@ public class AdministratorMenu implements MenuInterface {
 
     private final Administrator administrator;
     AccountController accountController = new AccountController(); // For Login and Register methods.
+    AppointmentController appointmentController = new AppointmentController();
+    InventoryController inventoryController = new InventoryController();
 
     // Import controller thats patient need e.g., appointment etc.
     // All the functions should be in controller. this menu class just uses it.
@@ -38,12 +42,15 @@ public class AdministratorMenu implements MenuInterface {
                     break;
                 case "2":
                     // View Appointments details();
+                    appointmentController.displayDoctorAppointmentDetails();
                     break;
                 case "3":
                     // View and Manage Medication Inventory();
+                    manageInventory(scanner);
                     break;
                 case "4":
                     // Approve Replenishment Requests();
+                    inventoryController.approveReplenishmentRequests();
                     break;
                 case "0":
                     System.out.println("Logging out...");
@@ -85,6 +92,46 @@ public class AdministratorMenu implements MenuInterface {
                 case "4":
                     // Call a method to remove staff
                     accountController.removeStaff(scanner);
+                    break;
+                case "0":
+                    backToMenu = true; // Go back to the main menu
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    break;
+            }
+        }
+    }
+
+    private void manageInventory(Scanner scanner) {
+        boolean backToMenu = false;
+
+        while (!backToMenu) {
+            System.out.println("\n--- Inventory Management ---");
+            System.out.println("1. View Inventory");
+            System.out.println("2. Add Medicine");
+            System.out.println("3. Update Medicine");
+            System.out.println("4. Remove Medicine");
+            System.out.println("0. Back to Main Menu");
+            System.out.print("Enter your choice: ");
+            String choice = scanner.nextLine().trim();
+
+            switch (choice) {
+                case "1":
+                    // Call a method to view inventory
+                    inventoryController.displayInventory();
+                    break;
+                case "2":
+                    // Call a method to add item
+                    inventoryController.addMedicine(scanner);
+                    break;
+                case "3":
+                    // Call a method to update item
+                    inventoryController.updateMedicine(scanner);
+                    break;
+                case "4":
+                    // Call a method to remove item
+                    inventoryController.removeMedicine(scanner);
                     break;
                 case "0":
                     backToMenu = true; // Go back to the main menu

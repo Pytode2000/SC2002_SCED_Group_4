@@ -1,33 +1,34 @@
 package entity;
 
 public class Medicine {
-    private String itemId; // Changed from int to String
+    private String medicineId; // Changed from int to String
     private String name;
     private String description;
     private int stockLevel;
     private int lowStockLevel; // Threshold for low stock
     private boolean lowStockLevelAlert; // Flag for when stock is low
     private String status; // Medicine status can be "Available", "Low Stock", "Pending Replenishment"
-    private String itemType; // New attribute for type of item
+    private String medicineType; // New attribute for type of item
 
     // Constructor
-    public Medicine(String itemId, String name, String description, int stockLevel, int lowStockLevel, String itemType) {
-        this.itemId = itemId;
+    public Medicine(String medicineId, String name, String description, int stockLevel, int lowStockLevel,
+            String medicineType) {
+        this.medicineId = medicineId;
         this.name = name;
         this.description = description;
         this.stockLevel = stockLevel;
         this.lowStockLevel = lowStockLevel;
-        this.itemType = itemType; // Initialize itemType
+        this.medicineType = medicineType; // Initialize medicineType
         updateLowStockAlert();
     }
 
     // Getters and Setters
-    public String getItemId() {
-        return itemId;
+    public String getMedicineId() {
+        return medicineId;
     }
 
-    public void setItemId(String itemId) {
-        this.itemId = itemId;
+    public void setMedicineId(String medicineId) {
+        this.medicineId = medicineId;
     }
 
     public String getName() {
@@ -76,12 +77,12 @@ public class Medicine {
         this.status = "Pending Replenishment Request";
     }
 
-    public String getItemType() {
-        return itemType;
+    public String getMedicineType() {
+        return medicineType;
     }
 
-    public void setItemType(String itemType) {
-        this.itemType = itemType;
+    public void setMedicineType(String medicineType) {
+        this.medicineType = medicineType;
     }
 
     // Method to update the low stock alert flag and status
@@ -97,14 +98,14 @@ public class Medicine {
     @Override
     public String toString() {
         return "Medicine{" +
-                "itemId='" + itemId + '\'' +
+                "medicineId='" + medicineId + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", stockLevel=" + stockLevel +
                 ", lowStockLevel=" + lowStockLevel +
                 ", lowStockLevelAlert=" + lowStockLevelAlert +
                 ", status='" + status + '\'' +
-                ", itemType='" + itemType + '\'' +
+                ", medicineType='" + medicineType + '\'' +
                 '}';
     }
 }

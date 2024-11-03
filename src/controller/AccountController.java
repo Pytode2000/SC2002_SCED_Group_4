@@ -17,6 +17,7 @@ import java.util.HexFormat;
 import java.util.List;
 import java.util.Scanner;
 import utility.FileUtils;
+import utility.PrintUtils;
 
 public class AccountController {
 
@@ -634,23 +635,29 @@ public class AccountController {
         return updated;
     }
 
+    // View all staff
     public void viewStaff() {
         try {
             List<String> staff = Files.readAllLines(Paths.get(STAFF_TXT));
+            System.out.println("\n--- View All Staff ---");
+            System.out.printf("%-10s %-20s %-20s %-12s %-18s %-30s %-15s\n",
+                    "User ID", "First Name", "Last Name", "Gender", "Contact Number", "Email Address", "Role");
             System.out.println(
-                    "| User ID    | First Name          | Last Name           | Gender   | Contact Number   | Email Address                  | Role            |");
-            System.out.println(
-                    "-------------------------------------------------------------------------------------------------------------------------------------------");
+                    "-----------------------------------------------------------------------------------------------------------------------------------");
             for (String line : staff) {
                 String[] fields = line.split("\\|");
-                System.out.printf("| %-10s | %-19s | %-19s | %-8s | %-16s | %-30s | %-15s |\n",
+                System.out.printf("%-10s %-20s %-20s %-12s %-18s %-30s %-15s\n",
                         fields[0], fields[1], fields[2], fields[3], fields[4], fields[5], fields[6]);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        PrintUtils.pause();
+
     }
 
+    // Update staff
     public void updateStaff(Scanner scanner) { // Pass the scanner as a parameter
         try {
             System.out.print("Enter staff ID to update: ");
@@ -737,21 +744,7 @@ public class AccountController {
         }
     }
 
-    private boolean isValidStaffId(String staffId) {
-        try {
-            List<String> staff = Files.readAllLines(Paths.get(STAFF_TXT));
-            for (String line : staff) {
-                String[] fields = line.split("\\|");
-                if (fields[0].equals(staffId)) {
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
+    // Remove staff
     public void removeStaff(Scanner scanner) {
         try {
             System.out.print("Enter staff ID to remove: ");
@@ -796,6 +789,22 @@ public class AccountController {
     private boolean isValidPassword(String password) {
         String passwordPattern = "^(?=.*[0-9])(?=.*[!@#$%^&*()_+=-]).{8,}$";
         return password.matches(passwordPattern);
+    }
+
+    // Helper method to check if staff ID is valid
+    private boolean isValidStaffId(String staffId) {
+        try {
+            List<String> staff = Files.readAllLines(Paths.get(STAFF_TXT));
+            for (String line : staff) {
+                String[] fields = line.split("\\|");
+                if (fields[0].equals(staffId)) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }
