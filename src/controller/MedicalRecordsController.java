@@ -126,8 +126,16 @@ public class MedicalRecordsController {
     }
 
     public String generateMedicalRecordId() {
-        int medicalRecordCount = medicalRecords.size();
-        return "MR" + medicalRecordCount;
+        if (medicalRecords.isEmpty()) {
+            return "MR1"; // Start with MR1 if no records exist
+        }
+    
+        // Get the last medical record ID
+        String lastRecordId = medicalRecords.get(medicalRecords.size() - 1).getMedicalRecordId(); // Assuming each record has an getId() method
+    
+        // Extract the numeric part and increment it
+        int lastIdNumber = Integer.parseInt(lastRecordId.substring(2));
+        return "MR" + (lastIdNumber + 1);
     }
 
     // Method to create a medical record for a patient
