@@ -2,6 +2,7 @@ package boundary;
 
 import entity.Pharmacist;
 import controller.InventoryController;
+import controller.AppointmentOutcomeController;
 import entity.Medicine;
 import interfaces.MenuInterface;
 import java.util.Scanner;
@@ -9,6 +10,9 @@ import java.util.Scanner;
 public class PharmacistMenu implements MenuInterface {
 
     private final Pharmacist pharmacist;
+    //testing
+    AppointmentOutcomeController appointmentOutcomeController = new AppointmentOutcomeController();
+
 
     // Import controller thats patient need e.g., appointment etc.
     // All the functions should be in controller. this menu class just uses it.
@@ -35,19 +39,14 @@ public class PharmacistMenu implements MenuInterface {
             switch (choice) {
                 case "1":
                     // View Appointment Outcome Record();
+                    viewAptOC();
                     break;
                 case "2":
                     // Update Prescription Status;
+
                     break;
                 case "3":
                     // View Medication Inventory;
-                    // testing some stuff
-                    // inventoryController.addMedicine(new Medicine("MD00001", "Aspirin", "Pain
-                    // relief", 100, 20, "Medication"));
-                    // inventoryController.addMedicine(new Medicine("MD00002", "Ibuprofen",
-                    // "Anti-inflammatory", 5, 10, "Medication"));
-                    // inventoryController.addMedicine(new Medicine("MD00003", "Paracetamol", "Fever
-                    // reducer", 50, 15, "Medication"));
                     inventoryController.displayInventory();
                     break;
                 case "4":
@@ -64,5 +63,25 @@ public class PharmacistMenu implements MenuInterface {
             }
         }
     }
+
+
+        public void viewAptOC() {
+        System.out.println("\n--- Appoinment Outcomes ---");
+        System.out.println("------------------------------------");
+        Scanner scanner = new Scanner(System.in);
+
+        // Prompt for Patient ID
+        System.out.print("Enter Patient ID: ");
+        String patientId = scanner.nextLine().trim();
+
+        // Find the patient by ID
+        appointmentOutcomeController.displayAppointmentOutcomesByPatientId(patientId);
+
+        System.out.println("------------------------------------");
+
+        // back to main menu
+        //promptReturnToMenu();
+    }
+
 
 }
