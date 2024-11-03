@@ -869,16 +869,20 @@ public class AppointmentController {
             }
         }
     
-        // Step 5: Prompt for any notes to add to the appointment
-        System.out.print("Enter any additional notes (or press Enter to skip): ");
-        String notes = scanner.nextLine();
     
         // Step 6: Update the status and add notes in the data
         String[] fields = selectedAppointment.split("\\|");
-        fields[5] = decision.equals("accept") ? "ACCEPTED" : "DECLINED";
-        if (!notes.isEmpty()) {
-            fields[9] = notes; // Assuming the notes field is at index 9
+        fields[5] = decision.equals("accept") ? "BOOKED" : "DECLINED";
+
+        // If booked appointment replace new appointment date time with old one.
+        if (fields[5].equals("BOOKED")) {
+            fields[3] = fields[7];
+            fields[4] = fields[8];
+            fields[7] = "-";
+            fields[8] = "-";
+            fields[9] = "-";
         }
+
         String updatedData = String.join("|", fields);
     
         // Step 7: Update the file
@@ -901,7 +905,7 @@ public class AppointmentController {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] fields = line.split("\\|");
-                if (fields.length >= 6 && fields[5].equals("ACCEPTED")  && fields[1].equals(doctorId)) {
+                if (fields.length >= 6 && fields[5].equals("BOOKED")  && fields[1].equals(doctorId)) {
                     upcomingAppointments.add(line);
                 }
             }
