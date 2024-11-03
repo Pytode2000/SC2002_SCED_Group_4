@@ -239,7 +239,7 @@ public class MedicalRecordsController {
         System.out.println("Medical record for Patient ID " + patientId + " updated successfully!");
     }
 
-    public void deleteMedicalRecord(String patientId) {
+    public void deleteMedicalRecord(String patientId, String doctorId) {
         // Find all medical records associated with the patient ID
 
         if (findPatientById(patientId) == null) {
@@ -249,7 +249,7 @@ public class MedicalRecordsController {
 
         List<MedicalRecord> recordsToDelete = new ArrayList<>();
         for (MedicalRecord record : medicalRecords) {
-            if (record.getPatientId().equals(patientId)) {
+            if (record.getPatientId().equals(patientId) && record.getDoctorId().equals(doctorId)) {
                 recordsToDelete.add(record);
             }
         }
@@ -262,10 +262,10 @@ public class MedicalRecordsController {
 
         // Display records for user to choose from
         System.out.println("\n--- Medical Records for Patient ID: " + patientId + " ---");
-        for (int i = 0; i < recordsToDelete.size(); i++) {
-            System.out.println(recordsToDelete.get(i));
+        for (MedicalRecord record : recordsToDelete) {
+            System.out.println(record);
         }
-        System.out.print("Enter the id of the record you want to delete (or 0 to cancel): ");
+        System.out.print("Enter the ID of the record you want to delete (or 0 to cancel): ");
 
         // Get user's choice
         Scanner scanner = new Scanner(System.in);
@@ -371,7 +371,7 @@ public class MedicalRecordsController {
                         // Call the deleteMedicalRecord method
                         System.out.println("Enter ID of patient: ");
                         patientId = scanner.nextLine().trim();
-                        deleteMedicalRecord(patientId);
+                        deleteMedicalRecord(patientId, user.getUserId());
                         break;
                     case "0":
                         System.out.println("Returning to menu...");
