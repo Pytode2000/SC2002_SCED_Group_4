@@ -96,4 +96,72 @@ public class FileUtils {
             e.printStackTrace();
         }
     }
+
+    public static String findEntryReturnString(String filePath, String id) {
+        File file = new File(filePath);
+    
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith(id)) {  // Check if the line starts with the specified ID
+                    return line;  // Return the matching line as a string
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading the file: " + e.getMessage());
+            e.printStackTrace();
+        }
+    
+        System.out.println("No entry found with ID: " + id);
+        return null;  // Return null if no matching ID is found
+    }
+
+    public static void updateEntry(String filePath, String id, String updatedText, int index) {
+        File file = new File(filePath);
+        List<String> lines = new ArrayList<>();
+        boolean updated = false;
+    
+        // Read the file and add lines to the list
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith(id)) {  // Find the line with the specified ID
+                    String[] fields = line.split("\\|");  // Split the line by "|"
+    
+                    // Check if the index is within bounds
+                    if (index >= 0 && index < fields.length) {
+                        fields[index] = updatedText;  // Update the specific field
+                        line = String.join("|", fields);  // Join the fields back into a single string
+                        updated = true;
+                        System.out.println("Updated entry to file.");
+                    } else {
+                        System.out.println("Index out of bounds for entry: " + line);
+                        return;  // Exit if the index is invalid
+                    }
+                }
+                lines.add(line);  // Add the (possibly updated) line to the list
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading the file: " + e.getMessage());
+            e.printStackTrace();
+            return;
+        }
+    
+        if (!updated) {
+            System.out.println("No entry found with ID: " + id);
+            return;
+        }
+    
+        // Write the updated lines back to the file
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            for (String line : lines) {
+                writer.write(line);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Error writing to the file: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
 }

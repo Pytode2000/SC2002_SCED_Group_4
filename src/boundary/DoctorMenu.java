@@ -5,6 +5,7 @@ import interfaces.MenuInterface;
 import java.util.Scanner;
 
 import controller.AppointmentController;
+import controller.AppointmentOutcomeController;
 import controller.MedicalRecordsController;
 
 public class DoctorMenu implements MenuInterface {
@@ -12,6 +13,7 @@ public class DoctorMenu implements MenuInterface {
     private final Doctor doctor;
     private MedicalRecordsController medicalRecordsController;
     private AppointmentController appointmentController;
+    private AppointmentOutcomeController appointmentOutcomeController;
 
     // Import controller thats doctors need e.g., appointment, schedule etc.
     // All the functions should be in controller. this menu class just uses it.
@@ -19,7 +21,7 @@ public class DoctorMenu implements MenuInterface {
         this.doctor = doctor;
         medicalRecordsController = new MedicalRecordsController();
         appointmentController = new AppointmentController();
-
+        appointmentOutcomeController = new AppointmentOutcomeController();
     }
 
     @Override
@@ -63,6 +65,7 @@ public class DoctorMenu implements MenuInterface {
                     break;
                 case "6":
                     // Record Appointment Outcome();
+                    appointmentOutcomeController.viewDoctorMenu(doctor.getUserId());
                     break;
                 case "0":
                     System.out.println("Logging out...");
