@@ -256,6 +256,7 @@ public class AccountController {
         System.out.println(userRole + " registered successfully!");
         System.out.println("The account's credentials are: " + userId + " | \"password\".");
         return true;
+
     }
 
     public User login() {
