@@ -468,7 +468,7 @@ public class AppointmentController {
                     break;
                 } else if (confirmation.equals("0")) {
                     System.out.println("Action canceled.");
-                    PrintUtils.pause();
+
                     deleteBookedAppointment(patientId); // Go back to the delete menu
 
                     break;
@@ -490,7 +490,6 @@ public class AppointmentController {
         // Retrieve booked appointments
         try (BufferedReader reader = new BufferedReader(new FileReader(APPOINTMENT_FILE))) {
             String line;
-            int index = 1;
 
             while ((line = reader.readLine()) != null) {
                 String[] fields = line.split("\\|");
@@ -501,6 +500,10 @@ public class AppointmentController {
                 }
             }
 
+            // Sort appointments by date and time
+            bookedAppointments.sort(Comparator.comparing((String[] fields) -> LocalDate.parse(fields[3], dateFormatter))
+                    .thenComparing(fields -> LocalTime.parse(fields[4], timeFormatter)));
+
             // Display appointments with index
             if (bookedAppointments.isEmpty()) {
                 System.out.println("You have no appointments available to request rescheduling!");
@@ -509,7 +512,7 @@ public class AppointmentController {
             }
             System.out.println("Select appointment to request for a reschedule");
 
-            index = 1;
+            int index = 1;
             for (String[] fields : bookedAppointments) {
                 LocalDate date = LocalDate.parse(fields[3], dateFormatter);
                 LocalTime time = LocalTime.parse(fields[4], timeFormatter);
