@@ -69,23 +69,28 @@ public class AdministratorMenu implements MenuInterface {
         while (!backToMenu) {
             System.out.println("\n--- Staff Management ---");
             accountController.viewStaff();
-            System.out.println("1. Add Staff");
-            System.out.println("2. Update Staff");
-            System.out.println("3. Remove Staff");
+            System.err.println("1. Filter Staff by Role/Gender/Age");
+            System.out.println("2. Add Staff");
+            System.out.println("3. Update Staff");
+            System.out.println("4. Remove Staff");
             System.out.println("0. Back to Main Menu");
             System.out.print("Enter your choice: ");
             String choice = scanner.nextLine().trim();
 
             switch (choice) {
                 case "1":
+                    // Call a method to filter staff
+                    filterStaff(scanner);
+                    break;
+                case "2":
                     // Call a method to add staff
                     accountController.register(true); // isAdmin = false.
                     break;
-                case "2":
+                case "3":
                     // Call a method to update staff
                     accountController.updateStaff(scanner);
                     break;
-                case "3":
+                case "4":
                     // Call a method to remove staff
                     accountController.removeStaff(scanner);
                     break;
@@ -96,6 +101,32 @@ public class AdministratorMenu implements MenuInterface {
                     System.out.println("Invalid choice. Please try again.");
                     break;
             }
+        }
+    }
+
+    private void filterStaff(Scanner scanner) {
+        System.out.println("\n--- Filter Staff ---");
+        System.out.println("1. Filter by Role");
+        System.out.println("2. Filter by Gender");
+        System.out.println("3. Filter by Age");
+        System.out.println("0. Back to Main Menu");
+        System.out.print("Enter your choice: ");
+        String choice = scanner.nextLine().trim();
+        switch (choice) {
+            case "1":
+                accountController.filterByRole(scanner);
+                break;
+            case "2":
+                accountController.filterByGender(scanner);
+                break;
+            case "3":
+                accountController.filterByAge(scanner);
+                break;
+            case "0":
+                break;
+            default:
+                System.out.println("Invalid choice. Please try again.");
+                break;
         }
     }
 

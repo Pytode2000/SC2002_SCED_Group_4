@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.Scanner;
@@ -650,17 +651,22 @@ public class AccountController {
     public void viewStaff() {
         try {
             List<String> staff = Files.readAllLines(Paths.get(STAFF_TXT));
-            System.out.println("\n--- View All Staff ---");
-            System.out.printf("%-5s %-10s %-20s %-20s %-10s %-8s %-18s %-30s %-15s\n",
-                    "No.", "User ID", "First Name", "Last Name", "Gender", "Age", "Contact Number", "Email Address",
-                    "Role");
-            System.out.println(
-                    "--------------------------------------------------------------------------------------------------------------------------------------------");
-            for (int i = 0; i < staff.size(); i++) {
-                String[] fields = staff.get(i).split("\\|");
-                int age = calculateAge(LocalDate.parse(fields[4], DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-                System.out.printf("%-5d %-10s %-20s %-20s %-10s %-8d %-18s %-30s %-15s\n",
-                        i + 1, fields[0], fields[1], fields[2], fields[3], age, fields[5], fields[6], fields[7]);
+
+            if (staff.isEmpty()) {
+                System.out.println("\nNo results found.");
+            } else {
+                System.out.println("\n--- View All Staff ---");
+                System.out.printf("%-5s %-10s %-20s %-20s %-10s %-8s %-18s %-30s %-15s\n",
+                        "No.", "User ID", "First Name", "Last Name", "Gender", "Age", "Contact Number", "Email Address",
+                        "Role");
+                System.out.println(
+                        "----------------------------------------------------------------------------------------------------------------------------------------------");
+                for (int i = 0; i < staff.size(); i++) {
+                    String[] fields = staff.get(i).split("\\|");
+                    int age = calculateAge(LocalDate.parse(fields[4], DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+                    System.out.printf("%-5d %-10s %-20s %-20s %-10s %-8d %-18s %-30s %-15s\n",
+                            i + 1, fields[0], fields[1], fields[2], fields[3], age, fields[5], fields[6], fields[7]);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -669,6 +675,171 @@ public class AccountController {
         PrintUtils.pause();
     }
 
+    // View staff by role
+    public void filterByRole(Scanner scanner) {
+        System.out.println("\n--- Filter Staff by Role ---");
+        System.out.println("1. Doctor");
+        System.out.println("2. Pharmacist");
+        System.out.println("3. Administrator");
+        System.out.print("Enter your choice: ");
+        String choice = scanner.nextLine().trim();
+        String role = "";
+        switch (choice) {
+            case "1":
+                role = "Doctor";
+                break;
+            case "2":
+                role = "Pharmacist";
+                break;
+            case "3":
+                role = "Administrator";
+                break;
+            default:
+                System.out.println("Invalid choice. Please try again.");
+                return;
+        }
+
+        try {
+            List<String> filteredStaff = Files.readAllLines(Paths.get(STAFF_TXT));
+            List<String> filtered = new ArrayList<>();
+            for (String line : filteredStaff) {
+                String[] fields = line.split("\\|");
+                if (fields[7].equals(role)) {
+                    filtered.add(line);
+                }
+            }
+
+            if (filtered.isEmpty()) {
+                System.out.println("\nNo results found.");
+            } else {
+                System.out.println("\n--- Filtered Staff ---");
+                System.out.printf("%-5s %-10s %-20s %-20s %-10s %-8s %-18s %-30s %-15s\n",
+                        "No.", "User ID", "First Name", "Last Name", "Gender", "Age", "Contact Number", "Email Address",
+                        "Role");
+                System.out.println(
+                        "----------------------------------------------------------------------------------------------------------------------------------------------");
+                for (int i = 0; i < filtered.size(); i++) {
+                    String[] fields = filtered.get(i).split("\\|");
+                    int age = calculateAge(LocalDate.parse(fields[4], DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+                    System.out.printf("%-5d %-10s %-20s %-20s %-10s %-8d %-18s %-30s %-15s\n",
+                            i + 1, fields[0], fields[1], fields[2], fields[3], age, fields[5], fields[6], fields[7]);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        PrintUtils.pause();
+    }
+
+    // View staff by gender
+    public void filterByGender(Scanner scanner) {
+        System.out.println("\n--- Filter Staff by Gender ---");
+        System.out.println("1. Male");
+        System.out.println("2. Female");
+        System.out.println("3. Other");
+        System.out.print("Enter your choice: ");
+        String choice = scanner.nextLine().trim();
+        String gender = "";
+        switch (choice) {
+            case "1":
+                gender = "Male";
+                break;
+            case "2":
+                gender = "Female";
+                break;
+            case "3":
+                gender = "Other";
+                break;
+            default:
+                System.out.println("Invalid choice. Please try again.");
+                return;
+        }
+
+        try {
+            List<String> filteredStaff = Files.readAllLines(Paths.get(STAFF_TXT));
+            List<String> filtered = new ArrayList<>();
+            for (String line : filteredStaff) {
+                String[] fields = line.split("\\|");
+                if (fields[3].equals(gender)) {
+                    filtered.add(line);
+                }
+            }
+
+            if (filtered.isEmpty()) {
+                System.out.println("\nNo results found.");
+            } else {
+                System.out.println("\n--- Filtered Staff ---");
+                System.out.printf("%-5s %-10s %-20s %-20s %-10s %-8s %-18s %-30s %-15s\n",
+                        "No.", "User ID", "First Name", "Last Name", "Gender", "Age", "Contact Number", "Email Address",
+                        "Role");
+                System.out.println(
+                        "----------------------------------------------------------------------------------------------------------------------------------------------");
+                for (int i = 0; i < filtered.size(); i++) {
+                    String[] fields = filtered.get(i).split("\\|");
+                    int age = calculateAge(LocalDate.parse(fields[4], DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+                    System.out.printf("%-5d %-10s %-20s %-20s %-10s %-8d %-18s %-30s %-15s\n",
+                            i + 1, fields[0], fields[1], fields[2], fields[3], age, fields[5], fields[6], fields[7]);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        PrintUtils.pause();
+    }
+
+    // View staff by age
+    public void filterByAge(Scanner scanner) {
+        System.out.println("\n--- Filter Staff by Age ---");
+        System.out.print("Enter age: ");
+        int age;
+        while (true) {
+            try {
+                age = Integer.parseInt(scanner.nextLine().trim());
+                if (age < 0) {
+                    System.out.println("Age cannot be negative. Please enter a valid age: ");
+                    continue;
+                }
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid age: ");
+            }
+        }
+
+        try {
+            List<String> filteredStaff = Files.readAllLines(Paths.get(STAFF_TXT));
+            List<String> filtered = new ArrayList<>();
+            for (String line : filteredStaff) {
+                String[] fields = line.split("\\|");
+                if (calculateAge(LocalDate.parse(fields[4], DateTimeFormatter.ofPattern("dd-MM-yyyy"))) == age) {
+                    filtered.add(line);
+                }
+            }
+
+            if (filtered.isEmpty()) {
+                System.out.println("\nNo results found.");
+            } else {
+                System.out.println("\n--- Filtered Staff ---");
+                System.out.printf("%-5s %-10s %-20s %-20s %-10s %-8s %-18s %-30s %-15s\n",
+                        "No.", "User ID", "First Name", "Last Name", "Gender", "Age", "Contact Number", "Email Address",
+                        "Role");
+                System.out.println(
+                        "----------------------------------------------------------------------------------------------------------------------------------------------");
+                for (int i = 0; i < filtered.size(); i++) {
+                    String[] fields = filtered.get(i).split("\\|");
+                    System.out.printf("%-5d %-10s %-20s %-20s %-10s %-8d %-18s %-30s %-15s\n",
+                            i + 1, fields[0], fields[1], fields[2], fields[3], age, fields[5], fields[6], fields[7]);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        PrintUtils.pause();
+    }
+
+    // Calculate age from date of birth
     private int calculateAge(LocalDate birthDate) {
         return Period.between(birthDate, LocalDate.now()).getYears();
     }
@@ -925,7 +1096,7 @@ public class AccountController {
     }
 
     // Helper validation methods
-// Helper validation methods
+    // Helper validation methods
     private boolean isValidContactNumber(String contactNumber) {
         return contactNumber.length() >= 8
                 && contactNumber.length() <= 15
