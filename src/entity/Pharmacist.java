@@ -3,9 +3,10 @@ package entity;
 public class Pharmacist extends entity.Staff {
 
     // add more Pharmacist-specific attributes here if any.
-    public Pharmacist(String userId, String firstName, String lastName, String gender, String contactNumber, String emailAddress, String userRole) {
+    public Pharmacist(String userId, String firstName, String lastName, String gender, String dateOfBirth,
+            String contactNumber, String emailAddress, String userRole) {
         // Using the constructor of the abstract User class.
-        super(userId, firstName, lastName, gender, contactNumber, emailAddress, userRole);
+        super(userId, firstName, lastName, gender, dateOfBirth, contactNumber, emailAddress, userRole);
     }
 
     // Implement the abstract method from User.
@@ -16,8 +17,7 @@ public class Pharmacist extends entity.Staff {
 
     @Override
     public String toString() {
-        return getUserId() + "|" + getFirstName() + "|" + getLastName() + "|"
-                + getGender() + "|" + getContactNumber() + "|" + getEmailAddress() + "|"
-                + getUserRole();
+        return getUserId() + "|" + getFirstName() + "|" + getLastName() + "|" + getGender() + "|" + getDateOfBirth()
+                + "|" + getContactNumber() + "|" + getEmailAddress() + "|" + getUserRole();
     }
 }

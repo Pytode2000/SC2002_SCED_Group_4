@@ -13,6 +13,9 @@ import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.Scanner;
@@ -140,10 +143,12 @@ public class AccountController {
         if (!isAdmin) {
             // Day input
             System.out.println("Enter date of birth: ");
-            while (day.length() != 2 || !day.matches("\\d{2}") || Integer.parseInt(day) < 1 || Integer.parseInt(day) > 31) {
+            while (day.length() != 2 || !day.matches("\\d{2}") || Integer.parseInt(day) < 1
+                    || Integer.parseInt(day) > 31) {
                 System.out.print("Enter day (DD): ");
                 day = scanner.nextLine().trim();
-                if (day.length() != 2 || !day.matches("\\d{2}") || Integer.parseInt(day) < 1 || Integer.parseInt(day) > 31) {
+                if (day.length() != 2 || !day.matches("\\d{2}") || Integer.parseInt(day) < 1
+                        || Integer.parseInt(day) > 31) {
                     System.out.println("Invalid day. Please enter a two-digit day (e.g., 01, 15, 31).");
                 }
             }
@@ -232,15 +237,16 @@ public class AccountController {
             // Create a Staff object based on userRole and set to STAFF_TXT
             switch (userRole) {
                 case "Doctor":
-                    newUser = new Doctor(userId, firstName, lastName, gender, contactNumber, emailAddress, userRole);
+                    newUser = new Doctor(userId, firstName, lastName, gender, dateOfBirth, contactNumber, emailAddress,
+                            userRole);
                     break;
                 case "Administrator":
-                    newUser = new Administrator(userId, firstName, lastName, gender, contactNumber, emailAddress,
-                            userRole);
+                    newUser = new Administrator(userId, firstName, lastName, gender, dateOfBirth, contactNumber,
+                            emailAddress, userRole);
                     break;
                 case "Pharmacist":
-                    newUser = new Pharmacist(userId, firstName, lastName, gender, contactNumber, emailAddress,
-                            userRole);
+                    newUser = new Pharmacist(userId, firstName, lastName, gender, dateOfBirth, contactNumber,
+                            emailAddress, userRole);
                     break;
                 default:
                     throw new IllegalArgumentException("Invalid user role: " + userRole);
@@ -403,20 +409,20 @@ public class AccountController {
             while ((line = br.readLine()) != null) {
                 String[] userData = line.split("\\|");
                 if (userData[0].equals(userId)) {
-                    String role = userData[6]; // Assuming role is at index 6
+                    String role = userData[7]; // Assuming role is at index 7
 
                     switch (role) {
                         case "Doctor":
                             return new Doctor(userId, userData[1], userData[2], userData[3],
-                                    userData[4], userData[5], role);
+                                    userData[4], userData[5], userData[6], role);
 
                         case "Administrator":
                             return new Administrator(userId, userData[1], userData[2], userData[3],
-                                    userData[4], userData[5], role);
+                                    userData[4], userData[5], userData[6], role);
 
                         case "Pharmacist":
                             return new Pharmacist(userId, userData[1], userData[2], userData[3],
-                                    userData[4], userData[5], role);
+                                    userData[4], userData[5], userData[6], role);
 
                         default:
                             System.out.println("Unknown role: " + role);
@@ -641,21 +647,26 @@ public class AccountController {
         try {
             List<String> staff = Files.readAllLines(Paths.get(STAFF_TXT));
             System.out.println("\n--- View All Staff ---");
-            System.out.printf("%-10s %-20s %-20s %-12s %-18s %-30s %-15s\n",
-                    "User ID", "First Name", "Last Name", "Gender", "Contact Number", "Email Address", "Role");
+            System.out.printf("%-5s %-10s %-20s %-20s %-10s %-8s %-18s %-30s %-15s\n",
+                    "No.", "User ID", "First Name", "Last Name", "Gender", "Age", "Contact Number", "Email Address",
+                    "Role");
             System.out.println(
-                    "-----------------------------------------------------------------------------------------------------------------------------------");
-            for (String line : staff) {
-                String[] fields = line.split("\\|");
-                System.out.printf("%-10s %-20s %-20s %-12s %-18s %-30s %-15s\n",
-                        fields[0], fields[1], fields[2], fields[3], fields[4], fields[5], fields[6]);
+                    "--------------------------------------------------------------------------------------------------------------------------------------------");
+            for (int i = 0; i < staff.size(); i++) {
+                String[] fields = staff.get(i).split("\\|");
+                int age = calculateAge(LocalDate.parse(fields[4], DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+                System.out.printf("%-5d %-10s %-20s %-20s %-10s %-8d %-18s %-30s %-15s\n",
+                        i + 1, fields[0], fields[1], fields[2], fields[3], age, fields[5], fields[6], fields[7]);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         PrintUtils.pause();
+    }
 
+    private int calculateAge(LocalDate birthDate) {
+        return Period.between(birthDate, LocalDate.now()).getYears();
     }
 
     // Update staff
@@ -663,7 +674,7 @@ public class AccountController {
         try {
             System.out.print("Enter staff ID to update: ");
             String staffId = scanner.nextLine().trim();
-            if (staffId.isEmpty()) {
+            if (staffId == null || staffId.isEmpty()) {
                 System.out.println("Staff ID cannot be empty.");
                 return;
             }
@@ -673,71 +684,204 @@ public class AccountController {
                 return; // Exit early if the staff ID is invalid
             }
 
-            String firstName = "", lastName = "", gender = "", contactNumber = "", emailAddress = "", role = "";
+            String firstName = "", lastName = "", gender = "", contactNumber = "", emailAddress = "", role = "",
+                    dateOfBirth = "";
+            boolean anyFieldUpdated = false;
 
-            System.out.print("Enter your new First Name (leave blank to keep current value): ");
-            String input = scanner.nextLine();
-            if (!input.trim().isEmpty()) {
-                firstName = input.trim();
+            // Prompt for new values if provided
+            while (true) {
+                System.out.print("Enter your new First Name (leave blank to keep current value): ");
+                String input = scanner.nextLine();
+                if (input == null || input.trim().isEmpty()) {
+                    break;
+                }
+
+                if (input.trim().length() < 1 || input.trim().length() > 15) {
+                    System.out.println("First name must be between 1 and 15 characters. Please try again.");
+                } else {
+                    firstName = input.trim();
+                    anyFieldUpdated = true;
+                    break;
+                }
             }
 
-            System.out.print("Enter your new Last Name (leave blank to keep current value): ");
-            input = scanner.nextLine();
-            if (!input.trim().isEmpty()) {
-                lastName = input.trim();
+            while (true) {
+                System.out.print("Enter your new Last Name (leave blank to keep current value): ");
+                String input = scanner.nextLine();
+                if (input == null || input.trim().isEmpty()) {
+                    break;
+                }
+
+                if (input.trim().length() < 1 || input.trim().length() > 15) {
+                    System.out.println("Last name must be between 1 and 15 characters. Please try again.");
+                } else {
+                    lastName = input.trim();
+                    anyFieldUpdated = true;
+                    break;
+                }
             }
 
-            System.out.print("Enter your new Gender (M/F/O) (leave blank to keep current value): ");
-            input = scanner.nextLine();
-            if (!input.trim().isEmpty()) {
-                gender = input.trim();
+            while (true) {
+                System.out.println("Choose your new Gender (leave blank to keep current value):");
+                System.out.println("1. Male");
+                System.out.println("2. Female");
+                System.out.println("3. Other");
+                System.out.print("Enter your choice (1-3): ");
+                String choiceInput = scanner.nextLine().trim();
+                if (choiceInput == null || choiceInput.isEmpty()) {
+                    break;
+                }
+
+                try {
+                    int choice = Integer.parseInt(choiceInput);
+                    switch (choice) {
+                        case 1:
+                            gender = "Male";
+                            break;
+                        case 2:
+                            gender = "Female";
+                            break;
+                        case 3:
+                            gender = "Other";
+                            break;
+                        default:
+                            System.out.println("Invalid choice. Please try again.");
+                            continue;
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter a number.");
+                    continue;
+                }
+                anyFieldUpdated = true;
+                break;
             }
 
-            System.out.print("Enter your new Contact Number (leave blank to keep current value): ");
-            input = scanner.nextLine();
-            if (!input.trim().isEmpty()) {
-                contactNumber = input.trim();
+            while (true) {
+                System.out.print("Enter your new Contact Number (leave blank to keep current value): ");
+                String input = scanner.nextLine();
+                if (input == null || input.trim().isEmpty()) {
+                    break;
+                }
+
+                if (!isValidPhoneNumber(input.trim())) {
+                    System.out.println("Invalid phone number. Please enter a valid phone number.");
+                } else {
+                    contactNumber = input.trim();
+                    anyFieldUpdated = true;
+                    break;
+                }
             }
 
-            System.out.print("Enter your new Email Address (leave blank to keep current value): ");
-            input = scanner.nextLine();
-            if (!input.trim().isEmpty()) {
-                emailAddress = input.trim();
+            while (true) {
+                System.out.print("Enter your new Email Address (leave blank to keep current value): ");
+                String input = scanner.nextLine();
+                if (input == null || input.trim().isEmpty()) {
+                    break;
+                }
+
+                if (!isValidEmail(input.trim())) {
+                    System.out.println("Invalid email address. Please enter a valid email address.");
+                } else {
+                    emailAddress = input.trim();
+                    anyFieldUpdated = true;
+                    break;
+                }
             }
 
-            System.out.print(
-                    "Enter your new Role (Doctor/Pharmacist/Administrator) (leave blank to keep current value): ");
-            input = scanner.nextLine();
-            if (!input.trim().isEmpty()) {
-                role = input.trim();
+            while (true) {
+                System.out.print("Enter your new date of birth (dd-MM-yyyy) (leave blank to keep current value): ");
+                String input = scanner.nextLine();
+                if (input == null || input.trim().isEmpty()) {
+                    break;
+                }
+
+                if (!isValidDate(input)) {
+                    System.out.println("Invalid date of birth. Please enter a valid date of birth.");
+                } else {
+                    dateOfBirth = input;
+                    anyFieldUpdated = true;
+                    break;
+                }
+            }
+
+            while (true) {
+                System.out.println("Choose your new Role (leave blank to keep current value):");
+                System.out.println("1. Doctor");
+                System.out.println("2. Pharmacist");
+                System.out.println("3. Administrator");
+                System.out.print("Enter your choice (1-3): ");
+                String choiceInput = scanner.nextLine().trim();
+                if (choiceInput == null || choiceInput.isEmpty()) {
+                    break;
+                }
+
+                try {
+                    int choice = Integer.parseInt(choiceInput);
+                    switch (choice) {
+                        case 1:
+                            role = "Doctor";
+                            break;
+                        case 2:
+                            role = "Pharmacist";
+                            break;
+                        case 3:
+                            role = "Administrator";
+                            break;
+                        default:
+                            System.out.println("Invalid choice. Please enter a valid choice.");
+                            continue;
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter a number.");
+                    continue;
+                }
+                anyFieldUpdated = true;
+                break;
+            }
+
+            if (!anyFieldUpdated) {
+                System.out.println("No fields were updated for staff ID: " + staffId);
+                return;
             }
 
             boolean updated = false;
-            // Update only if the new values are provided
-            if (!firstName.isEmpty() && updateAccountFile(staffId, firstName, STAFF_TXT, 1)) {
-                updated = true;
-            }
-            if (!lastName.isEmpty() && updateAccountFile(staffId, lastName, STAFF_TXT, 2)) {
-                updated = true;
-            }
-            if (!gender.isEmpty() && updateAccountFile(staffId, gender, STAFF_TXT, 3)) {
-                updated = true;
-            }
-            if (!contactNumber.isEmpty() && updateAccountFile(staffId, contactNumber, STAFF_TXT, 4)) {
-                updated = true;
-            }
-            if (!emailAddress.isEmpty() && updateAccountFile(staffId, emailAddress, STAFF_TXT, 5)) {
-                updated = true;
-            }
-            if (!role.isEmpty() && updateAccountFile(staffId, role, STAFF_TXT, 6)) {
-                updated = true;
+            List<String> staff = Files.readAllLines(Paths.get(STAFF_TXT));
+            for (int i = 0; i < staff.size(); i++) {
+                String[] fields = staff.get(i).split("\\|");
+                if (fields[0].equals(staffId)) {
+                    if (!firstName.isEmpty()) {
+                        fields[1] = firstName;
+                    }
+                    if (!lastName.isEmpty()) {
+                        fields[2] = lastName;
+                    }
+                    if (!gender.isEmpty()) {
+                        fields[3] = gender;
+                    }
+                    if (!dateOfBirth.isEmpty()) {
+                        fields[4] = dateOfBirth;
+                    }
+                    if (!contactNumber.isEmpty()) {
+                        fields[5] = contactNumber;
+                    }
+                    if (!emailAddress.isEmpty()) {
+                        fields[6] = emailAddress;
+                    }
+                    if (!role.isEmpty()) {
+                        fields[7] = role;
+                    }
+                    staff.set(i, String.join("|", fields));
+                    updated = true;
+                }
             }
 
             if (updated) {
-                System.out.println("Update successful for userId: " + staffId);
+                Files.write(Paths.get(STAFF_TXT), staff);
+                System.out.println("Update successful for staff ID: " + staffId);
             } else {
-                System.out.println("Update failed for userId: " + staffId);
+                System.out.println("Update failed for staff ID: " + staffId);
             }
+
         } catch (IOException e) {
             System.out.println("An error occurred while updating the staff information.");
             System.out.println("Please make sure the staff ID is valid.");
@@ -748,32 +892,30 @@ public class AccountController {
     // Remove staff
     public void removeStaff(Scanner scanner) {
         try {
-            System.out.print("Enter staff ID to remove: ");
-            String staffId = scanner.nextLine().trim();
-            if (staffId.isEmpty()) {
-                System.out.println("Staff ID cannot be empty.");
+            List<String> staff = Files.readAllLines(Paths.get(STAFF_TXT));
+            System.out.println("\n--- Remove Staff ---");
+            System.out.println("------------------------");
+            System.out.print("Enter index of staff to remove: ");
+            int index;
+            try {
+                index = Integer.parseInt(scanner.nextLine().trim()) - 1; // Convert to zero-based index
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid index entered. Please enter a valid number.");
                 return;
             }
 
-            if (!isValidStaffId(staffId)) {
-                System.out.println("Invalid staff ID. Please try again.");
-                return; // Exit early if the staff ID is invalid
+            if (index < 0 || index >= staff.size()) {
+                System.out.println("Invalid index. Please enter a valid number between 1 and "
+                        + staff.size() + ".");
+                return;
             }
 
-            List<String> staff = Files.readAllLines(Paths.get(STAFF_TXT));
-            for (int i = 0; i < staff.size(); i++) {
-                String[] fields = staff.get(i).split("\\|");
-                if (fields[0].equals(staffId)) {
-                    staff.remove(i);
-                    Files.write(Paths.get(STAFF_TXT), staff);
-                    System.out.println("Remove successful for userId: " + staffId);
-                    return;
-                }
-            }
-            System.out.println("User with userId: " + staffId + " not found.");
+            staff.remove(index);
+            Files.write(Paths.get(STAFF_TXT), staff);
+            System.out.println("Remove successful for index: " + (index + 1));
         } catch (IOException e) {
             System.out.println("An error occurred while removing the staff information.");
-            System.out.println("Please make sure the staff ID is valid.");
+            System.out.println("Please make sure the index is valid.");
             e.printStackTrace();
         }
     }
@@ -790,6 +932,20 @@ public class AccountController {
     private boolean isValidPassword(String password) {
         String passwordPattern = "^(?=.*[0-9])(?=.*[!@#$%^&*()_+=-]).{8,}$";
         return password.matches(passwordPattern);
+    }
+
+    private boolean isValidPhoneNumber(String phoneNumber) {
+        String pattern = "^[0-9]{8}$";
+        return phoneNumber.matches(pattern);
+    }
+
+    private boolean isValidDate(String date) {
+        try {
+            LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+            return true;
+        } catch (DateTimeParseException e) {
+            return false;
+        }
     }
 
     // Helper method to check if staff ID is valid

@@ -68,28 +68,24 @@ public class AdministratorMenu implements MenuInterface {
 
         while (!backToMenu) {
             System.out.println("\n--- Staff Management ---");
-            System.out.println("1. View Staff");
-            System.out.println("2. Add Staff");
-            System.out.println("3. Update Staff");
-            System.out.println("4. Remove Staff");
+            accountController.viewStaff();
+            System.out.println("1. Add Staff");
+            System.out.println("2. Update Staff");
+            System.out.println("3. Remove Staff");
             System.out.println("0. Back to Main Menu");
             System.out.print("Enter your choice: ");
             String choice = scanner.nextLine().trim();
 
             switch (choice) {
                 case "1":
-                    // Call a method to view staff
-                    accountController.viewStaff();
-                    break;
-                case "2":
                     // Call a method to add staff
                     accountController.register(true); // isAdmin = false.
                     break;
-                case "3":
+                case "2":
                     // Call a method to update staff
                     accountController.updateStaff(scanner);
                     break;
-                case "4":
+                case "3":
                     // Call a method to remove staff
                     accountController.removeStaff(scanner);
                     break;
@@ -108,28 +104,24 @@ public class AdministratorMenu implements MenuInterface {
 
         while (!backToMenu) {
             System.out.println("\n--- Inventory Management ---");
-            System.out.println("1. View Inventory");
-            System.out.println("2. Add Medicine");
-            System.out.println("3. Update Medicine");
-            System.out.println("4. Remove Medicine");
+            inventoryController.displayInventory();
+            System.out.println("1. Add Medicine");
+            System.out.println("2. Update Medicine");
+            System.out.println("3. Remove Medicine");
             System.out.println("0. Back to Main Menu");
             System.out.print("Enter your choice: ");
             String choice = scanner.nextLine().trim();
 
             switch (choice) {
                 case "1":
-                    // Call a method to view inventory
-                    inventoryController.displayInventory();
-                    break;
-                case "2":
                     // Call a method to add item
                     inventoryController.addMedicine(scanner);
                     break;
-                case "3":
+                case "2":
                     // Call a method to update item
                     inventoryController.updateMedicine(scanner);
                     break;
-                case "4":
+                case "3":
                     // Call a method to remove item
                     inventoryController.removeMedicine(scanner);
                     break;
