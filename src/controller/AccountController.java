@@ -437,7 +437,7 @@ public class AccountController {
         boolean updating = true;
 
         while (updating) {
-            System.out.println("\n--- Update Personal Information ---");
+            System.out.println("\n--- Personal Information ---");
             System.out.println("User ID: " + user.getUserId());
             if (user instanceof Patient) {
                 System.out.println("Current Contact Number: " + ((Patient) user).getContactNumber());

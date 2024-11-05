@@ -28,7 +28,7 @@ public class AppointmentOutcomeController {
 
     private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
-// Display appointment outcomes by patient ID with full prescription details in a table format
+    // Display appointment outcomes by patient ID with full prescription details in a table format
     public void displayAppointmentOutcomesByPatientId(String patientId) {
         List<AppointmentOutcome> outcomes = getAppointmentOutcomesByPatientId(patientId);
 
@@ -39,46 +39,50 @@ public class AppointmentOutcomeController {
             outcomes.sort(Comparator.comparing(AppointmentOutcome::getDateOfAppointment));
 
             // Print table headers
-            System.out.printf("%-15s | %-20s | %-20s | %-50s | %-30s%n",
+            System.out.println("\nAppointment Outcomes for Patient ID: " + patientId + "\n");
+            System.out.printf("%-15s | %-20s | %-20s | %-50s | %-30s |%n",
                     "Date", "Doctor", "Service Type",
                     "Medications", "Consultation Notes");
-            System.out.println("---------------------------------------------------------------------------------------------------------------");
+            System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------------------");
 
             // Display each appointment outcome in a table row format
             for (AppointmentOutcome outcome : outcomes) {
                 // Retrieve doctor name using doctorId
                 String doctorName = getDoctorName(outcome.getDoctorId());
 
-                // Format and print the general appointment information (date, doctor, service type)
-                System.out.printf("%-15s | %-20s | %-20s | %-50s | %-30s%n",
-                        outcome.getDateOfAppointment().format(dateFormatter),
-                        doctorName,
-                        outcome.getServiceType(),
-                        "", ""); // Initial row without medication details
-
-                // Retrieve and print each prescribed medication with quantity and status
+                // Retrieve each prescribed medication with quantity and status
                 List<Prescription> prescriptions = getPrescriptionsByIds(outcome.getPrescribedMedications());
                 if (prescriptions.isEmpty()) {
-                    System.out.printf("%-15s | %-20s | %-20s | %-50s | %-30s%n",
-                            "", "", "",
-                            "- No Prescription", "");
+                    // No prescriptions, display "No Prescription" on the first row
+                    System.out.printf("%-15s | %-20s | %-20s | %-50s | %-30s |%n",
+                            outcome.getDateOfAppointment().format(dateFormatter),
+                            doctorName,
+                            outcome.getServiceType(),
+                            "- No Prescription",
+                            outcome.getConsultationNotes()); // Consultation notes at the top
                 } else {
-                    int index = 1;
-                    for (Prescription prescription : prescriptions) {
-                        String medicineName = getMedicineName(prescription.getMedicineId());
-                        System.out.printf("%-15s | %-20s | %-20s | %-50s | %-30s%n",
+                    // Print the first row with the first prescription
+                    Prescription firstPrescription = prescriptions.get(0);
+                    String medicineName = getMedicineName(firstPrescription.getMedicineId());
+                    System.out.printf("%-15s | %-20s | %-20s | %-50s | %-30s |%n",
+                            outcome.getDateOfAppointment().format(dateFormatter),
+                            doctorName,
+                            outcome.getServiceType(),
+                            String.format("1. %dx %s (%s)", firstPrescription.getQuantity(), medicineName, firstPrescription.getStatus()),
+                            outcome.getConsultationNotes()); // Consultation notes at the top
+
+                    // Print subsequent rows for additional prescriptions, if any
+                    for (int i = 1; i < prescriptions.size(); i++) {
+                        Prescription prescription = prescriptions.get(i);
+                        medicineName = getMedicineName(prescription.getMedicineId());
+                        System.out.printf("%-15s | %-20s | %-20s | %-50s | %-30s |%n",
                                 "", "", "",
-                                String.format("%d. %dx %s (%s)", index++, prescription.getQuantity(), medicineName, prescription.getStatus()),
-                                ""); // Empty consultation notes column here
+                                String.format("%d. %dx %s (%s)", i + 1, prescription.getQuantity(), medicineName, prescription.getStatus()),
+                                ""); // Empty Consultation Notes column here
                     }
                 }
 
-                // Print consultation notes aligned to the far right
-                System.out.printf("%-15s | %-20s | %-20s | %-50s | %-30s%n",
-                        "", "", "",
-                        "", outcome.getConsultationNotes());
-
-                System.out.println("---------------------------------------------------------------------------------------------------------------");
+                System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------------------");
             }
         }
         PrintUtils.pause();
