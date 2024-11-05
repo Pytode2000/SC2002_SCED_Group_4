@@ -135,7 +135,7 @@ public class MedicalRecordsController {
     
         // Extract the numeric part and increment it
         int lastIdNumber = Integer.parseInt(lastRecordId.substring(2));
-        return "MR" + (lastIdNumber + 1);
+        return String.format("%s%05d", "MR", lastIdNumber + 1);
     }
 
     // Method to create a medical record for a patient
