@@ -7,5 +7,10 @@ public abstract class Staff extends User {
         // Add staff specific attributes here.
     }
 
+    @Override
+    public String registrationString() {
+        //userId, firstName, lastName, gender, contactNumber, emailAddress, userRole
+        return getUserId() + "|" + getFirstName() + "|" + getLastName() + "|" + getGender() + "|" + getContactNumber() + "|" + getEmailAddress() + "|" + getUserRole();
+    }
 
 }

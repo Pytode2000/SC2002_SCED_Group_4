@@ -14,7 +14,6 @@ public class Patient extends entity.User {
         this.bloodType = bloodType;
     }
 
-
     public String getDateOfBirth() {
         return dateOfBirth;
     }
@@ -27,6 +26,12 @@ public class Patient extends entity.User {
     @Override
     public String getUserRole() {
         return "Patient";
+    }
+
+    @Override
+    public String registrationString() {
+        //userId, firstName, lastName, gender, contactNumber, emailAddress, userRole
+        return getUserId() + "|" + getFirstName() + "|" + getLastName() + "|" + getGender() + "|" + getContactNumber() + "|" + getEmailAddress() + "|" + getUserRole() + "|" + getDateOfBirth() + "|" + getBloodType();
     }
 
     @Override

@@ -1,5 +1,8 @@
-PA00001|Jacob|Ong|Male|98564200|jacobob@mgial.com|Patient|04-08-2000|O+
+PA00001|Jacob|Ong|Male|213231321321|pemail@gmail.com|Patient|04-08-2000|O+
 PA00002|Bobby|Ng|Female|99999999|bobbyng@hotmail.com|Patient|02-03-2000|B+
 PA00003|Bruce|Lee|Female|912344321|brucelee@gmail.com|Patient|01-01-2000|B-
 PA00004|Michael|Jordan|Female|321321321321|email@gmail.com|Patient|02-03-2000|A-
 PA00005|Fred|Chan|Male|98321234|fred@gmail.com|Patient|04-08-2000|B-
+PA00007|Donald|Duck|Other|91234998|donald_trump@gmail.com|Patient|03-05-2020|B-
+PA00008|testing|test|Female|93399339|newemail@gmial.com|Patient|23-02-2024|AB+
+PA00009|testing|testing|Female|wa123123|gmail@goma.com|Patient|03-04-2023|B-

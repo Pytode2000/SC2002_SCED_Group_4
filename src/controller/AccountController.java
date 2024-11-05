@@ -140,11 +140,10 @@ public class AccountController {
         if (!isAdmin) {
             // Day input
             System.out.println("Enter date of birth: ");
-            while (day.length() != 2 || !day.matches("\\d{2}")) {
+            while (day.length() != 2 || !day.matches("\\d{2}") || Integer.parseInt(day) < 1 || Integer.parseInt(day) > 31) {
                 System.out.print("Enter day (DD): ");
                 day = scanner.nextLine().trim();
-                if (day.length() != 2 || !day.matches("\\d{2}") || Integer.parseInt(day) < 1
-                        || Integer.parseInt(day) <= 31) {
+                if (day.length() != 2 || !day.matches("\\d{2}") || Integer.parseInt(day) < 1 || Integer.parseInt(day) > 31) {
                     System.out.println("Invalid day. Please enter a two-digit day (e.g., 01, 15, 31).");
                 }
             }
@@ -162,11 +161,12 @@ public class AccountController {
             }
 
             // Year input
-            while (year.length() != 4 || !year.matches("\\d{4}")) {
+            while (year.length() != 4 || !year.matches("\\d{4}") || Integer.parseInt(year) < 1900
+                    || Integer.parseInt(year) > LocalDate.now().getYear()) {
                 System.out.print("Enter year (YYYY): ");
                 year = scanner.nextLine().trim();
                 if (year.length() != 4 || !year.matches("\\d{4}") || Integer.parseInt(year) < 1900
-                        || Integer.parseInt(year) <= LocalDate.now().getYear()) {
+                        || Integer.parseInt(year) > LocalDate.now().getYear()) {
                     System.out.println("Invalid year. Please enter a four-digit year (e.g., 1990, 2023).");
                 }
             }
@@ -249,13 +249,14 @@ public class AccountController {
         }
 
         // Write to the appropriate file based on the user role
-        FileUtils.writeToFile(roleFile, newUser.toString());
+        FileUtils.writeToFile(roleFile, newUser.registrationString());
         FileUtils.writeToFile(ACCOUNT_TXT, userId + "|" + hashPassword("password"));
 
         // Display success message
         System.out.println(userRole + " registered successfully!");
         System.out.println("The account's credentials are: " + userId + " | \"password\".");
         return true;
+
     }
 
     public User login() {
@@ -436,7 +437,7 @@ public class AccountController {
         boolean updating = true;
 
         while (updating) {
-            System.out.println("\n--- Update Personal Information ---");
+            System.out.println("\n--- Personal Information ---");
             System.out.println("User ID: " + user.getUserId());
             if (user instanceof Patient) {
                 System.out.println("Current Contact Number: " + ((Patient) user).getContactNumber());
@@ -510,11 +511,13 @@ public class AccountController {
                 if (isValidPassword(newPassword)) {
                     passwordUpdated = updatePassword(user.getUserId(), newPassword);
                     System.out.println(passwordUpdated ? "Password updated successfully." : "Password update failed.");
+                    PrintUtils.pause();
                 } else {
                     newPasswordAttempts++;
                     System.out.println(
                             "Invalid password format. " + (3 - newPasswordAttempts) + " attempt(s) remaining.");
                 }
+
             }
 
             // If user fails to enter a valid new password after 3 attempts
@@ -550,6 +553,7 @@ public class AccountController {
                     patient.setContactNumber(newContactNumber);
                     System.out.println("Contact number updated successfully.");
                     contactUpdated = true;
+                    PrintUtils.pause();
                 } else {
                     System.out.println("Failed to update contact number. Please try again.");
                 }
@@ -578,6 +582,7 @@ public class AccountController {
                     patient.setEmailAddress(newEmail);
                     System.out.println("Email address updated successfully.");
                     emailUpdated = true;
+                    PrintUtils.pause();
                 } else {
                     System.out.println("Failed to update email address. Please try again.");
                 }
@@ -778,8 +783,11 @@ public class AccountController {
     }
 
     // Helper validation methods
+// Helper validation methods
     private boolean isValidContactNumber(String contactNumber) {
-        return contactNumber.length() >= 8 && contactNumber.length() <= 15;
+        return contactNumber.length() >= 8
+                && contactNumber.length() <= 15
+                && contactNumber.matches("[0-9]+"); // Ensures all characters are digits
     }
 
     private boolean isValidEmail(String email) {

@@ -58,4 +58,6 @@ public abstract class User { // ABSTRACT CLASS, NO USER OBJECT WILL EVER BE INST
     public abstract String getUserRole();
 
     public abstract String toString();
+
+    public abstract String registrationString();
 }
