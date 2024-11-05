@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import utility.FileUtils;
+import utility.PrintUtils;
 
 public class MedicalRecordsController {
 
@@ -336,6 +337,8 @@ public class MedicalRecordsController {
         if (!recordFound) {
             System.out.println("No medical records found for patient ID: " + patientId);
         }
+
+        PrintUtils.pause();
     }
 
     // Method to view all medical records with associated patient information 
