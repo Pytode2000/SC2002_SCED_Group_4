@@ -893,6 +893,7 @@ public class AppointmentController {
 
         // for each appointment in appointment request print the details
         List<String> appointmentRequests = getAppointmentRequests(doctorId);
+        int counter = 1;
 
         if (appointmentRequests.isEmpty()) {
             System.out.println("No pending appointment requests for doctor ID: " + doctorId);
@@ -901,14 +902,14 @@ public class AppointmentController {
 
         System.out.println("Pending appointment requests for doctor ID: " + doctorId + ":");
         for (String request : appointmentRequests) {
-            System.out.println(request);
+            System.out.println(counter + ". " + request);
         }
         return;
     }
 
     public void acceptDeclineAppointment(String doctorId) {
         Scanner scanner = new Scanner(System.in);
-        String decision, appointmentId;
+        String decision, appointmentId, choice;
         String selectedAppointment = null;
 
         // Step 1: Display pending or rescheduled appointments for the doctor
@@ -918,30 +919,23 @@ public class AppointmentController {
         }
 
         // Step 2: Get the appointment ID from the user
+        System.out.println("Select an appointment to accept/decline (press 0 to return): ");
+
         while (true) {
-            System.out.print("Enter the Appointment ID (or press 0 to return): ");
-            appointmentId = scanner.nextLine();
+            choice = scanner.nextLine();
 
             // Check if the user wants to exit
-            if (appointmentId.equals("0")) {
+            if (choice.equals("0")) {
                 System.out.println("Returning to the previous menu.");
                 return;
             }
-
-            // Search for the appointment with the given ID
-            for (String request : appointmentRequests) {
-                if (request.startsWith(appointmentId + "|")) {
-                    selectedAppointment = request;
-                    break;
-                }
+            else if (Integer.parseInt(choice)>appointmentRequests.size()) {
+                System.out.println("Invalid option. Please try again");
+                continue;
             }
 
-            // Check if a valid appointment was found
-            if (selectedAppointment != null) {
-                break; // Exit the loop if a matching appointment is found
-            } else {
-                System.out.println("Appointment ID not found. Please try again.");
-            }
+            selectedAppointment = appointmentRequests.get(Integer.parseInt(choice)-1);
+            break;
         }
 
         // Step 4: Prompt user to accept or decline the appointment
@@ -962,21 +956,31 @@ public class AppointmentController {
 
         // Step 6: Update the status and add notes in the data
         String[] fields = selectedAppointment.split("\\|");
-        fields[5] = decision.equals("accept") ? "BOOKED" : "DECLINED";
 
-        // If booked appointment replace new appointment date time with old one.
-        if (fields[5].equals("BOOKED")) {
-            fields[3] = fields[7];
-            fields[4] = fields[8];
+        if (decision.equals("accept")) {
+            if (fields[5].equals("RESCHEDULE")) {
+                fields[5] = "BOOKED";
+                fields[3] = fields[7];
+                fields[4] = fields[8];
+                fields[7] = "-";
+                fields[8] = "-";
+                fields[9] = "-";
+            }
+            else {
+                fields[5] = "BOOKED";
+            }
+        }
+        else {
             fields[7] = "-";
             fields[8] = "-";
             fields[9] = "-";
         }
 
+
         String updatedData = String.join("|", fields);
 
         // Step 7: Update the file
-        FileUtils.updateToFile(APPOINTMENT_FILE, updatedData, appointmentId);
+        FileUtils.updateToFile(APPOINTMENT_FILE, updatedData, fields[0]);
         System.out.println("Appointment " + (decision.equals("accept") ? "accepted" : "declined") + " successfully.");
     }
 

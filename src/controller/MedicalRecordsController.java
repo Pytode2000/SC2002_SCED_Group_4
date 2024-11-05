@@ -269,6 +269,7 @@ public class MedicalRecordsController {
         for (MedicalRecord record : recordsToDelete) {
             System.out.println(counter+".");
             System.out.println(record);
+            counter++;
         }
 
         counter = 1;
