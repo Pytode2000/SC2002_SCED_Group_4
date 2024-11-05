@@ -16,6 +16,11 @@ import java.util.Scanner;
 import utility.FileUtils;
 import utility.PrintUtils;
 
+//testZL
+import java.util.HashSet;
+import java.util.Set;
+//testZL
+
 public class AppointmentOutcomeController {
 
     private static final String APPOINTMENT_OUTCOME_FILE = "data/appointmentOutcome.txt";
@@ -27,6 +32,128 @@ public class AppointmentOutcomeController {
     private static final String PRESCRIPTION_FILE = "data/prescription.txt";
 
     private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+
+    //testZL
+    public void displayAllPendingAppointmentOutcomes() {
+        try {
+            // Step 1: Load all pending prescription IDs
+            Set<String> pendingPrescriptionIds = getPendingPrescriptionIds();
+
+            // Step 2: Read and filter appointment outcomes with pending prescriptions
+            BufferedReader br = new BufferedReader(new FileReader(APPOINTMENT_OUTCOME_FILE));
+            String line;
+            List<String[]> pendingAppointments = new ArrayList<>();
+
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split("\\|");
+                String appointmentId = data[0].trim();
+                String patientId = data[1].trim();
+                String doctorId = data[2].trim();
+                String date = data[3].trim();
+                String serviceType = data[4].trim();
+                String prescriptionIds = data[5].trim();
+                String consultationNotes = data[6].trim();
+
+                // Check if any of the prescription IDs in this appointment are pending
+                String[] prescriptionIdArray = prescriptionIds.split(";");
+                List<String> medications = new ArrayList<>();
+                boolean hasPendingPrescription = false;
+
+                for (String prescriptionId : prescriptionIdArray) {
+                    if (pendingPrescriptionIds.contains(prescriptionId.trim())) {
+                        hasPendingPrescription = true;
+                    }
+                    // Get full prescription details
+                    Prescription prescription = getPrescriptionDetails(prescriptionId.trim());
+                    if (prescription != null) {
+                        String medicineName = getMedicineName(prescription.getMedicineId());
+                        medications.add(String.format("%dx %s (%s)", prescription.getQuantity(), medicineName, prescription.getStatus()));
+                    }
+                }
+
+                // Add to list if it has at least one pending prescription
+                if (hasPendingPrescription) {
+                    pendingAppointments.add(new String[] {
+                        appointmentId,
+                        date,
+                        getDoctorName(doctorId),
+                        serviceType,
+                        medications.isEmpty() ? "- No Prescription" : String.join("\n", medications),
+                        consultationNotes.isEmpty() ? "-" : consultationNotes
+                    });
+                }
+            }
+            br.close();
+
+            // Step 3: Display the results in table format
+            if (pendingAppointments.isEmpty()) {
+                System.out.println("No appointment outcomes with pending prescriptions found.");
+            } else {
+                System.out.printf("%-15s | %-12s | %-15s | %-15s | %-50s | %-30s |%n",
+                        "Appointment ID", "Date", "Doctor", "Service Type", "Medications", "Consultation Notes");
+                System.out.println("-------------------------------------------------------------------------------------------------------------");
+
+                for (String[] appointment : pendingAppointments) {
+                    // Print the first line with all data, including consultation notes
+                    System.out.printf("%-15s | %-12s | %-15s | %-15s | %-50s | %-30s |%n",
+                            appointment[0], appointment[1], appointment[2], appointment[3], appointment[4].split("\n")[0], appointment[5]);
+
+                    // Print additional lines for each medication if there are multiple
+                    String[] medications = appointment[4].split("\n");
+                    for (int i = 1; i < medications.length; i++) {
+                        System.out.printf("%-15s | %-12s | %-15s | %-15s | %-50s | %-30s |%n",
+                                "", "", "", "", medications[i], "");
+                    }
+                    System.out.println("-------------------------------------------------------------------------------------------------------------");
+                }
+            }
+
+        } catch (IOException e) {
+            System.out.println("Error reading files: " + e.getMessage());
+        }
+    }
+
+
+    // Helper method to retrieve prescription details
+    private Prescription getPrescriptionDetails(String prescriptionId) {
+        try (BufferedReader br = new BufferedReader(new FileReader(PRESCRIPTION_FILE))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] fields = line.split("\\|");
+                if (fields[0].trim().equals(prescriptionId)) {
+                    String medicineId = fields[1].trim();
+                    int quantity = Integer.parseInt(fields[2].trim());
+                    Prescription.Status status = Prescription.Status.valueOf(fields[3].trim().toUpperCase());
+                    return new Prescription(prescriptionId, medicineId, quantity, status);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading prescription file: " + e.getMessage());
+        }
+        return null;
+    }
+
+    // Helper method to retrieve all pending prescription IDs from prescription file
+    private Set<String> getPendingPrescriptionIds() {
+        Set<String> pendingPrescriptionIds = new HashSet<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(PRESCRIPTION_FILE))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] fields = line.split("\\|");
+                String prescriptionId = fields[0].trim();
+                String status = fields[3].trim();
+
+                if (status.equalsIgnoreCase("PENDING")) {
+                    pendingPrescriptionIds.add(prescriptionId);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading prescription file: " + e.getMessage());
+        }
+        return pendingPrescriptionIds;
+    }
+    //testZL
 
     // Display appointment outcomes by patient ID with full prescription details in
     // a table format

@@ -39,10 +39,13 @@ public class PharmacistMenu implements MenuInterface {
             switch (choice) {
                 case "1":
                     // View Appointment Outcome Record();
-                    viewAptOC();
+                    appointmentOutcomeController.displayAllPendingAppointmentOutcomes();
                     break;
                 case "2":
                     // Update Prescription Status;
+                    //enter appointment id, display the prescription for this appointmentOutcome
+                    //promt user to enter which precription to update this will change the prescription status to "DISPENSED"
+                    //and the stock level
 
                     break;
                 case "3":
@@ -63,25 +66,5 @@ public class PharmacistMenu implements MenuInterface {
             }
         }
     }
-
-
-        public void viewAptOC() {
-        System.out.println("\n--- Appoinment Outcomes ---");
-        System.out.println("------------------------------------");
-        Scanner scanner = new Scanner(System.in);
-
-        // Prompt for Patient ID
-        System.out.print("Enter Patient ID: ");
-        String patientId = scanner.nextLine().trim();
-
-        // Find the patient by ID
-        appointmentOutcomeController.displayAppointmentOutcomesByPatientId(patientId);
-
-        System.out.println("------------------------------------");
-
-        // back to main menu
-        //promptReturnToMenu();
-    }
-
 
 }
