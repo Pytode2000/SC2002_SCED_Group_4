@@ -24,7 +24,6 @@ public class ForgetPasswordController {
     public void handleForgetPasswordRequest() {
         Scanner scanner = new Scanner(System.in);
 
-        // Step 1: Enter userId and capitalize alphabets
         System.out.print("Enter your User ID (or press 0 to exit): ");
         String userId = scanner.nextLine().trim();
         if (userId.equals("0")) {
@@ -33,25 +32,22 @@ public class ForgetPasswordController {
         }
         userId = userId.toUpperCase(); // Capitalize all letters
 
-        // Step 2: Check if userId exists in account.txt
         if (!isUserIdExist(userId)) {
             System.out.println("User ID not found. Please try again.");
             PrintUtils.pause();
             return;
         }
 
-        // Step 3: Allow user to enter a message
         System.out.print("Enter a message for the reset request (or press 0 to exit): ");
         String message = scanner.nextLine().trim();
         if (message.equals("0")) {
             System.out.println("Exiting request.");
             return;
         }
-        if(message.length() == 0){
+        if (message.length() == 0) {
             message = "-";
         }
 
-        // Step 4: Create a ForgetPassword object with current date and time
         ForgetPassword forgetPasswordRequest = new ForgetPassword(userId, message);
 
         // Step 5: Write the request details to ForgetPassword.txt
@@ -74,15 +70,16 @@ public class ForgetPasswordController {
         // Prompt admin to select a request by index
         while (true) {
 
-            // Display all requests with an index
+            // Display all requests in a table
             System.out.println("\n--- Password Reset Requests ---");
+            System.out.printf("%-5s %-10s %-32s %-22s%n", "No.", "User ID", "Message", "Request Date");
             for (int i = 0; i < requests.size(); i++) {
                 ForgetPassword request = requests.get(i);
-                System.out.printf("%d. User ID: %s | Message: %s | Request Date: %s%n",
+                System.out.printf("%-5d %-10s %-32s %-22s%n",
                         i + 1, request.getUserId(), request.getMessage(),
                         request.getRequestDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
             }
-            
+
             System.out.print("\nEnter the request number to process (or 0 to exit): ");
             int index;
             try {

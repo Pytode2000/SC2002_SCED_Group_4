@@ -30,6 +30,7 @@ public class AccountController {
     private static final String STAFF_TXT = "data/staff.txt";
 
     // Register method to add new patient
+    // Register method to add new patient
     public boolean register(boolean isAdmin) {
 
         String firstName = "";
@@ -47,8 +48,9 @@ public class AccountController {
         Scanner scanner = new Scanner(System.in);
 
         if (isAdmin) {
-            while (!(userRole.equals("Doctor") || userRole.equals("Pharmacist") || userRole.equals("Administrator"))) {
-                System.out.println("Choose Role:");
+            while (!(userRole.equals("Doctor") || userRole.equals("Pharmacist") || userRole.equals("Administrator")
+                    || userRole.equals("0"))) {
+                System.out.println("Choose Role (0 to cancel):");
                 System.out.println("1. Doctor");
                 System.out.println("2. Pharmacist");
                 System.out.println("3. Administrator");
@@ -56,6 +58,8 @@ public class AccountController {
                 userRole = scanner.nextLine().trim();
 
                 switch (userRole) {
+                    case "0":
+                        return false;
                     case "1":
                         userRole = "Doctor";
                         break;
@@ -70,13 +74,21 @@ public class AccountController {
                 }
             }
         }
+
+        if (userRole.equals("0")) {
+            return false;
+        }
+
         // Generate userId (starting from PA00001 for patient, differs for staff)
         String userId = generateUserId(userRole);
 
         // Input and validation for first name
         while (firstName.length() < 1 || firstName.length() > 15) {
-            System.out.print("Enter first name (1-15 characters): ");
+            System.out.print("Enter first name (1-15 characters, 0 to cancel): ");
             firstName = scanner.nextLine().trim();
+            if (firstName.equals("0")) {
+                return false;
+            }
             if (firstName.length() < 1 || firstName.length() > 15) {
                 System.out.println("First name must be between 1 and 15 characters. Please try again.");
             }
@@ -84,8 +96,11 @@ public class AccountController {
 
         // Input and validation for last name
         while (lastName.length() < 1 || lastName.length() > 15) {
-            System.out.print("Enter last name (1-15 characters): ");
+            System.out.print("Enter last name (1-15 characters, 0 to cancel): ");
             lastName = scanner.nextLine().trim();
+            if (lastName.equals("0")) {
+                return false;
+            }
             if (lastName.length() < 1 || lastName.length() > 15) {
                 System.out.println("Last name must be between 1 and 15 characters. Please try again.");
             }
@@ -102,8 +117,8 @@ public class AccountController {
             return false;
         }
 
-        while (!(gender.equals("Male") || gender.equals("Female") || gender.equals("Other"))) {
-            System.out.println("Choose gender:");
+        while (!(gender.equals("Male") || gender.equals("Female") || gender.equals("Other") || gender.equals("0"))) {
+            System.out.println("Choose gender (0 to cancel):");
             System.out.println("1. Male");
             System.out.println("2. Female");
             System.out.println("3. Other");
@@ -111,6 +126,8 @@ public class AccountController {
             gender = scanner.nextLine().trim();
 
             switch (gender) {
+                case "0":
+                    return false;
                 case "1":
                     gender = "Male";
                     break;
@@ -126,27 +143,35 @@ public class AccountController {
         }
 
         while (!isValidContactNumber(contactNumber)) {
-            System.out.print("Enter contact number (8-15 digits): ");
+            System.out.print("Enter contact number (8-15 digits, 0 to cancel): ");
             contactNumber = scanner.nextLine().trim();
+            if (contactNumber.equals("0")) {
+                return false;
+            }
             if (contactNumber.length() < 8 || contactNumber.length() > 15) {
                 System.out.println("Contact number must be between 8 and 15 digits. Please try again.");
             }
         }
 
         while (!isValidEmail(emailAddress)) {
-            System.out.print("Enter a valid email address: ");
+            System.out.print("Enter a valid email address (0 to cancel): ");
             emailAddress = scanner.nextLine().trim();
+            if (emailAddress.equals("0")) {
+                return false;
+            }
             if (!emailAddress.contains("@") || !emailAddress.contains(".")) {
                 System.out.println("Invalid email format. Please include '@' and a domain.");
             }
         }
 
         // Day input
-        System.out.println("Enter date of birth: ");
-        while (day.length() != 2 || !day.matches("\\d{2}") || Integer.parseInt(day) < 1
-                || Integer.parseInt(day) > 31) {
+        System.out.println("Enter date of birth (0 to cancel): ");
+        while (day.length() != 2 || !day.matches("\\d{2}") || Integer.parseInt(day) < 1 || Integer.parseInt(day) > 31) {
             System.out.print("Enter day (DD): ");
             day = scanner.nextLine().trim();
+            if (day.equals("0")) {
+                return false;
+            }
             if (day.length() != 2 || !day.matches("\\d{2}") || Integer.parseInt(day) < 1
                     || Integer.parseInt(day) > 31) {
                 System.out.println("Invalid day. Please enter a two-digit day (e.g., 01, 15, 31).");
@@ -158,6 +183,9 @@ public class AccountController {
                 || Integer.parseInt(month) > 12) {
             System.out.print("Enter month (MM): ");
             month = scanner.nextLine().trim();
+            if (month.equals("0")) {
+                return false;
+            }
             if (month.length() != 2 || !month.matches("\\d{2}") || Integer.parseInt(month) < 1
                     || Integer.parseInt(month) > 12) {
                 System.out.println(
@@ -168,8 +196,11 @@ public class AccountController {
         // Year input
         while (year.length() != 4 || !year.matches("\\d{4}") || Integer.parseInt(year) < 1900
                 || Integer.parseInt(year) > LocalDate.now().getYear()) {
-            System.out.print("Enter year (YYYY): ");
+            System.out.print("Enter year (YYYY, 0 to cancel): ");
             year = scanner.nextLine().trim();
+            if (year.equals("0")) {
+                return false;
+            }
             if (year.length() != 4 || !year.matches("\\d{4}") || Integer.parseInt(year) < 1900
                     || Integer.parseInt(year) > LocalDate.now().getYear()) {
                 System.out.println("Invalid year. Please enter a four-digit year (e.g., 1990, 2023).");
@@ -182,8 +213,8 @@ public class AccountController {
         if (!isAdmin) {
             while (!(bloodType.equals("A+") || bloodType.equals("A-") || bloodType.equals("B+")
                     || bloodType.equals("B-") || bloodType.equals("AB+") || bloodType.equals("AB-")
-                    || bloodType.equals("O+") || bloodType.equals("O-"))) {
-                System.out.println("Choose blood type:");
+                    || bloodType.equals("O+") || bloodType.equals("O-") || bloodType.equals("0"))) {
+                System.out.println("Choose blood type (0 to cancel):");
                 System.out.println("1. A+");
                 System.out.println("2. A-");
                 System.out.println("3. B+");
@@ -195,6 +226,8 @@ public class AccountController {
                 System.out.print("Enter choice (1-8): ");
                 bloodType = scanner.nextLine().trim();
                 switch (bloodType) {
+                    case "0":
+                        return false;
                     case "1":
                         bloodType = "A+";
                         break;

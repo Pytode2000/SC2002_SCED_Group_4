@@ -1036,15 +1036,12 @@ public class AppointmentController {
                     System.out.println("Skipping appointment with invalid number of fields: " + line);
                     continue;
                 }
-                String status = fields[5];
-                if (!status.equals("BOOKED")) {
-                    continue;
-                }
                 String appointmentId = fields[0];
                 String doctorId = fields[1];
                 String patientId = fields[2];
                 LocalDate date;
                 LocalTime time;
+                String status;
                 String requestMessage;
                 String rescheduleDate;
                 String rescheduleTime;
@@ -1052,6 +1049,7 @@ public class AppointmentController {
                 try {
                     date = LocalDate.parse(fields[3], dateFormatter);
                     time = LocalTime.parse(fields[4], timeFormatter);
+                    status = fields[5];
                     requestMessage = fields[6];
                     rescheduleDate = fields[7];
                     rescheduleTime = fields[8];
@@ -1070,8 +1068,14 @@ public class AppointmentController {
 
         // Prompt for patient ID to view appointment outcome details
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter patient ID to view appointment outcome details: ");
+        System.out.print(
+                "Enter patient ID to view completed (Status: CLOSED) appointment outcome details (or 0 to exit): ");
         String patientId = scanner.nextLine().trim();
+
+        if (patientId.equals("0")) {
+            System.out.println("Exiting to main menu...");
+            return;
+        }
 
         if (patientId.isEmpty()) {
             System.out.println("Please enter a valid patient ID.");
@@ -1080,8 +1084,6 @@ public class AppointmentController {
 
         AppointmentOutcomeController appointmentOutcomeController = new AppointmentOutcomeController();
         appointmentOutcomeController.displayAppointmentOutcomesByPatientId(patientId);
-
-        // PrintUtils.pause();
     }
 
 }
