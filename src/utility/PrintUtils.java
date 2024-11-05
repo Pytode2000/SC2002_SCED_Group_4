@@ -10,4 +10,6 @@ public class PrintUtils {
         Scanner scanner = new Scanner(System.in);
         scanner.nextLine(); // Wait for user to hit Enter
     }
+
+    public static void printTable()
 }
