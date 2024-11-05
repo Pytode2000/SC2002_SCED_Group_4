@@ -388,9 +388,11 @@ public class AppointmentController {
             while ((line = reader.readLine()) != null) {
                 String[] fields = line.split("\\|");
 
-                // Check if the appointment is booked for the patient and has a status of BOOKED or RESCHEDULE
+                // Check if the appointment is booked for the patient and has a status of BOOKED
+                // or RESCHEDULE
                 if (fields.length >= 6 && fields[2].equals(patientId)
-                        && (fields[5].equals("BOOKED") || fields[5].equals("RESCHEDULE") || fields[5].equals("PENDING"))) {
+                        && (fields[5].equals("BOOKED") || fields[5].equals("RESCHEDULE")
+                                || fields[5].equals("PENDING"))) {
                     bookedAppointments.add(fields);
                 }
             }
@@ -447,17 +449,17 @@ public class AppointmentController {
 
                     // If status is RESCHEDULE, reset specific fields
                     if (selectedAppointment[5].equals("RESCHEDULE")) {
-                        selectedAppointment[2] = "-";         // Reset patientId
+                        selectedAppointment[2] = "-"; // Reset patientId
                         selectedAppointment[5] = "AVAILABLE"; // Set status to AVAILABLE
-                        selectedAppointment[6] = "-";         // Clear requestMessage
-                        selectedAppointment[7] = "-";         // Clear rescheduleDate
-                        selectedAppointment[8] = "-";         // Clear rescheduleTime
-                        selectedAppointment[9] = "-";         // Clear rescheduleMessage
+                        selectedAppointment[6] = "-"; // Clear requestMessage
+                        selectedAppointment[7] = "-"; // Clear rescheduleDate
+                        selectedAppointment[8] = "-"; // Clear rescheduleTime
+                        selectedAppointment[9] = "-"; // Clear rescheduleMessage
                     } else {
                         // For BOOKED status, reset patientId, status, and request message only
-                        selectedAppointment[2] = "-";         // Reset patientId
+                        selectedAppointment[2] = "-"; // Reset patientId
                         selectedAppointment[5] = "AVAILABLE"; // Set status to AVAILABLE
-                        selectedAppointment[6] = "-";         // Clear requestMessage
+                        selectedAppointment[6] = "-"; // Clear requestMessage
                     }
 
                     String newLine = String.join("|", selectedAppointment);
@@ -1021,11 +1023,11 @@ public class AppointmentController {
     public void displayDoctorAppointmentDetails() {
         System.out.println("\n--- View All Appointments ---");
 
-        System.out.printf("%-20s %-15s %-15s %-15s %-10s %-15s %-30s %-20s %-20s %-30s%n",
+        System.out.printf("%-16s %-12s %-12s %-12s %-8s %-12s %-32s %-18s %-18s %-32s%n",
                 "Appointment ID", "Doctor ID", "Patient ID", "Date", "Time", "Status", "Request Message",
                 "Reschedule Date", "Reschedule Time", "Reschedule Message");
         System.out.println(
-                "-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                "-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
         try (BufferedReader reader = new BufferedReader(new FileReader(APPOINTMENT_FILE))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -1034,12 +1036,15 @@ public class AppointmentController {
                     System.out.println("Skipping appointment with invalid number of fields: " + line);
                     continue;
                 }
+                String status = fields[5];
+                if (!status.equals("BOOKED")) {
+                    continue;
+                }
                 String appointmentId = fields[0];
                 String doctorId = fields[1];
                 String patientId = fields[2];
                 LocalDate date;
                 LocalTime time;
-                String status;
                 String requestMessage;
                 String rescheduleDate;
                 String rescheduleTime;
@@ -1047,7 +1052,6 @@ public class AppointmentController {
                 try {
                     date = LocalDate.parse(fields[3], dateFormatter);
                     time = LocalTime.parse(fields[4], timeFormatter);
-                    status = fields[5];
                     requestMessage = fields[6];
                     rescheduleDate = fields[7];
                     rescheduleTime = fields[8];
@@ -1056,7 +1060,7 @@ public class AppointmentController {
                     System.out.println("Skipping appointment with invalid date/time: " + line);
                     continue;
                 }
-                System.out.printf("%-20s %-15s %-15s %-15s %-10s %-15s %-30s %-20s %-20s %-30s%n",
+                System.out.printf("%-16s %-12s %-12s %-12s %-8s %-12s %-32s %-18s %-18s %-32s%n",
                         appointmentId, doctorId, patientId, date.format(dateFormatter), time.format(timeFormatter),
                         status, requestMessage, rescheduleDate, rescheduleTime, rescheduleMessage);
             }
@@ -1077,7 +1081,7 @@ public class AppointmentController {
         AppointmentOutcomeController appointmentOutcomeController = new AppointmentOutcomeController();
         appointmentOutcomeController.displayAppointmentOutcomesByPatientId(patientId);
 
-        PrintUtils.pause();
+        // PrintUtils.pause();
     }
 
 }
