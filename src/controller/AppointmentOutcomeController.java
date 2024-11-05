@@ -28,7 +28,8 @@ public class AppointmentOutcomeController {
 
     private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
-    // Display appointment outcomes by patient ID with full prescription details in a table format
+    // Display appointment outcomes by patient ID with full prescription details in
+    // a table format
     public void displayAppointmentOutcomesByPatientId(String patientId) {
         List<AppointmentOutcome> outcomes = getAppointmentOutcomesByPatientId(patientId);
 
@@ -43,7 +44,8 @@ public class AppointmentOutcomeController {
             System.out.printf("%-15s | %-20s | %-20s | %-50s | %-51s |%n",
                     "Date", "Doctor", "Service Type",
                     "Medications", "Consultation Notes");
-            System.out.println("--------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            System.out.println(
+                    "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
             // Display each appointment outcome in a table row format
             for (AppointmentOutcome outcome : outcomes) {
@@ -68,7 +70,8 @@ public class AppointmentOutcomeController {
                             outcome.getDateOfAppointment().format(dateFormatter),
                             doctorName,
                             outcome.getServiceType(),
-                            String.format("1. %dx %s (%s)", firstPrescription.getQuantity(), medicineName, firstPrescription.getStatus()),
+                            String.format("1. %dx %s (%s)", firstPrescription.getQuantity(), medicineName,
+                                    firstPrescription.getStatus()),
                             outcome.getConsultationNotes()); // Consultation notes at the top
 
                     // Print subsequent rows for additional prescriptions, if any
@@ -77,18 +80,20 @@ public class AppointmentOutcomeController {
                         medicineName = getMedicineName(prescription.getMedicineId());
                         System.out.printf("%-15s | %-20s | %-20s | %-50s | %-51s |%n",
                                 "", "", "",
-                                String.format("%d. %dx %s (%s)", i + 1, prescription.getQuantity(), medicineName, prescription.getStatus()),
+                                String.format("%d. %dx %s (%s)", i + 1, prescription.getQuantity(), medicineName,
+                                        prescription.getStatus()),
                                 ""); // Empty Consultation Notes column here
                     }
                 }
 
-                System.out.println("--------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                System.out.println(
+                        "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
             }
         }
         PrintUtils.pause();
     }
 
-// Retrieve a list of Prescription objects by prescription IDs
+    // Retrieve a list of Prescription objects by prescription IDs
     private List<Prescription> getPrescriptionsByIds(List<String> prescriptionIds) {
         List<Prescription> prescriptions = new ArrayList<>();
 
@@ -111,7 +116,7 @@ public class AppointmentOutcomeController {
         return prescriptions;
     }
 
-// Retrieve medicine name by medicineId from medicine file
+    // Retrieve medicine name by medicineId from medicine file
     private String getMedicineName(String medicineId) {
         try (BufferedReader reader = new BufferedReader(new FileReader("data/medicine.txt"))) {
             String line;
@@ -127,7 +132,7 @@ public class AppointmentOutcomeController {
         return "Unknown Medicine";
     }
 
-// Retrieve appointment outcomes by patient ID from file
+    // Retrieve appointment outcomes by patient ID from file
     public List<AppointmentOutcome> getAppointmentOutcomesByPatientId(String patientId) {
         List<AppointmentOutcome> outcomes = new ArrayList<>();
 
@@ -138,7 +143,8 @@ public class AppointmentOutcomeController {
                 if (outcomeFields.length >= 7 && outcomeFields[1].equals(patientId)) {
                     LocalDate dateOfAppointment = LocalDate.parse(outcomeFields[3], dateFormatter);
 
-                    // Parse the prescription IDs from the outcomeFields[5], which is semicolon-separated
+                    // Parse the prescription IDs from the outcomeFields[5], which is
+                    // semicolon-separated
                     List<String> prescriptionIds = parsePrescriptionIds(outcomeFields[5]);
 
                     // Create appointment outcome with prescription IDs
@@ -160,7 +166,7 @@ public class AppointmentOutcomeController {
         return outcomes;
     }
 
-// Helper method to parse prescription IDs from a semicolon-separated string
+    // Helper method to parse prescription IDs from a semicolon-separated string
     private List<String> parsePrescriptionIds(String prescriptionField) {
         List<String> prescriptionIds = new ArrayList<>();
         if (prescriptionField.equals("-")) {
@@ -169,7 +175,7 @@ public class AppointmentOutcomeController {
         if (prescriptionField != null && !prescriptionField.isEmpty()) {
             String[] idsArray = prescriptionField.split(";");
             for (String id : idsArray) {
-                prescriptionIds.add(id.trim());  // Add each prescription ID to the list
+                prescriptionIds.add(id.trim()); // Add each prescription ID to the list
             }
         }
         return prescriptionIds;
@@ -191,7 +197,7 @@ public class AppointmentOutcomeController {
         return "Doctor not found.";
     }
 
-    //Print out menu for Doctor
+    // Print out menu for Doctor
     private List<String> getUpcomingAppointments(String doctorId) {
 
         List<String> upcomingAppointments = new ArrayList<>();
@@ -242,9 +248,9 @@ public class AppointmentOutcomeController {
 
         for (String patient : patients) {
             String[] fields = patient.split("\\|");
-            if (fields.length >= 3) {  // Ensure at least ID, first name, and last name are available
+            if (fields.length >= 3) { // Ensure at least ID, first name, and last name are available
                 String patientId = fields[0];
-                String fullName = fields[1] + " " + fields[2];  // Combine first and last name
+                String fullName = fields[1] + " " + fields[2]; // Combine first and last name
                 patientMap.put(patientId, fullName);
             }
         }
@@ -256,12 +262,12 @@ public class AppointmentOutcomeController {
 
         for (String appointment : appointments) {
             String[] fields = appointment.split("\\|");
-            if (fields.length >= 3) {  // Ensure that the patient ID field exists
+            if (fields.length >= 3) { // Ensure that the patient ID field exists
                 String patientId = fields[2];
 
                 // Replace patient ID with full name if available
                 if (patientMap.containsKey(patientId)) {
-                    fields[2] = patientMap.get(patientId);  // Replace patient ID with name
+                    fields[2] = patientMap.get(patientId); // Replace patient ID with name
                 }
 
                 // Reconstruct the appointment entry as a formatted string
@@ -288,7 +294,7 @@ public class AppointmentOutcomeController {
 
     private void createAppointmentOutcome(String doctorId) {
         List<String> upcomingAppointments = getUpcomingAppointments(doctorId);
-        if (upcomingAppointments.isEmpty()) {
+        if (upcomingAppointments == null || upcomingAppointments.isEmpty()) {
             System.out.println("No upcoming appointments available.");
             return;
         }
@@ -319,7 +325,8 @@ public class AppointmentOutcomeController {
 
         // Construct the final record string
         String appointmentRecord = String.format("%s|%s|%s|%s|%s|%s|%s",
-                appointmentId, patientId, doctorId, dateOfAppointment, typeOfService, prescribedMedicine, consultationNotes);
+                appointmentId, patientId, doctorId, dateOfAppointment, typeOfService, prescribedMedicine,
+                consultationNotes);
 
         FileUtils.writeToFile(APPOINTMENT_OUTCOME_FILE, appointmentRecord);
         System.out.println("\nAppointment outcome record created successfully.");
@@ -355,7 +362,7 @@ public class AppointmentOutcomeController {
         for (String appointment : appointments) {
             String[] fields = appointment.split("\\|");
             if (fields[0].equals(appointmentId)) {
-                return new String[]{fields[2], fields[3]}; // {patientId, dateOfAppointment}
+                return new String[] { fields[2], fields[3] }; // {patientId, dateOfAppointment}
             }
         }
         return null;
@@ -374,10 +381,10 @@ public class AppointmentOutcomeController {
         System.out.println("Enter consultation notes:");
         String consultationNotes = scanner.nextLine().trim();
 
-        return new String[]{typeOfService, prescribedMedicine, consultationNotes};
+        return new String[] { typeOfService, prescribedMedicine, consultationNotes };
     }
 
-// Checks if the given appointmentId exists in the list of upcoming appointments
+    // Checks if the given appointmentId exists in the list of upcoming appointments
     private boolean checkAppointmentId(String appointmentId, List<String> appointments) {
         for (String appointment : appointments) {
             String[] fields = appointment.split("\\|");
@@ -402,7 +409,7 @@ public class AppointmentOutcomeController {
             // Check for valid integer input
             if (scanner.hasNextInt()) {
                 choice = scanner.nextInt();
-                scanner.nextLine();  // Consume newline character
+                scanner.nextLine(); // Consume newline character
 
                 switch (choice) {
                     case 1:
@@ -419,7 +426,7 @@ public class AppointmentOutcomeController {
 
                     case 0:
                         System.out.println("Returning to previous menu.");
-                        return;  // Exit the loop and method
+                        return; // Exit the loop and method
 
                     default:
                         System.out.println("Invalid choice. Please select 1, 2, or 0.");
@@ -427,7 +434,7 @@ public class AppointmentOutcomeController {
             } else {
 
                 System.out.println("Invalid input. Please enter a number (0, 1, or 2).");
-                scanner.next();  // Consume invalid input
+                scanner.next(); // Consume invalid input
             }
         }
     }

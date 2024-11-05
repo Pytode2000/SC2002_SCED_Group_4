@@ -24,7 +24,7 @@ public class ForgetPasswordController {
     public void handleForgetPasswordRequest() {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.print("Enter your User ID (or press 0 to exit): ");
+        System.out.print("Enter your User ID (or 0 to cancel): ");
         String userId = scanner.nextLine().trim();
         if (userId.equals("0")) {
             System.out.println("Exiting request.");
@@ -38,7 +38,7 @@ public class ForgetPasswordController {
             return;
         }
 
-        System.out.print("Enter a message for the reset request (or press 0 to exit): ");
+        System.out.print("Enter a message for the reset request (or 0 to cancel): ");
         String message = scanner.nextLine().trim();
         if (message.equals("0")) {
             System.out.println("Exiting request.");
@@ -80,7 +80,7 @@ public class ForgetPasswordController {
                         request.getRequestDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
             }
 
-            System.out.print("\nEnter the request number to process (or 0 to exit): ");
+            System.out.print("\nEnter the request number to process (or 0 to cancel): ");
             int index;
             try {
                 index = Integer.parseInt(scanner.nextLine().trim());

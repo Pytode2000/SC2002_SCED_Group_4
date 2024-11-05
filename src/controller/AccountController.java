@@ -50,7 +50,7 @@ public class AccountController {
         if (isAdmin) {
             while (!(userRole.equals("Doctor") || userRole.equals("Pharmacist") || userRole.equals("Administrator")
                     || userRole.equals("0"))) {
-                System.out.println("Choose Role (0 to cancel):");
+                System.out.println("\nChoose Role (0 to cancel):");
                 System.out.println("1. Doctor");
                 System.out.println("2. Pharmacist");
                 System.out.println("3. Administrator");
@@ -1078,6 +1078,19 @@ public class AccountController {
                 break;
             }
 
+            while (true) {
+                System.out.println("Do you want to update your password? (yes/no): ");
+                String input = scanner.nextLine().toLowerCase().trim();
+                if (input.equals("yes")) {
+                    updateStaffPasswordFlow((staffId), scanner);
+                    break;
+                } else if (input.equals("no")) {
+                    break;
+                } else {
+                    System.out.println("Invalid input. Please enter yes or no.");
+                }
+            }
+
             if (!anyFieldUpdated) {
                 System.out.println("No fields were updated for staff ID: " + staffId);
                 return;
@@ -1125,6 +1138,67 @@ public class AccountController {
             System.out.println("An error occurred while updating the staff information.");
             System.out.println("Please make sure the staff ID is valid.");
             e.printStackTrace();
+        }
+    }
+
+    // Handles the update password flow for all users with a 3-attempt limit for
+    // both current and new passwords
+    private void updateStaffPasswordFlow(String staffId, Scanner scanner) {
+        int currentPasswordAttempts = 0;
+        boolean currentPasswordCorrect = false;
+
+        // First, verify current password with up to 3 attempts
+        while (currentPasswordAttempts < 3 && !currentPasswordCorrect) {
+            System.out.print("Enter current password: ");
+            String currentPassword = scanner.nextLine().trim();
+
+            if (authenticate(staffId, hashPassword(currentPassword))) {
+                currentPasswordCorrect = true;
+            } else {
+                currentPasswordAttempts++;
+                System.out.println(
+                        "Incorrect current password. " + (3 - currentPasswordAttempts) + " attempt(s) remaining.");
+            }
+        }
+
+        // If the current password is correct, proceed to update the password with a new
+        // one
+        if (currentPasswordCorrect) {
+            int newPasswordAttempts = 0;
+            boolean passwordUpdated = false;
+
+            while (newPasswordAttempts < 3 && !passwordUpdated) {
+                System.out.print("Enter new password (min 8 chars, 1 digit, 1 special char): ");
+                String newPassword = scanner.nextLine().trim();
+
+                if (isValidPassword(newPassword)) {
+                    passwordUpdated = updateStaffPassword(staffId, newPassword);
+                    System.out.println(passwordUpdated ? "Password updated successfully." : "Password update failed.");
+                    PrintUtils.pause();
+                } else {
+                    newPasswordAttempts++;
+                    System.out.println(
+                            "Invalid password format. " + (3 - newPasswordAttempts) + " attempt(s) remaining.");
+                }
+
+            }
+
+            // If user fails to enter a valid new password after 3 attempts
+            if (!passwordUpdated && newPasswordAttempts >= 3) {
+                System.out.println("Failed to update password. Exceeded maximum attempts.");
+            }
+        } else {
+            System.out.println("Password update failed. Exceeded maximum attempts for current password.");
+        }
+    }
+
+    // Update password in the account file after current password authentication
+    public boolean updateStaffPassword(String staffId, String newPassword) {
+        try {
+            return updateAccountFile(staffId, hashPassword(newPassword), ACCOUNT_TXT, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
