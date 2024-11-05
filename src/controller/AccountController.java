@@ -141,45 +141,44 @@ public class AccountController {
             }
         }
 
-        if (!isAdmin) {
-            // Day input
-            System.out.println("Enter date of birth: ");
-            while (day.length() != 2 || !day.matches("\\d{2}") || Integer.parseInt(day) < 1
+        // Day input
+        System.out.println("Enter date of birth: ");
+        while (day.length() != 2 || !day.matches("\\d{2}") || Integer.parseInt(day) < 1
+                || Integer.parseInt(day) > 31) {
+            System.out.print("Enter day (DD): ");
+            day = scanner.nextLine().trim();
+            if (day.length() != 2 || !day.matches("\\d{2}") || Integer.parseInt(day) < 1
                     || Integer.parseInt(day) > 31) {
-                System.out.print("Enter day (DD): ");
-                day = scanner.nextLine().trim();
-                if (day.length() != 2 || !day.matches("\\d{2}") || Integer.parseInt(day) < 1
-                        || Integer.parseInt(day) > 31) {
-                    System.out.println("Invalid day. Please enter a two-digit day (e.g., 01, 15, 31).");
-                }
+                System.out.println("Invalid day. Please enter a two-digit day (e.g., 01, 15, 31).");
             }
+        }
 
-            // Month input
-            while (month.length() != 2 || !month.matches("\\d{2}") || Integer.parseInt(month) < 1
+        // Month input
+        while (month.length() != 2 || !month.matches("\\d{2}") || Integer.parseInt(month) < 1
+                || Integer.parseInt(month) > 12) {
+            System.out.print("Enter month (MM): ");
+            month = scanner.nextLine().trim();
+            if (month.length() != 2 || !month.matches("\\d{2}") || Integer.parseInt(month) < 1
                     || Integer.parseInt(month) > 12) {
-                System.out.print("Enter month (MM): ");
-                month = scanner.nextLine().trim();
-                if (month.length() != 2 || !month.matches("\\d{2}") || Integer.parseInt(month) < 1
-                        || Integer.parseInt(month) > 12) {
-                    System.out.println(
-                            "Invalid month. Please enter a valid two-digit month (e.g., 01 for January, 12 for December).");
-                }
+                System.out.println(
+                        "Invalid month. Please enter a valid two-digit month (e.g., 01 for January, 12 for December).");
             }
+        }
 
-            // Year input
-            while (year.length() != 4 || !year.matches("\\d{4}") || Integer.parseInt(year) < 1900
+        // Year input
+        while (year.length() != 4 || !year.matches("\\d{4}") || Integer.parseInt(year) < 1900
+                || Integer.parseInt(year) > LocalDate.now().getYear()) {
+            System.out.print("Enter year (YYYY): ");
+            year = scanner.nextLine().trim();
+            if (year.length() != 4 || !year.matches("\\d{4}") || Integer.parseInt(year) < 1900
                     || Integer.parseInt(year) > LocalDate.now().getYear()) {
-                System.out.print("Enter year (YYYY): ");
-                year = scanner.nextLine().trim();
-                if (year.length() != 4 || !year.matches("\\d{4}") || Integer.parseInt(year) < 1900
-                        || Integer.parseInt(year) > LocalDate.now().getYear()) {
-                    System.out.println("Invalid year. Please enter a four-digit year (e.g., 1990, 2023).");
-                }
+                System.out.println("Invalid year. Please enter a four-digit year (e.g., 1990, 2023).");
             }
+        }
 
-            // Combine into final date format
-            dateOfBirth = day + "-" + month + "-" + year;
-
+        // Combine into final date format
+        dateOfBirth = day + "-" + month + "-" + year;
+        if (!isAdmin) {
             while (!(bloodType.equals("A+") || bloodType.equals("A-") || bloodType.equals("B+")
                     || bloodType.equals("B-") || bloodType.equals("AB+") || bloodType.equals("AB-")
                     || bloodType.equals("O+") || bloodType.equals("O-"))) {
