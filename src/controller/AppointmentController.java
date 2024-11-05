@@ -903,6 +903,7 @@ public class AppointmentController {
         System.out.println("Pending appointment requests for doctor ID: " + doctorId + ":");
         for (String request : appointmentRequests) {
             System.out.println(counter + ". " + request);
+            counter++;
         }
         return;
     }
@@ -971,6 +972,9 @@ public class AppointmentController {
             }
         }
         else {
+            fields[5] = "AVAILABLE";
+            fields[6] = "-";
+            fields[2] = "-";
             fields[7] = "-";
             fields[8] = "-";
             fields[9] = "-";
