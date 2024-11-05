@@ -1,6 +1,6 @@
 package entity;
 
-public class Doctor extends entity.User {
+public class Doctor extends entity.Staff {
 
     // add more doctor-specific attributes here if any.
     public Doctor(String userId, String firstName, String lastName, String gender, String contactNumber, String emailAddress, String userRole) {
