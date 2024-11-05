@@ -511,11 +511,13 @@ public class AccountController {
                 if (isValidPassword(newPassword)) {
                     passwordUpdated = updatePassword(user.getUserId(), newPassword);
                     System.out.println(passwordUpdated ? "Password updated successfully." : "Password update failed.");
+                    PrintUtils.pause();
                 } else {
                     newPasswordAttempts++;
                     System.out.println(
                             "Invalid password format. " + (3 - newPasswordAttempts) + " attempt(s) remaining.");
                 }
+
             }
 
             // If user fails to enter a valid new password after 3 attempts
@@ -551,6 +553,7 @@ public class AccountController {
                     patient.setContactNumber(newContactNumber);
                     System.out.println("Contact number updated successfully.");
                     contactUpdated = true;
+                    PrintUtils.pause();
                 } else {
                     System.out.println("Failed to update contact number. Please try again.");
                 }
@@ -579,6 +582,7 @@ public class AccountController {
                     patient.setEmailAddress(newEmail);
                     System.out.println("Email address updated successfully.");
                     emailUpdated = true;
+                    PrintUtils.pause();
                 } else {
                     System.out.println("Failed to update email address. Please try again.");
                 }
@@ -779,8 +783,11 @@ public class AccountController {
     }
 
     // Helper validation methods
+// Helper validation methods
     private boolean isValidContactNumber(String contactNumber) {
-        return contactNumber.length() >= 8 && contactNumber.length() <= 15;
+        return contactNumber.length() >= 8
+                && contactNumber.length() <= 15
+                && contactNumber.matches("[0-9]+"); // Ensures all characters are digits
     }
 
     private boolean isValidEmail(String email) {
