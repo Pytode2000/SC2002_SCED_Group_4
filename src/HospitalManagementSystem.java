@@ -1,5 +1,6 @@
 
 import controller.AccountController;
+import controller.ForgetPasswordController;
 import controller.MenuController;
 import entity.User;
 import java.util.Scanner;
@@ -9,6 +10,7 @@ public class HospitalManagementSystem {
     public static void main(String[] args) {
 
         AccountController accountController = new AccountController(); // For Login and Register methods.
+        ForgetPasswordController forgetPasswordController = new ForgetPasswordController();
         Scanner scanner = new Scanner(System.in);
         String choice;
 
@@ -17,6 +19,7 @@ public class HospitalManagementSystem {
             System.out.println("\n--- Hospital Management System ---");
             System.out.println("1. Login");
             System.out.println("2. Register");
+            System.out.println("3. Forgot Password");
             System.out.println("0. Exit Program");
             System.out.print("\nEnter your choice: ");
             choice = scanner.nextLine();
@@ -32,6 +35,9 @@ public class HospitalManagementSystem {
 
                 case "2":
                     accountController.register(false); // isAdmin = false.
+                    break;
+                case "3":
+                    forgetPasswordController.handleForgetPasswordRequest();
                     break;
 
                 case "0":
