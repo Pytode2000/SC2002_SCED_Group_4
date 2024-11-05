@@ -65,8 +65,8 @@ public class AppointmentController {
             // Read doctor details
             while ((line = staffReader.readLine()) != null) {
                 String[] fields = line.split("\\|");
-                if ("Doctor".equalsIgnoreCase(fields[6])) {
-                    doctorDetails.put(fields[0], new String[] { fields[1] + " " + fields[2], fields[4], fields[5] });
+                if ("Doctor".equalsIgnoreCase(fields[7])) {
+                    doctorDetails.put(fields[0], new String[] { fields[1] + " " + fields[2], fields[5], fields[6] });
                     doctorAppointments.put(fields[0], new ArrayList<>());
                 }
             }
@@ -365,8 +365,8 @@ public class AppointmentController {
                     System.out.println("\nDoctor Details:"
                             + "\nName: " + fields[1] + " " + fields[2]
                             + "\nGender: " + fields[3]
-                            + "\nContact Number: " + fields[4]
-                            + "\nEmail Address: " + fields[5]);
+                            + "\nContact Number: " + fields[5]
+                            + "\nEmail Address: " + fields[6]);
                     PrintUtils.pause();
                 }
             }
