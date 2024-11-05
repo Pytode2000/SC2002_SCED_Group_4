@@ -6,15 +6,18 @@ public abstract class User { // ABSTRACT CLASS, NO USER OBJECT WILL EVER BE INST
     private String firstName;
     private String lastName;
     private String gender;
+    private String dateOfBirth;
     private String contactNumber;
     private String emailAddress;
     private String userRole;
 
-    public User(String userId, String firstName, String lastName, String gender, String contactNumber, String emailAddress, String userRole) {
+    public User(String userId, String firstName, String lastName, String gender, String dateOfBirth,
+            String contactNumber, String emailAddress, String userRole) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.gender = gender;
+        this.dateOfBirth = dateOfBirth;
         this.contactNumber = contactNumber;
         this.emailAddress = emailAddress;
         this.userRole = userRole;
@@ -34,6 +37,10 @@ public abstract class User { // ABSTRACT CLASS, NO USER OBJECT WILL EVER BE INST
 
     public String getGender() {
         return gender;
+    }
+
+    public String getDateOfBirth() {
+        return dateOfBirth;
     }
 
     public String getContactNumber() {

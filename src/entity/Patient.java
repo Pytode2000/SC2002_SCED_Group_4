@@ -7,15 +7,11 @@ public class Patient extends entity.User {
 
     // add more patient-specific attributes here if any.
     // Constructor
-    public Patient(String userId, String firstName, String lastName, String gender, String contactNumber, String emailAddress, String userRole, String dateOfBirth, String bloodType) {
+    public Patient(String userId, String firstName, String lastName, String gender, String contactNumber,
+            String emailAddress, String userRole, String dateOfBirth, String bloodType) {
         // Using the constructor of the abstract User class.
-        super(userId, firstName, lastName, gender, contactNumber, emailAddress, userRole);
-        this.dateOfBirth = dateOfBirth;
+        super(userId, firstName, lastName, gender, dateOfBirth, contactNumber, emailAddress, userRole);
         this.bloodType = bloodType;
-    }
-
-    public String getDateOfBirth() {
-        return dateOfBirth;
     }
 
     public String getBloodType() {
@@ -30,8 +26,9 @@ public class Patient extends entity.User {
 
     @Override
     public String registrationString() {
-        //userId, firstName, lastName, gender, contactNumber, emailAddress, userRole
-        return getUserId() + "|" + getFirstName() + "|" + getLastName() + "|" + getGender() + "|" + getContactNumber() + "|" + getEmailAddress() + "|" + getUserRole() + "|" + getDateOfBirth() + "|" + getBloodType();
+        // userId, firstName, lastName, gender, contactNumber, emailAddress, userRole
+        return getUserId() + "|" + getFirstName() + "|" + getLastName() + "|" + getGender() + "|" + getContactNumber()
+                + "|" + getEmailAddress() + "|" + getUserRole() + "|" + getDateOfBirth() + "|" + getBloodType();
     }
 
     @Override

@@ -56,7 +56,8 @@ public class AppointmentController {
         Scanner scanner = new Scanner(System.in);
 
         // Retrieve doctor details and group their appointments
-        try (BufferedReader staffReader = new BufferedReader(new FileReader(STAFF_FILE)); BufferedReader appointmentReader = new BufferedReader(new FileReader(APPOINTMENT_FILE))) {
+        try (BufferedReader staffReader = new BufferedReader(new FileReader(STAFF_FILE));
+                BufferedReader appointmentReader = new BufferedReader(new FileReader(APPOINTMENT_FILE))) {
 
             String line;
             Map<String, String[]> doctorDetails = new HashMap<>();
@@ -64,8 +65,8 @@ public class AppointmentController {
             // Read doctor details
             while ((line = staffReader.readLine()) != null) {
                 String[] fields = line.split("\\|");
-                if ("Doctor".equalsIgnoreCase(fields[6])) {
-                    doctorDetails.put(fields[0], new String[]{fields[1] + " " + fields[2], fields[4], fields[5]});
+                if ("Doctor".equalsIgnoreCase(fields[7])) {
+                    doctorDetails.put(fields[0], new String[] { fields[1] + " " + fields[2], fields[5], fields[6] });
                     doctorAppointments.put(fields[0], new ArrayList<>());
                 }
             }
@@ -82,15 +83,14 @@ public class AppointmentController {
             }
 
             // Sort each doctor's appointments by date and time
-            doctorAppointments.forEach((doctorId, appointments)
-                    -> appointments.sort(Comparator.comparing((String appointment) -> {
+            doctorAppointments.forEach(
+                    (doctorId, appointments) -> appointments.sort(Comparator.comparing((String appointment) -> {
                         String[] fields = appointment.split("\\|");
                         return LocalDate.parse(fields[3], dateFormatter);
                     }).thenComparing(appointment -> {
                         String[] fields = appointment.split("\\|");
                         return LocalTime.parse(fields[4], timeFormatter);
-                    }))
-            );
+                    })));
 
             // Display appointments by doctor
             System.out.println("\n--- Available Appointments by Doctor ---");
@@ -129,7 +129,9 @@ public class AppointmentController {
                     }
                     if (indexToAppointment.containsKey(selection)) {
                         String selectedAppointment = indexToAppointment.get(selection);
-                        processAppointmentSelection(1, Collections.singletonList(selectedAppointment), patientId); // Simplified slot handling
+                        processAppointmentSelection(1, Collections.singletonList(selectedAppointment), patientId); // Simplified
+                                                                                                                   // slot
+                                                                                                                   // handling
                         break;
                     } else {
                         System.out.println("Invalid selection. Please enter a valid number from the list.");
@@ -363,8 +365,8 @@ public class AppointmentController {
                     System.out.println("\nDoctor Details:"
                             + "\nName: " + fields[1] + " " + fields[2]
                             + "\nGender: " + fields[3]
-                            + "\nContact Number: " + fields[4]
-                            + "\nEmail Address: " + fields[5]);
+                            + "\nContact Number: " + fields[5]
+                            + "\nEmail Address: " + fields[6]);
                     PrintUtils.pause();
                 }
             }
@@ -468,7 +470,7 @@ public class AppointmentController {
                     break;
                 } else if (confirmation.equals("0")) {
                     System.out.println("Action canceled.");
-                    PrintUtils.pause();
+
                     deleteBookedAppointment(patientId); // Go back to the delete menu
 
                     break;
@@ -490,7 +492,6 @@ public class AppointmentController {
         // Retrieve booked appointments
         try (BufferedReader reader = new BufferedReader(new FileReader(APPOINTMENT_FILE))) {
             String line;
-            int index = 1;
 
             while ((line = reader.readLine()) != null) {
                 String[] fields = line.split("\\|");
@@ -501,6 +502,10 @@ public class AppointmentController {
                 }
             }
 
+            // Sort appointments by date and time
+            bookedAppointments.sort(Comparator.comparing((String[] fields) -> LocalDate.parse(fields[3], dateFormatter))
+                    .thenComparing(fields -> LocalTime.parse(fields[4], timeFormatter)));
+
             // Display appointments with index
             if (bookedAppointments.isEmpty()) {
                 System.out.println("You have no appointments available to request rescheduling!");
@@ -509,7 +514,7 @@ public class AppointmentController {
             }
             System.out.println("Select appointment to request for a reschedule");
 
-            index = 1;
+            int index = 1;
             for (String[] fields : bookedAppointments) {
                 LocalDate date = LocalDate.parse(fields[3], dateFormatter);
                 LocalTime time = LocalTime.parse(fields[4], timeFormatter);
@@ -784,8 +789,7 @@ public class AppointmentController {
                 "-",
                 "-",
                 "-",
-                "-"
-        );
+                "-");
 
         try (FileWriter writer = new FileWriter(APPOINTMENT_FILE, true)) {
             writer.write(appointmentRecord + System.lineSeparator());
@@ -846,7 +850,8 @@ public class AppointmentController {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.println("\nSet availability menu: \n1. Create availability slot \n2. Delete availability slot \n0. Return");
+            System.out.println(
+                    "\nSet availability menu: \n1. Create availability slot \n2. Delete availability slot \n0. Return");
             String choice = scanner.nextLine().trim();
 
             switch (choice) {
@@ -873,7 +878,8 @@ public class AppointmentController {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] fields = line.split("\\|");
-                if (fields.length >= 6 && (fields[5].equals("PENDING") || fields[5].equals("RESCHEDULE")) && fields[1].equals(doctorId)) {
+                if (fields.length >= 6 && (fields[5].equals("PENDING") || fields[5].equals("RESCHEDULE"))
+                        && fields[1].equals(doctorId)) {
                     appointmentsRequests.add(line);
                 }
             }
@@ -932,7 +938,7 @@ public class AppointmentController {
 
             // Check if a valid appointment was found
             if (selectedAppointment != null) {
-                break;  // Exit the loop if a matching appointment is found
+                break; // Exit the loop if a matching appointment is found
             } else {
                 System.out.println("Appointment ID not found. Please try again.");
             }
@@ -940,14 +946,15 @@ public class AppointmentController {
 
         // Step 4: Prompt user to accept or decline the appointment
         while (true) {
-            System.out.print("Do you want to accept or decline this appointment? (type 'accept', 'decline', or '0' to return): ");
+            System.out.print(
+                    "Do you want to accept or decline this appointment? (type 'accept', 'decline', or '0' to return): ");
             decision = scanner.nextLine().trim().toLowerCase();
 
             if (decision.equals("0")) {
                 System.out.println("Returning to the previous menu.");
                 return;
             } else if (decision.equals("accept") || decision.equals("decline")) {
-                break;  // Exit the loop if a valid choice is made
+                break; // Exit the loop if a valid choice is made
             } else {
                 System.out.println("Invalid choice. Please enter 'accept', 'decline', or '0' to return.");
             }
@@ -1023,16 +1030,32 @@ public class AppointmentController {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] fields = line.split("\\|");
+                if (fields.length < 10) {
+                    System.out.println("Skipping appointment with invalid number of fields: " + line);
+                    continue;
+                }
                 String appointmentId = fields[0];
                 String doctorId = fields[1];
                 String patientId = fields[2];
-                LocalDate date = LocalDate.parse(fields[3], dateFormatter);
-                LocalTime time = LocalTime.parse(fields[4], timeFormatter);
-                String status = fields[5];
-                String requestMessage = fields[6];
-                String rescheduleDate = fields[7];
-                String rescheduleTime = fields[8];
-                String rescheduleMessage = fields[9];
+                LocalDate date;
+                LocalTime time;
+                String status;
+                String requestMessage;
+                String rescheduleDate;
+                String rescheduleTime;
+                String rescheduleMessage;
+                try {
+                    date = LocalDate.parse(fields[3], dateFormatter);
+                    time = LocalTime.parse(fields[4], timeFormatter);
+                    status = fields[5];
+                    requestMessage = fields[6];
+                    rescheduleDate = fields[7];
+                    rescheduleTime = fields[8];
+                    rescheduleMessage = fields[9];
+                } catch (DateTimeParseException e) {
+                    System.out.println("Skipping appointment with invalid date/time: " + line);
+                    continue;
+                }
                 System.out.printf("%-20s %-15s %-15s %-15s %-10s %-15s %-30s %-20s %-20s %-30s%n",
                         appointmentId, doctorId, patientId, date.format(dateFormatter), time.format(timeFormatter),
                         status, requestMessage, rescheduleDate, rescheduleTime, rescheduleMessage);
@@ -1045,6 +1068,11 @@ public class AppointmentController {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter patient ID to view appointment outcome details: ");
         String patientId = scanner.nextLine().trim();
+
+        if (patientId.isEmpty()) {
+            System.out.println("Please enter a valid patient ID.");
+            return;
+        }
 
         AppointmentOutcomeController appointmentOutcomeController = new AppointmentOutcomeController();
         appointmentOutcomeController.displayAppointmentOutcomesByPatientId(patientId);

@@ -40,10 +40,10 @@ public class AppointmentOutcomeController {
 
             // Print table headers
             System.out.println("\nAppointment Outcomes for Patient ID: " + patientId + "\n");
-            System.out.printf("%-15s | %-20s | %-20s | %-50s | %-30s |%n",
+            System.out.printf("%-15s | %-20s | %-20s | %-50s | %-51s |%n",
                     "Date", "Doctor", "Service Type",
                     "Medications", "Consultation Notes");
-            System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------------------");
+            System.out.println("--------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
             // Display each appointment outcome in a table row format
             for (AppointmentOutcome outcome : outcomes) {
@@ -54,7 +54,7 @@ public class AppointmentOutcomeController {
                 List<Prescription> prescriptions = getPrescriptionsByIds(outcome.getPrescribedMedications());
                 if (prescriptions.isEmpty()) {
                     // No prescriptions, display "No Prescription" on the first row
-                    System.out.printf("%-15s | %-20s | %-20s | %-50s | %-30s |%n",
+                    System.out.printf("%-15s | %-20s | %-20s | %-50s | %-51s |%n",
                             outcome.getDateOfAppointment().format(dateFormatter),
                             doctorName,
                             outcome.getServiceType(),
@@ -64,7 +64,7 @@ public class AppointmentOutcomeController {
                     // Print the first row with the first prescription
                     Prescription firstPrescription = prescriptions.get(0);
                     String medicineName = getMedicineName(firstPrescription.getMedicineId());
-                    System.out.printf("%-15s | %-20s | %-20s | %-50s | %-30s |%n",
+                    System.out.printf("%-15s | %-20s | %-20s | %-50s | %-51s |%n",
                             outcome.getDateOfAppointment().format(dateFormatter),
                             doctorName,
                             outcome.getServiceType(),
@@ -75,14 +75,14 @@ public class AppointmentOutcomeController {
                     for (int i = 1; i < prescriptions.size(); i++) {
                         Prescription prescription = prescriptions.get(i);
                         medicineName = getMedicineName(prescription.getMedicineId());
-                        System.out.printf("%-15s | %-20s | %-20s | %-50s | %-30s |%n",
+                        System.out.printf("%-15s | %-20s | %-20s | %-50s | %-51s |%n",
                                 "", "", "",
                                 String.format("%d. %dx %s (%s)", i + 1, prescription.getQuantity(), medicineName, prescription.getStatus()),
                                 ""); // Empty Consultation Notes column here
                     }
                 }
 
-                System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------------------");
+                System.out.println("--------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
             }
         }
         PrintUtils.pause();
