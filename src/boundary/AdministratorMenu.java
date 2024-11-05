@@ -2,6 +2,7 @@ package boundary;
 
 import controller.AccountController;
 import controller.AppointmentController;
+import controller.ForgetPasswordController;
 import controller.InventoryController;
 import entity.Administrator;
 import interfaces.MenuInterface;
@@ -13,6 +14,8 @@ public class AdministratorMenu implements MenuInterface {
     AccountController accountController = new AccountController(); // For Login and Register methods.
     AppointmentController appointmentController = new AppointmentController();
     InventoryController inventoryController = new InventoryController();
+    ForgetPasswordController forgetPasswordController = new ForgetPasswordController();
+
 
     // Import controller thats patient need e.g., appointment etc.
     // All the functions should be in controller. this menu class just uses it.
@@ -31,6 +34,8 @@ public class AdministratorMenu implements MenuInterface {
             System.out.println("2. View Appointments Details"); // AppointmentController
             System.out.println("3. View and Manage Medication Inventory"); // InventoryController
             System.out.println("4. Approve Replenishment Requests"); // InventoryController
+            System.out.println("5. Manage Forget Password Requests"); // ForgetPasswordController
+
             System.out.println("0. Logout");
             System.out.print("Enter your choice: ");
             String choice = scanner.nextLine().trim();
@@ -51,6 +56,11 @@ public class AdministratorMenu implements MenuInterface {
                 case "4":
                     // Approve Replenishment Requests();
                     inventoryController.approveReplenishmentRequests();
+                    break;
+
+                    case "5":
+                    // Approve Replenishment Requests();
+                    forgetPasswordController.processForgetPasswordRequests();
                     break;
                 case "0":
                     System.out.println("Logging out...");

@@ -141,45 +141,45 @@ public class AccountController {
             }
         }
 
-        if (!isAdmin) {
-            // Day input
-            System.out.println("Enter date of birth: ");
-            while (day.length() != 2 || !day.matches("\\d{2}") || Integer.parseInt(day) < 1
+        // Day input
+        System.out.println("Enter date of birth: ");
+        while (day.length() != 2 || !day.matches("\\d{2}") || Integer.parseInt(day) < 1
+                || Integer.parseInt(day) > 31) {
+            System.out.print("Enter day (DD): ");
+            day = scanner.nextLine().trim();
+            if (day.length() != 2 || !day.matches("\\d{2}") || Integer.parseInt(day) < 1
                     || Integer.parseInt(day) > 31) {
-                System.out.print("Enter day (DD): ");
-                day = scanner.nextLine().trim();
-                if (day.length() != 2 || !day.matches("\\d{2}") || Integer.parseInt(day) < 1
-                        || Integer.parseInt(day) > 31) {
-                    System.out.println("Invalid day. Please enter a two-digit day (e.g., 01, 15, 31).");
-                }
+                System.out.println("Invalid day. Please enter a two-digit day (e.g., 01, 15, 31).");
             }
+        }
 
-            // Month input
-            while (month.length() != 2 || !month.matches("\\d{2}") || Integer.parseInt(month) < 1
+        // Month input
+        while (month.length() != 2 || !month.matches("\\d{2}") || Integer.parseInt(month) < 1
+                || Integer.parseInt(month) > 12) {
+            System.out.print("Enter month (MM): ");
+            month = scanner.nextLine().trim();
+            if (month.length() != 2 || !month.matches("\\d{2}") || Integer.parseInt(month) < 1
                     || Integer.parseInt(month) > 12) {
-                System.out.print("Enter month (MM): ");
-                month = scanner.nextLine().trim();
-                if (month.length() != 2 || !month.matches("\\d{2}") || Integer.parseInt(month) < 1
-                        || Integer.parseInt(month) > 12) {
-                    System.out.println(
-                            "Invalid month. Please enter a valid two-digit month (e.g., 01 for January, 12 for December).");
-                }
+                System.out.println(
+                        "Invalid month. Please enter a valid two-digit month (e.g., 01 for January, 12 for December).");
             }
+        }
 
-            // Year input
-            while (year.length() != 4 || !year.matches("\\d{4}") || Integer.parseInt(year) < 1900
+        // Year input
+        while (year.length() != 4 || !year.matches("\\d{4}") || Integer.parseInt(year) < 1900
+                || Integer.parseInt(year) > LocalDate.now().getYear()) {
+            System.out.print("Enter year (YYYY): ");
+            year = scanner.nextLine().trim();
+            if (year.length() != 4 || !year.matches("\\d{4}") || Integer.parseInt(year) < 1900
                     || Integer.parseInt(year) > LocalDate.now().getYear()) {
-                System.out.print("Enter year (YYYY): ");
-                year = scanner.nextLine().trim();
-                if (year.length() != 4 || !year.matches("\\d{4}") || Integer.parseInt(year) < 1900
-                        || Integer.parseInt(year) > LocalDate.now().getYear()) {
-                    System.out.println("Invalid year. Please enter a four-digit year (e.g., 1990, 2023).");
-                }
+                System.out.println("Invalid year. Please enter a four-digit year (e.g., 1990, 2023).");
             }
+        }
 
-            // Combine into final date format
-            dateOfBirth = day + "-" + month + "-" + year;
+        // Combine into final date format
+        dateOfBirth = day + "-" + month + "-" + year;
 
+        if (!isAdmin) {
             while (!(bloodType.equals("A+") || bloodType.equals("A-") || bloodType.equals("B+")
                     || bloodType.equals("B-") || bloodType.equals("AB+") || bloodType.equals("AB-")
                     || bloodType.equals("O+") || bloodType.equals("O-"))) {
@@ -269,6 +269,8 @@ public class AccountController {
     public User login() {
         Scanner scanner = new Scanner(System.in);
         int attempt = 0;
+        String defaultHashedPassword = hashPassword("password");
+
         while (attempt < 3) {
             attempt++;
             System.out.print("Enter User ID (e.g., PA00001): ");
@@ -282,6 +284,35 @@ public class AccountController {
                 // Step 2: Load User details if authentication succeeds
                 User user = loadUserDetails(inputUserId.toUpperCase());
                 if (user != null) {
+                    // Check if the password is still the default hashed "password"
+                    if (authenticate(inputUserId.toUpperCase(), defaultHashedPassword)) {
+                        System.out.println("You are using the default password. Please change it.");
+
+                        // Force the user to change their password
+                        boolean passwordUpdated = false;
+                        int newPasswordAttempts = 0;
+
+                        while (newPasswordAttempts < 3 && !passwordUpdated) {
+                            System.out.print("Enter new password (min 8 chars, 1 digit, 1 special char): ");
+                            String newPassword = scanner.nextLine().trim();
+
+                            if (isValidPassword(newPassword)) {
+                                passwordUpdated = updatePassword(user.getUserId(), newPassword);
+                                System.out.println(
+                                        passwordUpdated ? "Password updated successfully." : "Password update failed.");
+                            } else {
+                                newPasswordAttempts++;
+                                System.out.println("Invalid password format. " + (3 - newPasswordAttempts)
+                                        + " attempt(s) remaining.");
+                            }
+                        }
+
+                        if (!passwordUpdated) {
+                            System.out.println("Failed to update password. Exiting login.");
+                            return null; // Exit the login if the user fails to update their password
+                        }
+                    }
+
                     System.out.println("Login successful. Welcome, " + user.getFirstName());
                     return user;
                 }
@@ -1085,8 +1116,21 @@ public class AccountController {
                 return;
             }
 
+            String[] fields = staff.get(index).split("\\|");
+            String userId = fields[0];
             staff.remove(index);
             Files.write(Paths.get(STAFF_TXT), staff);
+
+            List<String> accounts = Files.readAllLines(Paths.get(ACCOUNT_TXT));
+            List<String> updatedAccounts = new ArrayList<>();
+            for (String account : accounts) {
+                String[] fieldsInAccount = account.split("\\|");
+                if (!fieldsInAccount[0].equals(userId)) {
+                    updatedAccounts.add(account);
+                }
+            }
+            Files.write(Paths.get(ACCOUNT_TXT), updatedAccounts);
+
             System.out.println("Remove successful for index: " + (index + 1));
         } catch (IOException e) {
             System.out.println("An error occurred while removing the staff information.");
