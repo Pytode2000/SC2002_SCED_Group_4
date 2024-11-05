@@ -447,7 +447,6 @@ public class MedicalRecordsController {
 
     // Method to view all medical records with associated patient information 
     public void viewMedicalRecords(User user) {
-        System.out.flush();  
 
         if (user instanceof Patient) {
             displayMedicalRecords(user.getUserId());

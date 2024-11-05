@@ -11,5 +11,4 @@ public class PrintUtils {
         scanner.nextLine(); // Wait for user to hit Enter
     }
 
-    public static void printTable()
 }
