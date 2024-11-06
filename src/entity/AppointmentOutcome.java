@@ -41,6 +41,10 @@ public class AppointmentOutcome {
         return this.doctorId;
     }
 
+    public String getPatientId() {
+        return this.patientId;
+    }
+
     public String getAppointmentId() {
         return this.appointmentId;
     }
@@ -59,6 +63,16 @@ public class AppointmentOutcome {
 
     public List<String> getPrescribedMedications() {
         return this.prescribedMedications;
+    }
+
+    // Setter for Service Type
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType == null || serviceType.trim().isEmpty() ? "-" : serviceType;
+    }
+
+    // Setter for Consultation Notes
+    public void setConsultationNotes(String consultationNotes) {
+        this.consultationNotes = consultationNotes == null || consultationNotes.trim().isEmpty() ? "-" : consultationNotes;
     }
 
 }
