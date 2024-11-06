@@ -36,6 +36,10 @@ public class AppointmentOutcomeController {
 
     //testZL
     public void displayAllPendingAppointmentOutcomes() {
+
+        System.out.println("\n--- Appointment Outcome Records ---");
+        System.out.println("-------------------------------------------------------------------------------------------------------------");
+
         try {
             // Step 1: Load all pending prescription IDs
             Set<String> pendingPrescriptionIds = getPendingPrescriptionIds();
@@ -112,6 +116,7 @@ public class AppointmentOutcomeController {
         } catch (IOException e) {
             System.out.println("Error reading files: " + e.getMessage());
         }
+        PrintUtils.pause();
     }
 
 

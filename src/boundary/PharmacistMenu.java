@@ -1,7 +1,8 @@
 package boundary;
 
 import entity.Pharmacist;
-import controller.InventoryController;
+import controller.PrescriptionController;
+import controller.InventoryController;//new here
 import controller.AppointmentOutcomeController;
 import entity.Medicine;
 import interfaces.MenuInterface;
@@ -11,6 +12,7 @@ public class PharmacistMenu implements MenuInterface {
 
     private final Pharmacist pharmacist;
     //testing
+    InventoryController inventoryController = new InventoryController();
     AppointmentOutcomeController appointmentOutcomeController = new AppointmentOutcomeController();
 
 
@@ -22,7 +24,7 @@ public class PharmacistMenu implements MenuInterface {
 
     @Override
     public void displayMenu() {
-        InventoryController inventoryController = new InventoryController();
+        PrescriptionController prescriptionController = new PrescriptionController();
         Scanner scanner = new Scanner(System.in);
         boolean exit = false;
 
@@ -43,14 +45,14 @@ public class PharmacistMenu implements MenuInterface {
                     break;
                 case "2":
                     // Update Prescription Status;
-                    //enter appointment id, display the prescription for this appointmentOutcome
-                    //promt user to enter which precription to update this will change the prescription status to "DISPENSED"
-                    //and the stock level
+                    prescriptionController.updatePrescriptionStatus();
 
                     break;
                 case "3":
                     // View Medication Inventory;
+                    inventoryController = new InventoryController(); //refresh Inventory
                     inventoryController.displayInventory();
+                    
                     break;
                 case "4":
                     // Submit Replenishment Request();
@@ -65,6 +67,6 @@ public class PharmacistMenu implements MenuInterface {
                     break;
             }
         }
-    }
+    }   
 
 }

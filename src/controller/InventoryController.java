@@ -552,8 +552,7 @@ public class InventoryController {
         }
         System.out.println("------------------------------------");
 
-        // back to main menu
-        promptReturnToMenu();
+        PrintUtils.pause();
     }
 
     // Find a specific medicine by its ID

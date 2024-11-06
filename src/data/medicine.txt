@@ -1,4 +1,4 @@
-MD00001|Paracetamol|Used for fever|100|10|Tablet
-MD00002|Ibuprofen|Used for pain|50|10|Tablet
+MD00001|Paracetamol|Used for fever|0|10|Tablet
+MD00002|Ibuprofen|Used for pain|46|10|Tablet
 MD00004|Aspirin|Used for inflammation|30|15|Tablet
 MD00005|Panadol|Fever|5|10|Pill

@@ -1,1 +1,4 @@
 MD00005|30|Panadol
+MD00001|40|Paracetamol
+MD00001|40|Paracetamol
+MD00001|40|Paracetamol
