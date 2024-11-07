@@ -1,4 +1,4 @@
-AP00001|PA00001|DR00003|01-01-2024|Consultation|-|New Note
+AP00001|PA00001|DR00003|01-01-2024|Consultation||New Note
 AP00002|PA00001|DR00003|13-10-2024|New service type|PR00003|new consutlation
 AP00003|PA00001|DR00003|24-07-2024|Consultation|-|Test
 AP00009|PA00001|DR00003|02-08-2024|Consultation|-|Testing consultation notes

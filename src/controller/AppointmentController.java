@@ -636,8 +636,24 @@ public class AppointmentController {
         }
     }
 
+    public List<String> getAvailableAndBookedAppointment(String doctorId) {
+        List<String> doctorAppointments = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(APPOINTMENT_FILE))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] fields = line.split("\\|");
+                if (fields.length >= 6 && (fields[5].equals("AVAILABLE"))||fields[5].equals("BOOKED") ){
+                    doctorAppointments.add(line);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return doctorAppointments;
+    }
+
     public List<String> getPersonalSchedule(String doctorId) {
-        List<String> allAppointmentSlots = getAvailableAppointments();
+        List<String> allAppointmentSlots = getAvailableAndBookedAppointment(doctorId);
         List<String> currentDoctorSchedule = new ArrayList<>();
 
         for (String appointment : allAppointmentSlots) {
