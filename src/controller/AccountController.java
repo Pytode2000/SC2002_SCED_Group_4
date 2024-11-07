@@ -48,9 +48,11 @@ public class AccountController {
         Scanner scanner = new Scanner(System.in);
 
         if (isAdmin) {
+            System.out.println("\n--- Register Staff ---");
+
             while (!(userRole.equals("Doctor") || userRole.equals("Pharmacist") || userRole.equals("Administrator")
                     || userRole.equals("0"))) {
-                System.out.println("\nChoose Role (0 to cancel):");
+                System.out.println("Choose Role (0 to cancel):");
                 System.out.println("1. Doctor");
                 System.out.println("2. Pharmacist");
                 System.out.println("3. Administrator");
@@ -910,230 +912,248 @@ public class AccountController {
 
     // Update staff
     public void updateStaff(Scanner scanner) { // Pass the scanner as a parameter
+        System.out.println("\n--- Update Staff ---");
+
         try {
-            System.out.print("Enter staff ID to update: ");
-            String staffId = scanner.nextLine().trim();
-            if (staffId == null || staffId.isEmpty()) {
-                System.out.println("Staff ID cannot be empty.");
-                return;
-            }
-
-            if (!isValidStaffId(staffId)) {
-                System.out.println("Invalid staff ID. Please try again.");
-                return; // Exit early if the staff ID is invalid
-            }
-
-            String firstName = "", lastName = "", gender = "", contactNumber = "", emailAddress = "", role = "",
-                    dateOfBirth = "";
-            boolean anyFieldUpdated = false;
-
-            // Prompt for new values if provided
-            while (true) {
-                System.out.print("Enter your new First Name (leave blank to keep current value): ");
-                String input = scanner.nextLine();
-                if (input == null || input.trim().isEmpty()) {
-                    break;
-                }
-
-                if (input.trim().length() < 1 || input.trim().length() > 15) {
-                    System.out.println("First name must be between 1 and 15 characters. Please try again.");
-                } else {
-                    firstName = input.trim();
-                    anyFieldUpdated = true;
-                    break;
-                }
-            }
-
-            while (true) {
-                System.out.print("Enter your new Last Name (leave blank to keep current value): ");
-                String input = scanner.nextLine();
-                if (input == null || input.trim().isEmpty()) {
-                    break;
-                }
-
-                if (input.trim().length() < 1 || input.trim().length() > 15) {
-                    System.out.println("Last name must be between 1 and 15 characters. Please try again.");
-                } else {
-                    lastName = input.trim();
-                    anyFieldUpdated = true;
-                    break;
-                }
-            }
-
-            while (true) {
-                System.out.println("Choose your new Gender (leave blank to keep current value):");
-                System.out.println("1. Male");
-                System.out.println("2. Female");
-                System.out.println("3. Other");
-                System.out.print("Enter your choice (1-3): ");
-                String choiceInput = scanner.nextLine().trim();
-                if (choiceInput == null || choiceInput.isEmpty()) {
-                    break;
-                }
-
-                try {
-                    int choice = Integer.parseInt(choiceInput);
-                    switch (choice) {
-                        case 1:
-                            gender = "Male";
-                            break;
-                        case 2:
-                            gender = "Female";
-                            break;
-                        case 3:
-                            gender = "Other";
-                            break;
-                        default:
-                            System.out.println("Invalid choice. Please try again.");
-                            continue;
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid input. Please enter a number.");
-                    continue;
-                }
-                anyFieldUpdated = true;
-                break;
-            }
-
-            while (true) {
-                System.out.print("Enter your new Contact Number (leave blank to keep current value): ");
-                String input = scanner.nextLine();
-                if (input == null || input.trim().isEmpty()) {
-                    break;
-                }
-
-                if (!isValidPhoneNumber(input.trim())) {
-                    System.out.println("Invalid phone number. Please enter a valid phone number.");
-                } else {
-                    contactNumber = input.trim();
-                    anyFieldUpdated = true;
-                    break;
-                }
-            }
-
-            while (true) {
-                System.out.print("Enter your new Email Address (leave blank to keep current value): ");
-                String input = scanner.nextLine();
-                if (input == null || input.trim().isEmpty()) {
-                    break;
-                }
-
-                if (!isValidEmail(input.trim())) {
-                    System.out.println("Invalid email address. Please enter a valid email address.");
-                } else {
-                    emailAddress = input.trim();
-                    anyFieldUpdated = true;
-                    break;
-                }
-            }
-
-            while (true) {
-                System.out.print("Enter your new date of birth (dd-MM-yyyy) (leave blank to keep current value): ");
-                String input = scanner.nextLine();
-                if (input == null || input.trim().isEmpty()) {
-                    break;
-                }
-
-                if (!isValidDate(input)) {
-                    System.out.println("Invalid date of birth. Please enter a valid date of birth.");
-                } else {
-                    dateOfBirth = input;
-                    anyFieldUpdated = true;
-                    break;
-                }
-            }
-
-            while (true) {
-                System.out.println("Choose your new Role (leave blank to keep current value):");
-                System.out.println("1. Doctor");
-                System.out.println("2. Pharmacist");
-                System.out.println("3. Administrator");
-                System.out.print("Enter your choice (1-3): ");
-                String choiceInput = scanner.nextLine().trim();
-                if (choiceInput == null || choiceInput.isEmpty()) {
-                    break;
-                }
-
-                try {
-                    int choice = Integer.parseInt(choiceInput);
-                    switch (choice) {
-                        case 1:
-                            role = "Doctor";
-                            break;
-                        case 2:
-                            role = "Pharmacist";
-                            break;
-                        case 3:
-                            role = "Administrator";
-                            break;
-                        default:
-                            System.out.println("Invalid choice. Please enter a valid choice.");
-                            continue;
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid input. Please enter a number.");
-                    continue;
-                }
-                anyFieldUpdated = true;
-                break;
-            }
-
-            while (true) {
-                System.out.println("Do you want to update your password? (yes/no): ");
-                String input = scanner.nextLine().toLowerCase().trim();
-                if (input.equals("yes")) {
-                    updateStaffPasswordFlow((staffId), scanner);
-                    break;
-                } else if (input.equals("no")) {
-                    break;
-                } else {
-                    System.out.println("Invalid input. Please enter yes or no.");
-                }
-            }
-
-            if (!anyFieldUpdated) {
-                System.out.println("No fields were updated for staff ID: " + staffId);
-                return;
-            }
-
-            boolean updated = false;
             List<String> staff = Files.readAllLines(Paths.get(STAFF_TXT));
-            for (int i = 0; i < staff.size(); i++) {
-                String[] fields = staff.get(i).split("\\|");
-                if (fields[0].equals(staffId)) {
-                    if (!firstName.isEmpty()) {
-                        fields[1] = firstName;
-                    }
-                    if (!lastName.isEmpty()) {
-                        fields[2] = lastName;
-                    }
-                    if (!gender.isEmpty()) {
-                        fields[3] = gender;
-                    }
-                    if (!dateOfBirth.isEmpty()) {
-                        fields[4] = dateOfBirth;
-                    }
-                    if (!contactNumber.isEmpty()) {
-                        fields[5] = contactNumber;
-                    }
-                    if (!emailAddress.isEmpty()) {
-                        fields[6] = emailAddress;
-                    }
-                    if (!role.isEmpty()) {
-                        fields[7] = role;
-                    }
-                    staff.set(i, String.join("|", fields));
-                    updated = true;
+            while (true) {
+                System.out.print("Enter the index of the staff to update (or -1 to exit): ");
+                String input = scanner.nextLine();
+                if (input.trim().equals("-1")) {
+                    break;
                 }
-            }
 
-            if (updated) {
-                Files.write(Paths.get(STAFF_TXT), staff);
-                System.out.println("Update successful for staff ID: " + staffId);
-            } else {
-                System.out.println("Update failed for staff ID: " + staffId);
-            }
+                int index;
+                try {
+                    index = Integer.parseInt(input.trim()) - 1; // Convert to zero-based index
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid index entered. Please enter a valid number.");
+                    continue;
+                }
 
+                if (index < 0 || index >= staff.size()) {
+                    System.out.println("Invalid index. Please enter a valid number between 1 and "
+                            + staff.size() + ".");
+                    continue;
+                }
+
+                String[] originalFields = staff.get(index).split("\\|");
+                String staffId = originalFields[0];
+                String firstName = originalFields[1], lastName = originalFields[2], gender = originalFields[3],
+                        contactNumber = originalFields[5], emailAddress = originalFields[6], role = originalFields[7],
+                        dateOfBirth = originalFields[4];
+                boolean anyFieldUpdated = false;
+
+                // Prompt for new values if provided
+                while (true) {
+                    System.out.print("Enter your new First Name (leave blank to keep current value): ");
+                    String input2 = scanner.nextLine();
+                    if (input2 == null || input2.trim().isEmpty()) {
+                        break;
+                    }
+
+                    if (input2.trim().length() < 1 || input2.trim().length() > 15) {
+                        System.out.println("First name must be between 1 and 15 characters. Please try again.");
+                    } else {
+                        firstName = input2.trim();
+                        anyFieldUpdated = true;
+                        break;
+                    }
+                }
+
+                while (true) {
+                    System.out.print("Enter your new Last Name (leave blank to keep current value): ");
+                    String input2 = scanner.nextLine();
+                    if (input2 == null || input2.trim().isEmpty()) {
+                        break;
+                    }
+
+                    if (input2.trim().length() < 1 || input2.trim().length() > 15) {
+                        System.out.println("Last name must be between 1 and 15 characters. Please try again.");
+                    } else {
+                        lastName = input2.trim();
+                        anyFieldUpdated = true;
+                        break;
+                    }
+                }
+
+                while (true) {
+                    System.out.println("Choose your new Gender (leave blank to keep current value):");
+                    System.out.println("1. Male");
+                    System.out.println("2. Female");
+                    System.out.println("3. Other");
+                    System.out.print("Enter your choice (1-3): ");
+                    String choiceInput = scanner.nextLine().trim();
+                    if (choiceInput == null || choiceInput.isEmpty()) {
+                        break;
+                    }
+
+                    try {
+                        int choice = Integer.parseInt(choiceInput);
+                        switch (choice) {
+                            case 1:
+                                gender = "Male";
+                                break;
+                            case 2:
+                                gender = "Female";
+                                break;
+                            case 3:
+                                gender = "Other";
+                                break;
+                            default:
+                                System.out.println("Invalid choice. Please enter a valid choice.");
+                                continue;
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid input. Please enter a number.");
+                        continue;
+                    }
+                    anyFieldUpdated = true;
+                    break;
+                }
+
+                while (true) {
+                    System.out.print("Enter your new Contact Number (leave blank to keep current value): ");
+                    String input2 = scanner.nextLine();
+                    if (input2 == null || input2.trim().isEmpty()) {
+                        break;
+                    }
+
+                    if (!isValidPhoneNumber(input2.trim())) {
+                        System.out.println("Invalid phone number. Please enter a valid phone number.");
+                    } else {
+                        contactNumber = input2.trim();
+                        anyFieldUpdated = true;
+                        break;
+                    }
+                }
+
+                while (true) {
+                    System.out.print("Enter your new Email Address (leave blank to keep current value): ");
+                    String input2 = scanner.nextLine();
+                    if (input2 == null || input2.trim().isEmpty()) {
+                        break;
+                    }
+
+                    if (!isValidEmail(input2.trim())) {
+                        System.out.println("Invalid email address. Please enter a valid email address.");
+                    } else {
+                        emailAddress = input2.trim();
+                        anyFieldUpdated = true;
+                        break;
+                    }
+                }
+
+                while (true) {
+                    System.out.print("Enter your new date of birth (dd-MM-yyyy) (leave blank to keep current value): ");
+                    String input2 = scanner.nextLine();
+                    if (input2 == null || input2.trim().isEmpty()) {
+                        break;
+                    }
+
+                    if (!isValidDate(input2)) {
+                        System.out.println("Invalid date of birth. Please enter a valid date of birth.");
+                    } else {
+                        dateOfBirth = input2;
+                        anyFieldUpdated = true;
+                        break;
+                    }
+                }
+
+                while (true) {
+                    System.out.println("Choose your new Role (leave blank to keep current value):");
+                    System.out.println("1. Doctor");
+                    System.out.println("2. Pharmacist");
+                    System.out.println("3. Administrator");
+                    System.out.print("Enter your choice (1-3): ");
+                    String choiceInput = scanner.nextLine().trim();
+                    if (choiceInput == null || choiceInput.isEmpty()) {
+                        break;
+                    }
+
+                    try {
+                        int choice = Integer.parseInt(choiceInput);
+                        switch (choice) {
+                            case 1:
+                                role = "Doctor";
+                                break;
+                            case 2:
+                                role = "Pharmacist";
+                                break;
+                            case 3:
+                                role = "Administrator";
+                                break;
+                            default:
+                                System.out.println("Invalid choice. Please enter a valid choice.");
+                                continue;
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid input. Please enter a number.");
+                        continue;
+                    }
+                    anyFieldUpdated = true;
+                    break;
+                }
+
+                while (true) {
+                    System.out.println("Do you want to update your password? (yes/no): ");
+                    String input2 = scanner.nextLine().toLowerCase().trim();
+                    if (input2.equals("yes")) {
+                        updateStaffPasswordFlow((staffId), scanner);
+                        break;
+                    } else if (input2.equals("no")) {
+                        break;
+                    } else {
+                        System.out.println("Invalid input. Please enter yes or no.");
+                    }
+                }
+
+                if (!anyFieldUpdated) {
+                    System.out.println("No fields were updated for staff ID: " + staffId);
+                    continue;
+                }
+
+                boolean updated = false;
+                List<String> updatedStaff = new ArrayList<>();
+                for (int i = 0; i < staff.size(); i++) {
+                    String[] updatedFields = staff.get(i).split("\\|");
+                    if (i == index) {
+                        if (!firstName.isEmpty()) {
+                            updatedFields[1] = firstName;
+                        }
+                        if (!lastName.isEmpty()) {
+                            updatedFields[2] = lastName;
+                        }
+                        if (!gender.isEmpty()) {
+                            updatedFields[3] = gender;
+                        }
+                        if (!dateOfBirth.isEmpty()) {
+                            updatedFields[4] = dateOfBirth;
+                        }
+                        if (!contactNumber.isEmpty()) {
+                            updatedFields[5] = contactNumber;
+                        }
+                        if (!emailAddress.isEmpty()) {
+                            updatedFields[6] = emailAddress;
+                        }
+                        if (!role.isEmpty()) {
+                            updatedFields[7] = role;
+                        }
+                        updatedStaff.add(String.join("|", updatedFields));
+                        updated = true;
+                    } else {
+                        updatedStaff.add(staff.get(i));
+                    }
+                }
+
+                if (updated) {
+                    Files.write(Paths.get(STAFF_TXT), updatedStaff);
+                    System.out.println("Update successful for staff ID: " + staffId);
+                } else {
+                    System.out.println("Update failed for staff ID: " + staffId);
+                }
+                break;
+            }
         } catch (IOException e) {
             System.out.println("An error occurred while updating the staff information.");
             System.out.println("Please make sure the staff ID is valid.");
@@ -1206,39 +1226,45 @@ public class AccountController {
     public void removeStaff(Scanner scanner) {
         try {
             List<String> staff = Files.readAllLines(Paths.get(STAFF_TXT));
-            System.out.println("\n--- Remove Staff ---");
-            System.out.println("------------------------");
-            System.out.print("Enter index of staff to remove: ");
-            int index;
-            try {
-                index = Integer.parseInt(scanner.nextLine().trim()) - 1; // Convert to zero-based index
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid index entered. Please enter a valid number.");
-                return;
-            }
-
-            if (index < 0 || index >= staff.size()) {
-                System.out.println("Invalid index. Please enter a valid number between 1 and "
-                        + staff.size() + ".");
-                return;
-            }
-
-            String[] fields = staff.get(index).split("\\|");
-            String userId = fields[0];
-            staff.remove(index);
-            Files.write(Paths.get(STAFF_TXT), staff);
-
-            List<String> accounts = Files.readAllLines(Paths.get(ACCOUNT_TXT));
-            List<String> updatedAccounts = new ArrayList<>();
-            for (String account : accounts) {
-                String[] fieldsInAccount = account.split("\\|");
-                if (!fieldsInAccount[0].equals(userId)) {
-                    updatedAccounts.add(account);
+            while (true) {
+                System.out.println("\n--- Remove Staff ---");
+                System.out.print("Enter index of staff to remove (or -1 to exit): ");
+                String input = scanner.nextLine().trim();
+                if (input.equals("-1")) {
+                    break;
                 }
-            }
-            Files.write(Paths.get(ACCOUNT_TXT), updatedAccounts);
 
-            System.out.println("Remove successful for index: " + (index + 1));
+                int index;
+                try {
+                    index = Integer.parseInt(input) - 1; // Convert to zero-based index
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid index entered. Please enter a valid number.");
+                    continue;
+                }
+
+                if (index < 0 || index >= staff.size()) {
+                    System.out.println("Invalid index. Please enter a valid number between 1 and "
+                            + staff.size() + ".");
+                    continue;
+                }
+
+                String[] fields = staff.get(index).split("\\|");
+                String userId = fields[0];
+                staff.remove(index);
+                Files.write(Paths.get(STAFF_TXT), staff);
+
+                List<String> accounts = Files.readAllLines(Paths.get(ACCOUNT_TXT));
+                List<String> updatedAccounts = new ArrayList<>();
+                for (String account : accounts) {
+                    String[] fieldsInAccount = account.split("\\|");
+                    if (!fieldsInAccount[0].equals(userId)) {
+                        updatedAccounts.add(account);
+                    }
+                }
+                Files.write(Paths.get(ACCOUNT_TXT), updatedAccounts);
+
+                System.out.println("Remove successful for index: " + (index + 1));
+            }
         } catch (IOException e) {
             System.out.println("An error occurred while removing the staff information.");
             System.out.println("Please make sure the index is valid.");

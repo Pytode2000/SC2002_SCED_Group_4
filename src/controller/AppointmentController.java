@@ -642,7 +642,7 @@ public class AppointmentController {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] fields = line.split("\\|");
-                if (fields.length >= 6 && (fields[5].equals("AVAILABLE"))||fields[5].equals("BOOKED") ){
+                if (fields.length >= 6 && (fields[5].equals("AVAILABLE")) || fields[5].equals("BOOKED")) {
                     doctorAppointments.add(line);
                 }
             }
@@ -947,13 +947,12 @@ public class AppointmentController {
             if (choice.equals("0")) {
                 System.out.println("Returning to the previous menu.");
                 return;
-            }
-            else if (Integer.parseInt(choice)>appointmentRequests.size()) {
+            } else if (Integer.parseInt(choice) > appointmentRequests.size()) {
                 System.out.println("Invalid option. Please try again");
                 continue;
             }
 
-            selectedAppointment = appointmentRequests.get(Integer.parseInt(choice)-1);
+            selectedAppointment = appointmentRequests.get(Integer.parseInt(choice) - 1);
             break;
         }
 
@@ -984,19 +983,16 @@ public class AppointmentController {
                 fields[7] = "-";
                 fields[8] = "-";
                 fields[9] = "-";
-            }
-            else {
+            } else {
                 fields[5] = "BOOKED";
             }
-        }
-        else {
+        } else {
             fields[5] = "BOOKED";
             fields[6] = "Reschdule appointment declined";
             fields[7] = "-";
             fields[8] = "-";
             fields[9] = "-";
         }
-
 
         String updatedData = String.join("|", fields);
 
@@ -1092,10 +1088,10 @@ public class AppointmentController {
         // Prompt for patient ID to view appointment outcome details
         Scanner scanner = new Scanner(System.in);
         System.out.print(
-                "Enter patient ID to view completed (Status: CLOSED) appointment outcome details (or 0 to exit): ");
+                "\nEnter Patient ID to view completed (Status: CLOSED) appointment outcome details (or -1 to exit): ");
         String patientId = scanner.nextLine().trim();
 
-        if (patientId.equals("0")) {
+        if (patientId.equals("-1")) {
             System.out.println("Exiting to main menu...");
             return;
         }
