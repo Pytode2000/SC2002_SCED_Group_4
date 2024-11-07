@@ -282,24 +282,6 @@ public class InventoryController {
         }
     }
 
-    // Decrement stock level by 1 depending on medication prescribed in
-    // AppointmentOutcome. [NOT COMPLETED YET]
-    public void decrementStockLevel(String medicineId) {
-        Medicine medicine = findMedicineById(medicineId); // Find the medicine by ID
-
-        if (medicine != null) {
-            if (medicine.getStockLevel() > 0) {
-                medicine.setStockLevel(medicine.getStockLevel() - 1); // Decrement stock level by 1
-                saveMedicinesToFile(); // Save updated inventory to file
-                System.out.println("Stock level decremented by 1 for medicine ID: " + medicineId);
-            } else {
-                System.out.println("Stock level is already at 0. Cannot decrement further.");
-            }
-        } else {
-            System.out.println("Medicine not found.");
-        }
-    }
-
     // Remove a specific medicine by its index
     public void removeMedicine(Scanner scanner) {
         System.out.println("\n--- Remove Medicine ---");
@@ -389,7 +371,7 @@ public class InventoryController {
                 return;
             }
 
-            int replenishmentAmount = 0;
+            int totalReplenishmentAmount = 0;
             // Read the replenishment amount from the request file
             try (BufferedReader reader2 = new BufferedReader(new FileReader(MEDICINE_REPLENISHMENT_REQUESTS))) {
                 String line2;
@@ -397,15 +379,15 @@ public class InventoryController {
                 while ((line2 = reader2.readLine()) != null) {
                     String[] data2 = line2.split("\\|");
                     if (data2[0].equals(medicineId)) {
-                        replenishmentAmount = Integer.parseInt(data2[1]);
+                        totalReplenishmentAmount += Integer.parseInt(data2[1]);
                     } else {
                         lines.add(line2);
                     }
                 }
 
-                if (replenishmentAmount > 0) {
-                    medicine.setStockLevel(medicine.getStockLevel() + replenishmentAmount);
-                    System.out.println("Replenished " + replenishmentAmount + " units of " + medicine.getName());
+                if (totalReplenishmentAmount > 0) {
+                    medicine.setStockLevel(medicine.getStockLevel() + totalReplenishmentAmount);
+                    System.out.println("Replenished " + totalReplenishmentAmount + " units of " + medicine.getName());
 
                     // Update the stock level in medicine.txt
                     updateMedicineStockInFile(medicine);
