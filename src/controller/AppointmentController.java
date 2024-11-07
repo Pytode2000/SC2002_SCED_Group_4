@@ -990,9 +990,8 @@ public class AppointmentController {
             }
         }
         else {
-            fields[5] = "AVAILABLE";
-            fields[6] = "-";
-            fields[2] = "-";
+            fields[5] = "BOOKED";
+            fields[6] = "Reschdule appointment declined";
             fields[7] = "-";
             fields[8] = "-";
             fields[9] = "-";
