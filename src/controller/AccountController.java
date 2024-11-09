@@ -50,13 +50,12 @@ public class AccountController {
         if (isAdmin) {
             System.out.println("\n--- Register Staff ---");
 
-            while (!(userRole.equals("Doctor") || userRole.equals("Pharmacist") || userRole.equals("Administrator")
-                    || userRole.equals("0"))) {
+            while (!(userRole.equals("Doctor") || userRole.equals("Pharmacist") || userRole.equals("0"))) {
                 System.out.println("Choose Role (0 to cancel):");
                 System.out.println("1. Doctor");
                 System.out.println("2. Pharmacist");
-                System.out.println("3. Administrator");
-                System.out.print("Enter choice (1-3): ");
+                // System.out.println("3. Administrator");
+                System.out.print("Enter choice: ");
                 userRole = scanner.nextLine().trim();
 
                 switch (userRole) {
@@ -68,11 +67,11 @@ public class AccountController {
                     case "2":
                         userRole = "Pharmacist";
                         break;
-                    case "3":
-                        userRole = "Administrator";
-                        break;
+                    // case "3":
+                    //     userRole = "Administrator";
+                    //     break;
                     default:
-                        System.out.println("Invalid choice. Please enter a number from 1 to 3.");
+                        System.out.println("Invalid choice. Please enter either '1' or '2'.");
                 }
             }
         }
@@ -276,10 +275,10 @@ public class AccountController {
                     newUser = new Doctor(userId, firstName, lastName, gender, dateOfBirth, contactNumber, emailAddress,
                             userRole);
                     break;
-                case "Administrator":
-                    newUser = new Administrator(userId, firstName, lastName, gender, dateOfBirth, contactNumber,
-                            emailAddress, userRole);
-                    break;
+                // case "Administrator":
+                //     newUser = new Administrator(userId, firstName, lastName, gender, dateOfBirth, contactNumber,
+                //             emailAddress, userRole);
+                //     break;
                 case "Pharmacist":
                     newUser = new Pharmacist(userId, firstName, lastName, gender, dateOfBirth, contactNumber,
                             emailAddress, userRole);
