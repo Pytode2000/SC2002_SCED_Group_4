@@ -38,7 +38,7 @@ public class AppointmentOutcomeController {
     public void displayAllPendingAppointmentOutcomes() {
 
         System.out.println("\n--- Appointment Outcome Records ---");
-        System.out.println("-------------------------------------------------------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
         try {
             // Step 1: Load all pending prescription IDs
@@ -90,26 +90,27 @@ public class AppointmentOutcomeController {
             }
             br.close();
 
-            // Step 3: Display the results in table format
+// Step 3: Display the results in table format
             if (pendingAppointments.isEmpty()) {
                 System.out.println("No appointment outcomes with pending prescriptions found.");
             } else {
-                System.out.printf("%-15s | %-12s | %-15s | %-15s | %-50s | %-30s |%n",
+                // Adjust column widths to make Service Type wider by 1.5x (adding space)
+                System.out.printf("%-15s | %-12s | %-18s | %-20s | %-40s | %-40s |%n", // Adjusted Service Type width
                         "Appointment ID", "Date", "Doctor", "Service Type", "Medications", "Consultation Notes");
-                System.out.println("-------------------------------------------------------------------------------------------------------------");
+                System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
                 for (String[] appointment : pendingAppointments) {
                     // Print the first line with all data, including consultation notes
-                    System.out.printf("%-15s | %-12s | %-15s | %-15s | %-50s | %-30s |%n",
+                    System.out.printf("%-15s | %-12s | %-18s | %-20s | %-40s | %-40s |%n", // Adjusted Service Type width
                             appointment[0], appointment[1], appointment[2], appointment[3], appointment[4].split("\n")[0], appointment[5]);
 
                     // Print additional lines for each medication if there are multiple
                     String[] medications = appointment[4].split("\n");
                     for (int i = 1; i < medications.length; i++) {
-                        System.out.printf("%-15s | %-12s | %-15s | %-15s | %-50s | %-30s |%n",
+                        System.out.printf("%-15s | %-12s | %-18s | %-20s | %-40s | %-40s |%n", // Adjusted Service Type width
                                 "", "", "", "", medications[i], "");
                     }
-                    System.out.println("-------------------------------------------------------------------------------------------------------------");
+                    System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------");
                 }
             }
 
