@@ -3,3 +3,4 @@ PH00004|Steph|Culli|Other|04-08-2000|99999999|StephC@gmail.com|Pharmacist
 AM00005|Dylan|Tan|Other|01-12-2001|98564222|KobeBeef@hotmail.com|Administrator
 AM00006|Bryan|Tan|Other|04-08-2000|12344321|valid@gmail.com|Administrator
 AM00007|Jacoby|Ong|Male|21-03-2023|98564288|jacob@gmail.com|Administrator
+DR00008|Joe|Biden|Male|04-08-2000|99992131|joe.Ng@hotmail.com|Doctor

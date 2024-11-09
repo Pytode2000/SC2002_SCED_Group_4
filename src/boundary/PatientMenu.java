@@ -3,6 +3,7 @@ package boundary;
 import controller.AccountController;
 import controller.AppointmentController;
 import controller.AppointmentOutcomeController;
+import controller.FeedbackController;
 import controller.MedicalRecordsController;
 import entity.Patient;
 import interfaces.MenuInterface;
@@ -24,6 +25,7 @@ public class PatientMenu implements MenuInterface {
         AppointmentController appointmentController = new AppointmentController();
         MedicalRecordsController medicalRecordsController = new MedicalRecordsController();
         AppointmentOutcomeController appointmentOutcomeController = new AppointmentOutcomeController();
+        FeedbackController feedbackController = new FeedbackController();
 
         Scanner scanner = new Scanner(System.in);
         boolean exit = false;
@@ -37,6 +39,8 @@ public class PatientMenu implements MenuInterface {
             System.out.println("5. Schedule an Appointment"); // AppointmentController
             System.out.println("6. Reschedule an Appointment"); // AppointmentController
             System.out.println("7. Cancel an Appointment/Request"); // AppointmentController
+            System.out.println("8. Rate a Doctor"); // FeedbackController
+
             System.out.println("0. Logout");
 
             System.out.print("Enter your choice: ");
@@ -75,6 +79,11 @@ public class PatientMenu implements MenuInterface {
                     // Cancel an Appointment(); // AppointmentController Update?
                     appointmentController.deleteBookedAppointment(this.patient.getUserId());
                     break;
+                case "8":
+                    // Rate doctor // FeedbackController
+                    feedbackController.provideFeedback(this.patient.getUserId());
+                    break;
+
                 case "0":
                     System.out.println("Logging out...");
                     exit = true;

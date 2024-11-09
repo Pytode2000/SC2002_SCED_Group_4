@@ -1,12 +1,12 @@
 package boundary;
 
+import controller.AppointmentController;
+import controller.AppointmentOutcomeController;
+import controller.FeedbackController;
+import controller.MedicalRecordsController;
 import entity.Doctor;
 import interfaces.MenuInterface;
 import java.util.Scanner;
-
-import controller.AppointmentController;
-import controller.AppointmentOutcomeController;
-import controller.MedicalRecordsController;
 
 public class DoctorMenu implements MenuInterface {
 
@@ -14,6 +14,8 @@ public class DoctorMenu implements MenuInterface {
     private MedicalRecordsController medicalRecordsController;
     private AppointmentController appointmentController;
     private AppointmentOutcomeController appointmentOutcomeController;
+    private FeedbackController feedbackController;
+
 
     // Import controller thats doctors need e.g., appointment, schedule etc.
     // All the functions should be in controller. this menu class just uses it.
@@ -22,6 +24,7 @@ public class DoctorMenu implements MenuInterface {
         medicalRecordsController = new MedicalRecordsController();
         appointmentController = new AppointmentController();
         appointmentOutcomeController = new AppointmentOutcomeController();
+        feedbackController = new FeedbackController();
     }
 
     @Override
@@ -37,6 +40,7 @@ public class DoctorMenu implements MenuInterface {
             System.out.println("4. Accept or Decline Appointment Requests"); // AppointmentController
             System.out.println("5. View Upcoming Appointments"); // AppointmentController
             System.out.println("6. Record Appointment Outcome"); // AppointmentOutcomeController
+            System.out.println("7. View Feedbacks"); // FeedbackController
             System.out.println("0. Logout");
 
             System.out.print("Enter your choice: ");
@@ -66,6 +70,10 @@ public class DoctorMenu implements MenuInterface {
                 case "6":
                     // Record Appointment Outcome();
                     appointmentOutcomeController.viewDoctorMenu(doctor.getUserId());
+                    break;
+                case "7":
+                    // Record Appointment Outcome();
+                    feedbackController.viewDoctorRatings(doctor.getUserId());
                     break;
                 case "0":
                     System.out.println("Logging out...");
