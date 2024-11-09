@@ -558,7 +558,7 @@ public class InventoryController {
     // Replenishment request (updated to use String medicineId)
     public void requestReplenishment() {
         System.out.println("\n--- Submit Replenishment Request ---");
-        System.out.println("------------------------------------");
+        System.out.println("=========================================================================");
         Scanner scanner = new Scanner(System.in);
 
         // Prompt for Medicine ID
@@ -569,6 +569,8 @@ public class InventoryController {
         Medicine medicine = findMedicineById(medicineId);
         if (medicine == null) {
             System.out.println("Medicine ID: " + medicineId + " not found in inventory.");
+            System.out.println("=========================================================================");
+            PrintUtils.pause();
             return;
         }
 
@@ -576,6 +578,8 @@ public class InventoryController {
         if (!medicine.isLowStockLevelAlert() && medicine.getStockLevel() != 0) {
             System.out.println(
                     "Replenishment not needed for medicine ID: " + medicineId + " as stock is sufficient.");
+            System.out.println("=========================================================================");
+            PrintUtils.pause();
             return;
         }
 
@@ -585,7 +589,9 @@ public class InventoryController {
         try {
             replenishmentAmount = Integer.parseInt(scanner.nextLine().trim());
             if (replenishmentAmount <= 0) {
-                System.out.println("Invalid amount. Please enter a positive integer.");
+                System.out.println("Invalid amount. negative value.");
+                System.out.println("=========================================================================");
+                PrintUtils.pause();
                 return;
             }
 
@@ -604,7 +610,7 @@ public class InventoryController {
         } catch (NumberFormatException e) {
             System.out.println("Invalid amount format. Please enter a valid numeric value.");
         }
-        System.out.println("------------------------------------");
+        System.out.println("=========================================================================");
 
         PrintUtils.pause();
     }

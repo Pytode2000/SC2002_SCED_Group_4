@@ -20,7 +20,7 @@ public class PrescriptionController {
     public void updatePrescriptionStatus() {
 
         System.out.println("\n--- Update Prescription Status ---");
-        System.out.println("------------------------------------");
+        System.out.println("=======================================================");
 
         Scanner scanner = new Scanner(System.in);
 
@@ -31,25 +31,29 @@ public class PrescriptionController {
         // Step 2: Retrieve and display only pending prescriptions for this appointment
         List<Prescription> prescriptions = getPendingPrescriptionsByAppointmentId(appointmentId);
         if (prescriptions.isEmpty()) {
-            System.out.println("No pending prescriptions found for this appointment.");
+            System.out.println("\nNo pending prescriptions found for this appointment.");
+            System.out.println("=======================================================");
             PrintUtils.pause();
             return;
         }
 
-        System.out.println("Pending Prescriptions for Appointment ID: " + appointmentId);
+        System.out.println("\nPending Prescriptions for Appointment ID: " + appointmentId);
+        System.out.println("-------------------------------------------------------");
         for (int i = 0; i < prescriptions.size(); i++) {
             Prescription prescription = prescriptions.get(i);
             System.out.printf("%d. %dx %s (%s)%n", i + 1, prescription.getQuantity(),
                     getMedicineName(prescription.getMedicineId()), prescription.getStatus());
         }
+        System.out.println("-------------------------------------------------------");
 
         // Step 3: Prompt for prescription selection
-        System.out.print("Select the prescription to dispense: ");
+        System.out.print("Select the prescription to dispense (Enter number): ");
         int choice = scanner.nextInt();
         scanner.nextLine(); // Consume newline
 
         if (choice < 1 || choice > prescriptions.size()) {
-            System.out.println("Invalid choice.");
+            System.out.println("\nInvalid choice. Please try again.");
+            System.out.println("=======================================================");
             PrintUtils.pause();
             return;
         }
@@ -60,7 +64,9 @@ public class PrescriptionController {
         int currentStock = getStockLevel(selectedPrescription.getMedicineId());
 
         if (currentStock < quantityRequired) {
-            System.out.println("Error: Not enough stock available for this medication. Current stock: " + currentStock);
+            System.out.println("\nError: Not enough stock available for this medication.");
+            System.out.println("Current stock: " + currentStock + " | Quantity required: " + quantityRequired);
+            System.out.println("=======================================================");
             PrintUtils.pause();
             return;
         }
@@ -71,7 +77,8 @@ public class PrescriptionController {
         // Step 6: Update the stock level of the associated medication
         updateStockLevel(selectedPrescription.getMedicineId(), quantityRequired);
 
-        System.out.println("Prescription status updated to 'DISPENSED' and stock level adjusted.");
+        System.out.println("\nPrescription successfully dispensed.");
+        System.out.println("=======================================================");
 
         PrintUtils.pause();
     }
