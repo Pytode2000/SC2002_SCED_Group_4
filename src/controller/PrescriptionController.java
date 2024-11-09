@@ -44,7 +44,7 @@ public class PrescriptionController {
         }
 
         // Step 3: Prompt for prescription selection
-        System.out.print("Select the prescription number to update to 'DISPENSED': ");
+        System.out.print("Select the prescription to dispense: ");
         int choice = scanner.nextInt();
         scanner.nextLine(); // Consume newline
 
