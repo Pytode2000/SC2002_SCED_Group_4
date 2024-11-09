@@ -1152,10 +1152,10 @@ public class AppointmentController {
         // Prompt for patient ID to view appointment outcome details
         Scanner scanner = new Scanner(System.in);
         System.out.print(
-                "\nEnter Patient ID to view completed (Status: CLOSED) appointment outcome details (or -1 to exit): ");
+                "\nEnter Patient ID to view completed (Status: CLOSED) appointment outcome details (or 0 to exit): ");
         String patientId = scanner.nextLine().trim();
 
-        if (patientId.equals("-1")) {
+        if (patientId.equals("0")) {
             System.out.println("Exiting to main menu...");
             return;
         }

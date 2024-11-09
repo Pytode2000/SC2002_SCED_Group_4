@@ -916,9 +916,9 @@ public class AccountController {
         try {
             List<String> staff = Files.readAllLines(Paths.get(STAFF_TXT));
             while (true) {
-                System.out.print("Enter the index of the staff to update (or -1 to exit): ");
+                System.out.print("Enter the index of the staff to update (or 0 to exit): ");
                 String input = scanner.nextLine();
-                if (input.trim().equals("-1")) {
+                if (input.trim().equals("0")) {
                     break;
                 }
 
@@ -1227,9 +1227,9 @@ public class AccountController {
             List<String> staff = Files.readAllLines(Paths.get(STAFF_TXT));
             while (true) {
                 System.out.println("\n--- Remove Staff ---");
-                System.out.print("Enter index of staff to remove (or -1 to exit): ");
+                System.out.print("Enter index of staff to remove (or 0 to exit): ");
                 String input = scanner.nextLine().trim();
-                if (input.equals("-1")) {
+                if (input.equals("0")) {
                     break;
                 }
 
