@@ -56,8 +56,7 @@ public class AppointmentController {
         Scanner scanner = new Scanner(System.in);
 
         // Retrieve doctor details and group their appointments
-        try (BufferedReader staffReader = new BufferedReader(new FileReader(STAFF_FILE));
-                BufferedReader appointmentReader = new BufferedReader(new FileReader(APPOINTMENT_FILE))) {
+        try (BufferedReader staffReader = new BufferedReader(new FileReader(STAFF_FILE)); BufferedReader appointmentReader = new BufferedReader(new FileReader(APPOINTMENT_FILE))) {
 
             String line;
             Map<String, String[]> doctorDetails = new HashMap<>();
@@ -66,7 +65,7 @@ public class AppointmentController {
             while ((line = staffReader.readLine()) != null) {
                 String[] fields = line.split("\\|");
                 if ("Doctor".equalsIgnoreCase(fields[7])) {
-                    doctorDetails.put(fields[0], new String[] { fields[1] + " " + fields[2], fields[5], fields[6] });
+                    doctorDetails.put(fields[0], new String[]{fields[1] + " " + fields[2], fields[5], fields[6]});
                     doctorAppointments.put(fields[0], new ArrayList<>());
                 }
             }
@@ -130,8 +129,8 @@ public class AppointmentController {
                     if (indexToAppointment.containsKey(selection)) {
                         String selectedAppointment = indexToAppointment.get(selection);
                         processAppointmentSelection(1, Collections.singletonList(selectedAppointment), patientId); // Simplified
-                                                                                                                   // slot
-                                                                                                                   // handling
+                        // slot
+                        // handling
                         break;
                     } else {
                         System.out.println("Invalid selection. Please enter a valid number from the list.");
@@ -392,7 +391,7 @@ public class AppointmentController {
                 // or RESCHEDULE
                 if (fields.length >= 6 && fields[2].equals(patientId)
                         && (fields[5].equals("BOOKED") || fields[5].equals("RESCHEDULE")
-                                || fields[5].equals("PENDING"))) {
+                        || fields[5].equals("PENDING"))) {
                     bookedAppointments.add(fields);
                 }
             }
@@ -667,7 +666,6 @@ public class AppointmentController {
         return currentDoctorSchedule;
     }
 
-    // View Appointments with logged in doctor's ID
     public void viewPersonalSchedule(String doctorId) {
 
         List<String> currentDoctorSchedule = getPersonalSchedule(doctorId);
@@ -680,8 +678,21 @@ public class AppointmentController {
         } else {
             int appointmentNumber = 1;
             for (String appointment : currentDoctorSchedule) {
-                System.out.println(appointmentNumber + ". " + appointment);
-                appointmentNumber++;
+                String[] fields = appointment.split("\\|");
+                LocalDate date = LocalDate.parse(fields[3], dateFormatter);
+                LocalTime time = LocalTime.parse(fields[4], timeFormatter);
+                String status = fields[5];
+                String message = fields[6];
+
+                // Format the date and time
+                String formattedDate = date.format(dateFormatter);
+                String formattedTime = time.format(timeFormatter);
+
+                // Only show consultation notes if they are not "-"
+                String consultationNotes = message.equals("-") ? "" : " - " + message;
+
+                // Print appointment details in the desired format
+                System.out.printf("%d. %s %s (%s)%s%n", appointmentNumber++, formattedDate, formattedTime, status, consultationNotes);
             }
         }
 
@@ -909,7 +920,7 @@ public class AppointmentController {
 
     public void printAppointmentRequest(String doctorId) {
 
-        // for each appointment in appointment request print the details
+        // For each appointment in the appointment request, print the details
         List<String> appointmentRequests = getAppointmentRequests(doctorId);
         int counter = 1;
 
@@ -920,9 +931,38 @@ public class AppointmentController {
 
         System.out.println("Pending appointment requests for doctor ID: " + doctorId + ":");
         for (String request : appointmentRequests) {
-            System.out.println(counter + ". " + request);
-            counter++;
+            String[] fields = request.split("\\|");
+
+            // Extract date, time, status, consultation notes, and reschedule details
+            LocalDate date = LocalDate.parse(fields[3], dateFormatter);
+            LocalTime time = LocalTime.parse(fields[4], timeFormatter);
+            String status = fields[5];
+            String patientId = fields[2];
+            String consultationNotes = fields[6];  // Notes for PENDING status
+            String rescheduleDate = fields.length > 7 ? fields[7] : "-";
+            String rescheduleTime = fields.length > 8 ? fields[8] : "-";
+            String rescheduleMessage = fields.length > 9 ? fields[9] : "-";
+
+            // Format the date and time
+            String formattedDate = date.format(dateFormatter);
+            String formattedTime = time.format(timeFormatter);
+
+            // Display basic appointment details
+            System.out.printf("%d. %s / %s: %s %s (%s)", counter++, fields[0], patientId, formattedDate, formattedTime, status);
+
+            // Display consultation notes if the status is PENDING
+            if ("PENDING".equalsIgnoreCase(status) && !consultationNotes.equals("-")) {
+                System.out.printf(" - Consultation Notes: %s", consultationNotes);
+            }
+
+            // Display reschedule details if the status is RESCHEDULE
+            if ("RESCHEDULE".equalsIgnoreCase(status)) {
+                System.out.printf(" - Rescheduled to: %s at %s | Message: %s", rescheduleDate, rescheduleTime, rescheduleMessage);
+            }
+
+            System.out.println(); // Newline after each appointment
         }
+
         return;
     }
 
@@ -1016,6 +1056,8 @@ public class AppointmentController {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] fields = line.split("\\|");
+
+                // Check if the appointment is booked and belongs to the specified doctor
                 if (fields.length >= 6 && fields[5].equals("BOOKED") && fields[1].equals(doctorId)) {
                     upcomingAppointments.add(line);
                 }
@@ -1030,9 +1072,31 @@ public class AppointmentController {
         }
 
         // Print the list of upcoming appointments
-        System.out.println("Upcoming appointments:");
+        System.out.println("Upcoming appointments for Doctor ID: " + doctorId + ":");
         for (String appointment : upcomingAppointments) {
-            System.out.println(appointment);
+            String[] fields = appointment.split("\\|");
+
+            // Extract details
+            String appointmentId = fields[0];
+            String patientId = fields[2];
+            LocalDate date = LocalDate.parse(fields[3], dateFormatter);
+            LocalTime time = LocalTime.parse(fields[4], timeFormatter);
+            String status = fields[5];
+            String consultationNotes = fields[6];
+
+            // Format the date and time
+            String formattedDate = date.format(dateFormatter);
+            String formattedTime = time.format(timeFormatter);
+
+            // Display appointment details
+            System.out.printf("%s / %s: %s %s (%s)", appointmentId, patientId, formattedDate, formattedTime, status);
+
+            // Show consultation notes if the status is BOOKED and notes are available
+            if ("BOOKED".equalsIgnoreCase(status) && !consultationNotes.equals("-")) {
+                System.out.printf(" - %s", consultationNotes);
+            }
+
+            System.out.println(); // Newline after each appointment
         }
 
         PrintUtils.pause();
