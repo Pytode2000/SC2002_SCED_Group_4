@@ -19,20 +19,16 @@ public class MenuController implements MenuInterface {
         this.user = user;
     }
 
-    // Method to display the appropriate menu based on user role
+    // Display the appropriate menu based on user role
     public void displayMenu() {
         if (user instanceof Patient) {
-            PatientMenu patientMenu = new PatientMenu((Patient) user);
-            patientMenu.displayMenu();
+            new PatientMenu((Patient) user).displayMenu();
         } else if (user instanceof Doctor) {
-            DoctorMenu doctorMenu = new DoctorMenu((Doctor) user);
-            doctorMenu.displayMenu();
+            new DoctorMenu((Doctor) user).displayMenu();
         } else if (user instanceof Pharmacist) {
-            PharmacistMenu pharmacistMenu = new PharmacistMenu((Pharmacist) user);
-            pharmacistMenu.displayMenu();
+            new PharmacistMenu((Pharmacist) user).displayMenu();
         } else if (user instanceof Administrator) {
-            AdministratorMenu administratorMenu = new AdministratorMenu((Administrator) user);
-            administratorMenu.displayMenu();
+            new AdministratorMenu((Administrator) user).displayMenu();
         } else {
             System.out.println("Invalid user role. No menu available.");
         }
