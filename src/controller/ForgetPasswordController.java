@@ -15,8 +15,8 @@ public class ForgetPasswordController {
 
     private static final String ACCOUNT_FILE = "data/account.txt";
     private static final String FORGET_PASSWORD_FILE = "data/forgetPassword.txt";
-    private static final String DEFAULT_PASSWORD = "password"; 
-    private AccountController accountController = new AccountController(); 
+    private static final String DEFAULT_PASSWORD = "password";
+    private AccountController accountController = new AccountController();
 
     // Handle a forget password request from the user
     public void handleForgetPasswordRequest() {
@@ -61,7 +61,9 @@ public class ForgetPasswordController {
         while (true) {
             displayRequests(requests);
             int index = getRequestIndex(scanner, requests.size());
-            if (index == 0) return;
+            if (index == 0) {
+                return;
+            }
 
             ForgetPassword selectedRequest = requests.get(index - 1);
             if (processRequestSelection(scanner, selectedRequest)) {
@@ -76,7 +78,9 @@ public class ForgetPasswordController {
         try (BufferedReader reader = new BufferedReader(new FileReader(ACCOUNT_FILE))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                if (line.split("\\|")[0].equalsIgnoreCase(userId)) return true;
+                if (line.split("\\|")[0].equalsIgnoreCase(userId)) {
+                    return true;
+                }
             }
         } catch (IOException e) {
             System.out.println("Error reading account file: " + e.getMessage());
@@ -103,7 +107,10 @@ public class ForgetPasswordController {
 
     // Display all requests for selection
     private void displayRequests(List<ForgetPassword> requests) {
-        System.out.println("\n--- Password Reset Requests ---");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║         Password Reset Requests        ║");
+        System.out.println("╚════════════════════════════════════════╝");
+
         System.out.printf("%-5s %-10s %-32s %-22s%n", "No.", "User ID", "Message", "Request Date");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         for (int i = 0; i < requests.size(); i++) {
@@ -120,8 +127,12 @@ public class ForgetPasswordController {
             System.out.print("\nEnter the request number to process (or 0 to cancel): ");
             try {
                 int index = Integer.parseInt(scanner.nextLine().trim());
-                if (index == 0) return 0;
-                if (index >= 1 && index <= maxIndex) return index;
+                if (index == 0) {
+                    return 0;
+                }
+                if (index >= 1 && index <= maxIndex) {
+                    return index;
+                }
                 System.out.println("Invalid index. Please try again.");
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a valid number.");

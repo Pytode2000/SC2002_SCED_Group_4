@@ -30,7 +30,9 @@ public class PatientMenu implements MenuInterface {
         boolean exit = false;
 
         while (!exit) {
-            System.out.println("\n--- Patient Menu ---");
+            System.out.println("\n╔════════════════════════════════════════╗");
+            System.out.println("║               Patient Menu             ║");
+            System.out.println("╚════════════════════════════════════════╝");
             System.out.println("1. View Personal Information");
             System.out.println("2. View Medical Record");
             System.out.println("3. View Past Appointment Outcome Records");
@@ -40,6 +42,7 @@ public class PatientMenu implements MenuInterface {
             System.out.println("7. Cancel an Appointment/Request");
             System.out.println("8. Rate a Doctor");
             System.out.println("0. Logout");
+            System.out.println("══════════════════════════════════════════");
 
             System.out.print("Enter your choice: ");
             String choice = scanner.nextLine().trim();

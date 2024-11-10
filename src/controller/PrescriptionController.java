@@ -15,8 +15,10 @@ public class PrescriptionController {
 
     // Update the status of a specific prescription and adjust the medicine stock level
     public void updatePrescriptionStatus() {
-        System.out.println("\n--- Update Prescription Status ---");
-        System.out.println("=======================================================");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║       Update Prescription Status       ║");
+        System.out.println("╚════════════════════════════════════════╝");
+        System.out.println("═══════════════════════════════════════════════════════");
 
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter Appointment ID: ");
@@ -25,7 +27,7 @@ public class PrescriptionController {
         List<Prescription> prescriptions = getPendingPrescriptions(appointmentId);
         if (prescriptions.isEmpty()) {
             System.out.println("\nNo pending prescriptions found for this appointment.");
-            System.out.println("=======================================================");
+            System.out.println("═══════════════════════════════════════════════════════");
             PrintUtils.pause();
             return;
         }
@@ -43,7 +45,7 @@ public class PrescriptionController {
 
         if (choice < 1 || choice > prescriptions.size()) {
             System.out.println("\nInvalid choice. Please try again.");
-            System.out.println("=======================================================");
+            System.out.println("═══════════════════════════════════════════════════════");
             PrintUtils.pause();
             return;
         }
@@ -54,17 +56,17 @@ public class PrescriptionController {
         if (currentStock < selectedPrescription.getQuantity()) {
             System.out.println("\nError: Not enough stock available for this medication.");
             System.out.println("Current stock: " + currentStock + " | Quantity required: " + selectedPrescription.getQuantity());
-            System.out.println("=======================================================");
+            System.out.println("═══════════════════════════════════════════════════════");
             PrintUtils.pause();
             return;
         }
 
         updateFileContent(PRESCRIPTION_FILE, selectedPrescription.getPrescriptionId(), "DISPENSED", 3);
-        updateFileContent(MEDICINE_FILE, selectedPrescription.getMedicineId(), 
-                          String.valueOf(Math.max(0, currentStock - selectedPrescription.getQuantity())), 3);
+        updateFileContent(MEDICINE_FILE, selectedPrescription.getMedicineId(),
+                String.valueOf(Math.max(0, currentStock - selectedPrescription.getQuantity())), 3);
 
         System.out.println("\nPrescription successfully dispensed.");
-        System.out.println("=======================================================");
+        System.out.println("═══════════════════════════════════════════════════════");
         PrintUtils.pause();
     }
 

@@ -70,7 +70,10 @@ public class Feedback {
 
     // Display feedback in a formatted way, including datetime
     public void displayFeedback() {
-        System.out.println("\n--- Feedback from Patient ID: " + patientId + " ---");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║                Feedback                ║");
+        System.out.println("╚════════════════════════════════════════╝");
+        System.out.println("Patient ID: " + patientId);
         System.out.println("Doctor ID: " + doctorId);
         System.out.println("Rating: " + rating + "/10");
         System.out.println("Date and Time: " + datetime);

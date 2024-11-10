@@ -71,11 +71,13 @@ public class InventoryController {
 
     // Display the current inventory of medicines
     public void displayInventory() {
-        System.out.println("\n------- Inventory ---------");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║                Inventory               ║");
+        System.out.println("╚════════════════════════════════════════╝");
         System.out.println(String.format("%-10s %-15s %-25s %-15s %-35s %-12s %-18s %-15s",
                 "Index", "Medicine ID", "Name", "Type", "Description", "Quantity", "Low Stock Level", "Status"));
         System.out.println(
-                "------------------------------------------------------------------------------------------------------------------------------------------------");
+                "════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════");
 
         int index = 1;
         for (Medicine medicine : medicines) {
@@ -94,7 +96,9 @@ public class InventoryController {
 
     // Add a new medicine to the inventory
     public void addMedicine(Scanner scanner) {
-        System.out.println("\n--- Add Medicine ---");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║              Add Medicine              ║");
+        System.out.println("╚════════════════════════════════════════╝");
 
         try {
             if (medicines == null) {
@@ -104,19 +108,29 @@ public class InventoryController {
             String medicineId = generateMedicineId();
 
             String name = promptForInput(scanner, "Enter Medicine Name (max 20 characters), or -1 to cancel: ", 1, 20, true);
-            if (name == null) return;
+            if (name == null) {
+                return;
+            }
 
             String description = promptForInput(scanner, "Enter Medicine Description (max 30 characters), or -1 to cancel: ", 1, 30, true);
-            if (description == null) return;
+            if (description == null) {
+                return;
+            }
 
             int stockLevel = promptForIntegerInput(scanner, "Enter Stock Level, or -1 to cancel: ", 0, Integer.MAX_VALUE);
-            if (stockLevel == -1) return;
+            if (stockLevel == -1) {
+                return;
+            }
 
             int lowStockLevel = promptForIntegerInput(scanner, "Enter Low Stock Level, or -1 to cancel: ", 0, stockLevel);
-            if (lowStockLevel == -1) return;
+            if (lowStockLevel == -1) {
+                return;
+            }
 
             String medicineType = promptForInput(scanner, "Enter Medicine Type (max 15 characters), or -1 to cancel: ", 1, 15, true);
-            if (medicineType == null) return;
+            if (medicineType == null) {
+                return;
+            }
 
             Medicine newMedicine = new Medicine(medicineId, name, description, stockLevel, lowStockLevel, medicineType);
             medicines.add(newMedicine);
@@ -130,10 +144,14 @@ public class InventoryController {
 
     // Update an existing medicine in the inventory
     public void updateMedicine(Scanner scanner) {
-        System.out.println("\n--- Update Medicine ---");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║             Update Medicine            ║");
+        System.out.println("╚════════════════════════════════════════╝");
 
         int index = promptForIntegerInput(scanner, "Enter the index of the medicine to update (or -1 to cancel): ", 1, medicines.size());
-        if (index == -1) return;
+        if (index == -1) {
+            return;
+        }
 
         Medicine medicine = medicines.get(index - 1);
         boolean anyFieldUpdated = false;
@@ -178,10 +196,14 @@ public class InventoryController {
 
     // Remove a medicine from the inventory
     public void removeMedicine(Scanner scanner) {
-        System.out.println("\n--- Remove Medicine ---");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║             Remove Medicine            ║");
+        System.out.println("╚════════════════════════════════════════╝");
 
         int index = promptForIntegerInput(scanner, "Enter the index of the medicine to remove (or -1 to cancel): ", 1, medicines.size());
-        if (index == -1) return;
+        if (index == -1) {
+            return;
+        }
 
         medicines.remove(index - 1);
         saveMedicinesToFile();
@@ -191,7 +213,9 @@ public class InventoryController {
     // Approve replenishment requests for low stock medicines
     public void approveReplenishmentRequests() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("\n--- Approve Replenishment Requests ---");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║      Approve Replenishment Requests    ║");
+        System.out.println("╚════════════════════════════════════════╝");
 
         try (BufferedReader reader = new BufferedReader(new FileReader(MEDICINE_REPLENISHMENT_REQUESTS))) {
             String line;
@@ -200,7 +224,7 @@ public class InventoryController {
                     String.format("%-15s %-30s %-10s %-18s %-30s",
                             "Medicine ID", "Name", "Stock", "Low Stock Level", "Replenishment Requested Amount"));
             System.out.println(
-                    "-----------------------------------------------------------------------------------------------------------");
+                    "═══════════════════════════════════════════════════════════════════════════════════════════════════════════");
 
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split("\\|");
@@ -309,7 +333,9 @@ public class InventoryController {
 
     // Check and display medicines with low stock levels
     public List<Medicine> checkLowStock() {
-        System.out.println("\n--- Check Low Stock Medicines ---");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║         Check Low Stock Medicine       ║");
+        System.out.println("╚════════════════════════════════════════╝");
 
         List<Medicine> lowStockMedicines = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(MEDICINE_REPLENISHMENT_REQUESTS))) {
@@ -318,7 +344,7 @@ public class InventoryController {
                     String.format("%-15s %-30s %-10s %-18s %-30s",
                             "Medicine ID", "Name", "Stock", "Low Stock Level", "Replenishment Requested Amount"));
             System.out.println(
-                    "-----------------------------------------------------------------------------------------------------------");
+                    "═══════════════════════════════════════════════════════════════════════════════════════════════════════════");
 
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split("\\|");
@@ -347,8 +373,10 @@ public class InventoryController {
 
     // Submit a replenishment request for a medicine
     public void requestReplenishment() {
-        System.out.println("\n--- Submit Replenishment Request ---");
-        System.out.println("=========================================================================");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║       Submit Replenishment Request     ║");
+        System.out.println("╚════════════════════════════════════════╝");
+        //System.out.println("=========================================================================");
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("Enter Medicine ID for replenishment request: ");
@@ -357,7 +385,7 @@ public class InventoryController {
         Medicine medicine = findMedicineById(medicineId);
         if (medicine == null) {
             System.out.println("Medicine ID: " + medicineId + " not found in inventory.");
-            System.out.println("=========================================================================");
+            System.out.println("═════════════════════════════════════════════════════════════════════════");
             PrintUtils.pause();
             return;
         }
@@ -365,7 +393,7 @@ public class InventoryController {
         if (!medicine.isLowStockLevelAlert() && medicine.getStockLevel() != 0) {
             System.out.println(
                     "Replenishment not needed for medicine ID: " + medicineId + " as stock is sufficient.");
-            System.out.println("=========================================================================");
+            System.out.println("═════════════════════════════════════════════════════════════════════════");
             PrintUtils.pause();
             return;
         }
@@ -376,7 +404,7 @@ public class InventoryController {
             replenishmentAmount = Integer.parseInt(scanner.nextLine().trim());
             if (replenishmentAmount <= 0) {
                 System.out.println("Invalid amount. negative value.");
-                System.out.println("=========================================================================");
+                System.out.println("═════════════════════════════════════════════════════════════════════════");
                 PrintUtils.pause();
                 return;
             }
@@ -392,7 +420,7 @@ public class InventoryController {
         } catch (NumberFormatException e) {
             System.out.println("Invalid amount format. Please enter a valid numeric value.");
         }
-        System.out.println("=========================================================================");
+        System.out.println("═════════════════════════════════════════════════════════════════════════");
 
         PrintUtils.pause();
     }

@@ -13,7 +13,7 @@ import utility.PrintUtils;
 public class FeedbackController {
 
     private static final String STAFF_FILE = "data/staff.txt";
-    private static final String FEEDBACK_FILE = "data/feedback.txt"; 
+    private static final String FEEDBACK_FILE = "data/feedback.txt";
     private Scanner scanner = new Scanner(System.in);
 
     // Display doctors, collect feedback for selected doctor
@@ -26,7 +26,9 @@ public class FeedbackController {
             return;
         }
 
-        System.out.println("\n--- Available Doctors ---");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║           Available Doctors            ║");
+        System.out.println("╚════════════════════════════════════════╝");
         for (int i = 0; i < doctorList.size(); i++) {
             System.out.printf("%d. %s\n", i + 1, doctorList.get(i));
         }
@@ -39,26 +41,25 @@ public class FeedbackController {
             return;
         }
 
-        String doctorId = doctorList.get(doctorIndex - 1).split(" ")[0]; 
+        String doctorId = doctorList.get(doctorIndex - 1).split(" ")[0];
         collectFeedback(patientId, doctorId);
     }
 
     private void collectFeedback(String patientId, String doctorId) {
         int rating = getValidSelection(10, "Enter a rating (1-10): ");
         System.out.print("Enter your comments (press Enter to skip): ");
-        
+
         // Capture comment in a single line to avoid double reading issues
         String comments = scanner.nextLine().trim();
         if (comments.isEmpty()) {
             comments = "-"; // Set to "-" if no comment is provided
         }
-    
+
         // Save feedback to the file
         FileUtils.writeToFile(FEEDBACK_FILE, String.join("|", patientId, doctorId, String.valueOf(rating), comments));
         System.out.println("Thank you for your feedback!");
         PrintUtils.pause();
     }
-    
 
     // Retrieve and display all ratings for a doctor with average rating
     public void viewDoctorRatings(String doctorId) {
@@ -82,9 +83,10 @@ public class FeedbackController {
             return;
         }
 
-        System.out.println("\n--- Feedback for Doctor ID: " + doctorId + " ---");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║           Feedback for Doctor          ║");
+        System.out.println("╚════════════════════════════════════════╝");
         System.out.printf("%-15s %-10s %-32s%n", "Patient ID", "Rating", "Comments");
-        System.out.println("-----------------------------------------------------------");
 
         int totalRating = 0;
         for (Feedback feedback : feedbackList) {
@@ -93,6 +95,7 @@ public class FeedbackController {
             totalRating += feedback.getRating();
         }
         System.out.printf("\nAverage Rating: %.2f/10\n", (double) totalRating / feedbackList.size());
+        System.out.println("══════════════════════════════════════════");
         PrintUtils.pause();
     }
 
@@ -103,7 +106,7 @@ public class FeedbackController {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] fields = line.split("\\|");
-                if ("Doctor".equalsIgnoreCase(fields[7])) { 
+                if ("Doctor".equalsIgnoreCase(fields[7])) {
                     doctorList.add(fields[0] + " " + fields[1] + " " + fields[2]);
                 }
             }
@@ -120,7 +123,9 @@ public class FeedbackController {
             try {
                 System.out.print(prompt);
                 selection = Integer.parseInt(scanner.nextLine().trim());
-                if (selection >= 0 && selection <= max) return selection;
+                if (selection >= 0 && selection <= max) {
+                    return selection;
+                }
                 System.out.println("Invalid selection. Please enter a number between 0 and " + max + ".");
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a valid number.");

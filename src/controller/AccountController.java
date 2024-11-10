@@ -48,13 +48,16 @@ public class AccountController {
         Scanner scanner = new Scanner(System.in);
 
         if (isAdmin) {
-            System.out.println("\n--- Register Staff ---");
+            System.out.println("\n╔════════════════════════════════════════╗");
+            System.out.println("║              Register Staff            ║");
+            System.out.println("╚════════════════════════════════════════╝");
 
             while (!(userRole.equals("Doctor") || userRole.equals("Pharmacist") || userRole.equals("0"))) {
                 System.out.println("Choose Role (0 to cancel):");
                 System.out.println("1. Doctor");
                 System.out.println("2. Pharmacist");
                 // System.out.println("3. Administrator");
+                System.out.println("══════════════════════════════════════════");
                 System.out.print("Enter choice: ");
                 userRole = scanner.nextLine().trim();
 
@@ -510,7 +513,9 @@ public class AccountController {
         boolean updating = true;
 
         while (updating) {
-            System.out.println("\n--- Personal Information ---");
+            System.out.println("\n╔════════════════════════════════════════╗");
+            System.out.println("║           Patient Information          ║");
+            System.out.println("╚════════════════════════════════════════╝");
             System.out.println("User ID: " + user.getUserId());
             if (user instanceof Patient) {
                 System.out.println("Current Contact Number: " + ((Patient) user).getContactNumber());
@@ -524,6 +529,7 @@ public class AccountController {
                 System.out.println("3. Email Address");
             }
             System.out.println("0. Back to Main Menu");
+            System.out.println("══════════════════════════════════════════");
             System.out.print("Enter your choice: ");
             String choice = scanner.nextLine().trim();
 
@@ -721,12 +727,13 @@ public class AccountController {
             if (staff.isEmpty()) {
                 System.out.println("\nNo results found.");
             } else {
-                System.out.println("\n--- View All Staff ---");
+                System.out.println("\n╔════════════════════════════════════════╗");
+                System.out.println("║             View All Staff             ║");
+                System.out.println("╚════════════════════════════════════════╝");
                 System.out.printf("%-5s %-10s %-20s %-20s %-10s %-8s %-18s %-30s %-15s\n",
                         "No.", "User ID", "First Name", "Last Name", "Gender", "Age", "Contact Number", "Email Address",
                         "Role");
-                System.out.println(
-                        "----------------------------------------------------------------------------------------------------------------------------------------------");
+                System.out.println("══════════════════════════════════════════");
                 for (int i = 0; i < staff.size(); i++) {
                     String[] fields = staff.get(i).split("\\|");
                     int age = calculateAge(LocalDate.parse(fields[4], DateTimeFormatter.ofPattern("dd-MM-yyyy")));
@@ -743,10 +750,14 @@ public class AccountController {
 
     // View staff by role
     public void filterByRole(Scanner scanner) {
-        System.out.println("\n--- Filter Staff by Role ---");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║          Filter Staff by Role          ║");
+        System.out.println("╚════════════════════════════════════════╝");
+
         System.out.println("1. Doctor");
         System.out.println("2. Pharmacist");
         System.out.println("3. Administrator");
+        System.out.println("══════════════════════════════════════════");
         System.out.print("Enter your choice: ");
         String choice = scanner.nextLine().trim();
         String role = "";
@@ -778,12 +789,13 @@ public class AccountController {
             if (filtered.isEmpty()) {
                 System.out.println("\nNo results found.");
             } else {
-                System.out.println("\n--- Filtered Staff ---");
+                System.out.println("\n╔════════════════════════════════════════╗");
+                System.out.println("║             Filtered Staff             ║");
+                System.out.println("╚════════════════════════════════════════╝");
                 System.out.printf("%-5s %-10s %-20s %-20s %-10s %-8s %-18s %-30s %-15s\n",
                         "No.", "User ID", "First Name", "Last Name", "Gender", "Age", "Contact Number", "Email Address",
                         "Role");
-                System.out.println(
-                        "----------------------------------------------------------------------------------------------------------------------------------------------");
+                System.out.println("══════════════════════════════════════════");
                 for (int i = 0; i < filtered.size(); i++) {
                     String[] fields = filtered.get(i).split("\\|");
                     int age = calculateAge(LocalDate.parse(fields[4], DateTimeFormatter.ofPattern("dd-MM-yyyy")));
@@ -800,10 +812,13 @@ public class AccountController {
 
     // View staff by gender
     public void filterByGender(Scanner scanner) {
-        System.out.println("\n--- Filter Staff by Gender ---");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║          Filter Staff by Gender        ║");
+        System.out.println("╚════════════════════════════════════════╝");
         System.out.println("1. Male");
         System.out.println("2. Female");
         System.out.println("3. Other");
+        System.out.println("══════════════════════════════════════════");
         System.out.print("Enter your choice: ");
         String choice = scanner.nextLine().trim();
         String gender = "";
@@ -835,12 +850,14 @@ public class AccountController {
             if (filtered.isEmpty()) {
                 System.out.println("\nNo results found.");
             } else {
-                System.out.println("\n--- Filtered Staff ---");
+                System.out.println("\n╔════════════════════════════════════════╗");
+                System.out.println("║             Filtered Staff             ║");
+                System.out.println("╚════════════════════════════════════════╝");
                 System.out.printf("%-5s %-10s %-20s %-20s %-10s %-8s %-18s %-30s %-15s\n",
                         "No.", "User ID", "First Name", "Last Name", "Gender", "Age", "Contact Number", "Email Address",
                         "Role");
-                System.out.println(
-                        "----------------------------------------------------------------------------------------------------------------------------------------------");
+                System.out.println("══════════════════════════════════════════");
+
                 for (int i = 0; i < filtered.size(); i++) {
                     String[] fields = filtered.get(i).split("\\|");
                     int age = calculateAge(LocalDate.parse(fields[4], DateTimeFormatter.ofPattern("dd-MM-yyyy")));
@@ -857,7 +874,10 @@ public class AccountController {
 
     // View staff by age
     public void filterByAge(Scanner scanner) {
-        System.out.println("\n--- Filter Staff by Age ---");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║           Filter Staff by Age          ║");
+        System.out.println("╚════════════════════════════════════════╝");
+
         System.out.print("Enter age: ");
         int age;
         while (true) {
@@ -886,12 +906,13 @@ public class AccountController {
             if (filtered.isEmpty()) {
                 System.out.println("\nNo results found.");
             } else {
-                System.out.println("\n--- Filtered Staff ---");
+                System.out.println("\n╔════════════════════════════════════════╗");
+                System.out.println("║             Filtered Staff             ║");
+                System.out.println("╚════════════════════════════════════════╝");
                 System.out.printf("%-5s %-10s %-20s %-20s %-10s %-8s %-18s %-30s %-15s\n",
                         "No.", "User ID", "First Name", "Last Name", "Gender", "Age", "Contact Number", "Email Address",
                         "Role");
-                System.out.println(
-                        "----------------------------------------------------------------------------------------------------------------------------------------------");
+                System.out.println("══════════════════════════════════════════");
                 for (int i = 0; i < filtered.size(); i++) {
                     String[] fields = filtered.get(i).split("\\|");
                     System.out.printf("%-5d %-10s %-20s %-20s %-10s %-8d %-18s %-30s %-15s\n",
@@ -912,7 +933,9 @@ public class AccountController {
 
     // Update staff
     public void updateStaff(Scanner scanner) { // Pass the scanner as a parameter
-        System.out.println("\n--- Update Staff ---");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║              Update Staff              ║");
+        System.out.println("╚════════════════════════════════════════╝");
 
         try {
             List<String> staff = Files.readAllLines(Paths.get(STAFF_TXT));
@@ -1227,7 +1250,10 @@ public class AccountController {
         try {
             List<String> staff = Files.readAllLines(Paths.get(STAFF_TXT));
             while (true) {
-                System.out.println("\n--- Remove Staff ---");
+                System.out.println("\n╔════════════════════════════════════════╗");
+                System.out.println("║              Remove Staff              ║");
+                System.out.println("╚════════════════════════════════════════╝");
+
                 System.out.print("Enter index of staff to remove (or 0 to exit): ");
                 String input = scanner.nextLine().trim();
                 if (input.equals("0")) {

@@ -31,14 +31,20 @@ public class AdministratorMenu implements MenuInterface {
         boolean exit = false;
 
         while (!exit) {
-            System.out.println("\n--- Administrator Menu ---");
+            System.out.println("\n╔════════════════════════════════════════╗");
+            System.out.println("║           Administrator Menu           ║");
+            System.out.println("╚════════════════════════════════════════╝");
             System.out.println("1. View and Manage Hospital Staff");
             System.out.println("2. View Appointment Details");
             System.out.println("3. View and Manage Medication Inventory");
             System.out.println("4. Approve Replenishment Requests");
             System.out.println("5. Manage Forget Password Requests");
+
             System.out.println("0. Logout");
+            System.out.println("══════════════════════════════════════════");
+
             System.out.print("Enter your choice: ");
+
             String choice = scanner.nextLine().trim();
 
             switch (choice) {
@@ -73,13 +79,16 @@ public class AdministratorMenu implements MenuInterface {
         boolean backToMenu = false;
 
         while (!backToMenu) {
-            System.out.println("\n--- Staff Management ---");
+            System.out.println("\n╔════════════════════════════════════════╗");
+            System.out.println("║             Staff Management           ║");
+            System.out.println("╚════════════════════════════════════════╝");
             accountController.viewStaff();
             System.out.println("1. Filter Staff by Role/Gender/Age");
             System.out.println("2. Add Staff");
             System.out.println("3. Update Staff");
             System.out.println("4. Remove Staff");
             System.out.println("0. Back to Main Menu");
+            System.out.println("══════════════════════════════════════════");
             System.out.print("Enter your choice: ");
             String choice = scanner.nextLine().trim();
 
@@ -108,11 +117,15 @@ public class AdministratorMenu implements MenuInterface {
 
     // Filter hospital staff by different attributes
     private void filterStaff(Scanner scanner) {
-        System.out.println("\n--- Filter Staff ---");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║              Filter Staff              ║");
+        System.out.println("╚════════════════════════════════════════╝");
+
         System.out.println("1. Filter by Role");
         System.out.println("2. Filter by Gender");
         System.out.println("3. Filter by Age");
         System.out.println("0. Back to Main Menu");
+        System.out.println("══════════════════════════════════════════");
         System.out.print("Enter your choice: ");
         String choice = scanner.nextLine().trim();
 
@@ -139,12 +152,15 @@ public class AdministratorMenu implements MenuInterface {
         boolean backToMenu = false;
 
         while (!backToMenu) {
-            System.out.println("\n--- Inventory Management ---");
+            System.out.println("\n╔════════════════════════════════════════╗");
+            System.out.println("║          Inventory Management          ║");
+            System.out.println("╚════════════════════════════════════════╝");
             inventoryController.displayInventory();
             System.out.println("1. Add Medicine");
             System.out.println("2. Update Medicine");
             System.out.println("3. Remove Medicine");
             System.out.println("0. Back to Main Menu");
+            System.out.println("══════════════════════════════════════════");
             System.out.print("Enter your choice: ");
             String choice = scanner.nextLine().trim();
 

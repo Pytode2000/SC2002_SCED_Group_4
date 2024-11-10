@@ -26,12 +26,16 @@ public class PharmacistMenu implements MenuInterface {
 
         // Display the Pharmacist menu and handle choices
         while (!exit) {
-            System.out.println("\n--- Pharmacist Menu ---");
+            System.out.println("\n╔════════════════════════════════════════╗");
+            System.out.println("║             Pharmacist Menu            ║");
+            System.out.println("╚════════════════════════════════════════╝");
             System.out.println("1. View Appointment Outcome Record");
             System.out.println("2. Update Prescription Status");
             System.out.println("3. View Medication Inventory");
             System.out.println("4. Submit Replenishment Request");
             System.out.println("0. Logout");
+            System.out.println("══════════════════════════════════════════");
+
             System.out.print("Enter your choice: ");
             String choice = scanner.nextLine().trim();
 
@@ -62,5 +66,5 @@ public class PharmacistMenu implements MenuInterface {
                     break;
             }
         }
-    }   
+    }
 }

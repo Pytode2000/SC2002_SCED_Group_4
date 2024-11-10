@@ -102,11 +102,13 @@ public class MedicalRecordsController {
 
     // Method to select a patient to perform CRUD on medical records
     private String selectPatient() {
-        System.out.println("\n--- Select a Patient ---");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║            Select a Patient            ║");
+        System.out.println("╚════════════════════════════════════════╝");
         for (Patient patient : patients) {
-            System.out.println("------------------------------------------------------");
+            System.out.println("══════════════════════════════════════════════════════");
             System.out.println(patient);  // Assuming Patient class has a meaningful toString() method
-            System.out.println("------------------------------------------------------");
+            System.out.println("══════════════════════════════════════════════════════");
         }
 
         System.out.print("Enter the patient ID to view medical records (or 0 to exit): ");
@@ -145,7 +147,9 @@ public class MedicalRecordsController {
             return;
         }
 
-        System.out.println("\n--- Creating Medical Record for Patient ID: " + patientId + " ---");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║         Creating Medical Record        ║");
+        System.out.println("╚════════════════════════════════════════╝");
 
         System.out.print("Enter diagnosis (or NIL if none): ");
         String diagnosisInput = scanner.nextLine().trim();
@@ -188,7 +192,9 @@ public class MedicalRecordsController {
             return;
         }
 
-        System.out.println("\n--- Medical Records for Patient ID: " + patientId + " ---");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║      Medical Records for Patient       ║");
+        System.out.println("╚════════════════════════════════════════╝");
         int counter = 1;
         for (MedicalRecord record : recordsToUpdate) {
             System.out.println(counter + ".");
@@ -250,7 +256,9 @@ public class MedicalRecordsController {
             return;
         }
 
-        System.out.println("\n--- Medical Records for Patient ID: " + patientId + " ---");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║      Medical Records for Patient       ║");
+        System.out.println("╚════════════════════════════════════════╝");
         int counter = 1;
         for (MedicalRecord record : recordsToDelete) {
             System.out.println(counter + ".");
@@ -292,7 +300,9 @@ public class MedicalRecordsController {
 
         // Print patient's information
         if (patient != null) {
-            System.out.println("\n--- Patient Information ---");
+            System.out.println("\n╔════════════════════════════════════════╗");
+            System.out.println("║           Patient Information          ║");
+            System.out.println("╚════════════════════════════════════════╝");
             System.out.println(patient);
         } else {
             System.out.println("Patient with ID " + patientId + " not found.");
@@ -301,13 +311,16 @@ public class MedicalRecordsController {
 
         // Display medical records for the patient
         boolean recordFound = false;
-        System.out.println("\n--- Medical Records ---");
+          System.out.println("\n╔════════════════════════════════════════╗");
+            System.out.println("║             Medical Records            ║");
+            System.out.println("╚════════════════════════════════════════╝");
+        
 
         for (MedicalRecord record : medicalRecords) {
             if (record.getPatientId().equals(patientId)) {
                 System.out.println("Diagnosis: " + record.getDiagnosis());
                 System.out.println("Treatment: " + record.getTreatment());
-                System.out.println("--------------------------------------");
+                System.out.println("══════════════════════════════════════");
                 recordFound = true;
             }
         }
@@ -322,9 +335,10 @@ public class MedicalRecordsController {
     // Print the list of patients
     private void printPatients() {
         int i = 1;
-        System.out.println("======================================");
-        System.out.println("Patient List");
-        System.out.println("======================================");
+
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║              Patient List              ║");
+        System.out.println("╚════════════════════════════════════════╝");
         for (Patient patient : patients) {
             System.out.printf("%d. %s %s\n", i, patient.getFirstName(), patient.getLastName());
             i++;

@@ -28,9 +28,12 @@ public class AppointmentController {
     public void scheduleAppointment(String patientId) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("\n--- Schedule an Appointment ---");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║         Schedule an Appointment        ║");
+        System.out.println("╚════════════════════════════════════════╝");
         System.out.println("1. See all available appointment slots");
         System.out.println("2. Select appointment by doctor");
+        System.out.println("══════════════════════════════════════════");
         System.out.print("Choose an option (1 or 2, 0 to exit): ");
 
         String choice = scanner.nextLine().trim();
@@ -92,7 +95,10 @@ public class AppointmentController {
                     })));
 
             // Display appointments by doctor
-            System.out.println("\n--- Available Appointments by Doctor ---");
+            System.out.println("\n╔════════════════════════════════════════╗");
+            System.out.println("║    Available Appointments by Doctor    ║");
+            System.out.println("╚════════════════════════════════════════╝");
+
             int globalIndex = 1;
             Map<Integer, String> indexToAppointment = new HashMap<>();
 
@@ -113,7 +119,7 @@ public class AppointmentController {
                         indexToAppointment.put(globalIndex++, appointment);
                     }
                 }
-                System.out.println("-----------------------------------");
+                System.out.println("══════════════════════════════════════════");
             }
 
             // Prompt user to select an appointment
@@ -193,8 +199,10 @@ public class AppointmentController {
 
     // Displays appointments with a selection index
     private void displayAppointmentsWithIndex(List<String> appointments) {
-        System.out.println("\nAvailable Appointments:");
-        System.out.println("-----------------------");
+          System.out.println("\n╔════════════════════════════════════════╗");
+            System.out.println("║          Available Appointments        ║");
+            System.out.println("╚════════════════════════════════════════╝");
+
         int index = 1;
         for (String appointment : appointments) {
             String[] fields = appointment.split("\\|");
@@ -204,8 +212,8 @@ public class AppointmentController {
                     time.format(timeFormatter));
         }
         System.out.println("0. Back to Main Menu");
-        System.out.println("-----------------------");
-    }
+        System.out.println("══════════════════════════════════════════");
+        }
 
     // Get user selection for appointment
     private int getUserSelection(int maxIndex) {
@@ -276,8 +284,9 @@ public class AppointmentController {
     public void displayAndSelectBookedAppointments(String patientId) {
         while (true) {
             List<String[]> bookedAppointments = new ArrayList<>();
-            System.out.println("\nYour Appointments:");
-            System.out.println("--------------------------");
+            System.out.println("\n╔════════════════════════════════════════╗");
+            System.out.println("║            Your Appointments           ║");
+            System.out.println("╚════════════════════════════════════════╝");
 
             // Retrieve booked appointments
             try (BufferedReader reader = new BufferedReader(new FileReader(APPOINTMENT_FILE))) {
@@ -329,7 +338,7 @@ public class AppointmentController {
                 }
 
                 System.out.println("0. Back to Main Menu");
-                System.out.println("--------------------------");
+                System.out.println("══════════════════════════");
 
                 // Prompt user to select an appointment by index
                 int selection = getUserSelection(bookedAppointments.size());
@@ -362,11 +371,14 @@ public class AppointmentController {
 
                 // Check if this is the correct doctor
                 if (fields[0].equals(doctorId)) {
-                    System.out.println("\nDoctor Details:"
-                            + "\nName: " + fields[1] + " " + fields[2]
+                    System.out.println("\n╔════════════════════════════════════════╗");
+                    System.out.println("║             Doctor Details             ║");
+                    System.out.println("╚════════════════════════════════════════╝");
+                    System.out.println("\nName: " + fields[1] + " " + fields[2]
                             + "\nGender: " + fields[3]
                             + "\nContact Number: " + fields[5]
                             + "\nEmail Address: " + fields[6]);
+                    System.out.println("══════════════════════════════════════════");
                     PrintUtils.pause();
                 }
             }
@@ -377,8 +389,9 @@ public class AppointmentController {
 
     public void deleteBookedAppointment(String patientId) {
         List<String[]> bookedAppointments = new ArrayList<>();
-        System.out.println("\nYour Booked Appointments:");
-        System.out.println("--------------------------");
+          System.out.println("\n╔════════════════════════════════════════╗");
+            System.out.println("║        Your Booked Appointments        ║");
+            System.out.println("╚════════════════════════════════════════╝");
 
         // Retrieve booked appointments
         try (BufferedReader reader = new BufferedReader(new FileReader(APPOINTMENT_FILE))) {
@@ -419,7 +432,7 @@ public class AppointmentController {
             }
 
             System.out.println("0. Back to Main Menu");
-            System.out.println("--------------------------");
+            System.out.println("══════════════════════════════════════════");
 
             // Prompt user to select an appointment by index
             int selection = getUserSelection(bookedAppointments.size());
@@ -488,8 +501,10 @@ public class AppointmentController {
 
     public void requestRescheduleAppointment(String patientId) {
         List<String[]> bookedAppointments = new ArrayList<>();
-        System.out.println("\nYour Booked Appointments:");
-        System.out.println("--------------------------");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║        Your Booked Appointments        ║");
+        System.out.println("╚════════════════════════════════════════╝");
+
 
         // Retrieve booked appointments
         try (BufferedReader reader = new BufferedReader(new FileReader(APPOINTMENT_FILE))) {
@@ -525,7 +540,7 @@ public class AppointmentController {
             }
 
             System.out.println("0. Back to Main Menu");
-            System.out.println("--------------------------");
+            System.out.println("══════════════════════════════════════════");
 
             // Prompt user to select an appointment by index
             int selection = getUserSelection(bookedAppointments.size());
@@ -672,7 +687,9 @@ public class AppointmentController {
         List<String> currentDoctorSchedule = getPersonalSchedule(doctorId);
 
         // Print or return the currentDoctorSchedule if needed
-        System.out.println("=== Appointments for Doctor ID: " + doctorId + " ===");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║           Doctor Appointments          ║");
+        System.out.println("╚════════════════════════════════════════╝");
 
         if (currentDoctorSchedule.isEmpty()) {
             System.out.println("No appointments scheduled.");
@@ -697,7 +714,7 @@ public class AppointmentController {
             }
         }
 
-        System.out.println("===================================");
+        System.out.println("══════════════════════════════════════════");
         PrintUtils.pause();
     }
 
@@ -827,14 +844,15 @@ public class AppointmentController {
             System.out.println("Error writing to appointment file: " + e.getMessage());
         }
 
-        System.out.println("\n--- Appointment Added Successfully ---");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║     Appointment Added Successfully     ║");
+        System.out.println("╚════════════════════════════════════════╝");
         System.out.println("Appointment ID  : " + appointmentId);
         System.out.println("Doctor ID       : " + doctorId);
         System.out.println("Date            : " + date.format(dateFormatter));
         System.out.println("Time            : " + time.format(timeFormatter));
         System.out.println("Status          : AVAILABLE");
-        System.out.println("--------------------------------------\n");
-
+        System.out.println("══════════════════════════════════════════\n");
     }
 
     public void deleteAvailability(String doctorId) {
@@ -1105,13 +1123,15 @@ public class AppointmentController {
 
     // Display doctor appointment details
     public void displayDoctorAppointmentDetails() {
-        System.out.println("\n--- View All Appointments ---");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║          View All Appointments         ║");
+        System.out.println("╚════════════════════════════════════════╝");
 
         System.out.printf("%-16s %-12s %-12s %-12s %-8s %-12s %-32s %-18s %-18s %-32s%n",
                 "Appointment ID", "Doctor ID", "Patient ID", "Date", "Time", "Status", "Request Message",
                 "Reschedule Date", "Reschedule Time", "Reschedule Message");
         System.out.println(
-                "-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                "═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════");
         try (BufferedReader reader = new BufferedReader(new FileReader(APPOINTMENT_FILE))) {
             String line;
             while ((line = reader.readLine()) != null) {

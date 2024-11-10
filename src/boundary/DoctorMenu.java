@@ -31,7 +31,9 @@ public class DoctorMenu implements MenuInterface {
         boolean exit = false;
 
         while (!exit) {
-            System.out.println("\n--- Doctor Menu ---");
+            System.out.println("\n╔════════════════════════════════════════╗");
+            System.out.println("║               Doctor Menu              ║");
+            System.out.println("╚════════════════════════════════════════╝");
             System.out.println("1. Patient Medical Records");
             System.out.println("2. View Personal Schedule");
             System.out.println("3. Set Availability for Appointments");
@@ -40,8 +42,11 @@ public class DoctorMenu implements MenuInterface {
             System.out.println("6. Record Appointment Outcome");
             System.out.println("7. View Feedbacks");
             System.out.println("0. Logout");
+            System.out.println("══════════════════════════════════════════");
+
 
             System.out.print("Enter your choice: ");
+            
             String choice = scanner.nextLine().trim();
 
             switch (choice) {

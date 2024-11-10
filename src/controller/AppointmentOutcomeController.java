@@ -37,8 +37,10 @@ public class AppointmentOutcomeController {
     //testZL
     public void displayAllPendingAppointmentOutcomes() {
 
-        System.out.println("\n--- Appointment Outcome Records ---");
-        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║       Appointment Outcome Records      ║");
+        System.out.println("╚════════════════════════════════════════╝");
+        System.out.println("\n══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════");
 
         try {
             // Step 1: Load all pending prescription IDs
