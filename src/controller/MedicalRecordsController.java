@@ -21,11 +21,11 @@ public class MedicalRecordsController {
     private static final String PATIENT_TXT = "data/patient.txt";
     Scanner scanner = new Scanner(System.in);
 
+    // Constructor to initialize the controller and load data from files
     public MedicalRecordsController() {
         this.patients = new ArrayList<>();
         this.medicalRecords = new ArrayList<>();
 
-        // System.out.println("medicalrecordscontrollerconstructor\n");
         // Load patient records
         try {
             loadPatientsFromFile(PATIENT_TXT);
@@ -43,7 +43,6 @@ public class MedicalRecordsController {
 
     // Load patients from file
     private void loadPatientsFromFile(String filename) throws IOException {
-        // System.out.println("Loading patient file\n");
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -62,7 +61,6 @@ public class MedicalRecordsController {
 
     // Load medical records from file
     private void loadMedicalRecordsFromFile(String filename) throws IOException {
-        // System.out.println("Loading medical records file\n");
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -83,7 +81,7 @@ public class MedicalRecordsController {
                 Patient patient = findPatientById(patientId);
 
                 if (patient != null) {
-                    MedicalRecord record = new MedicalRecord(medicalRecordId,doctorId, patientId, diagnosis, treatment);
+                    MedicalRecord record = new MedicalRecord(medicalRecordId, doctorId, patientId, diagnosis, treatment);
                     medicalRecords.add(record);
                 } else {
                     System.out.println("No matching patient found for ID: " + patientId);
@@ -102,9 +100,8 @@ public class MedicalRecordsController {
         return null;
     }
 
-    // Method to select patient to perform CRUD on medical records.
+    // Method to select a patient to perform CRUD on medical records
     private String selectPatient() {
-        Scanner scanner = new Scanner(System.in);
         System.out.println("\n--- Select a Patient ---");
         for (Patient patient : patients) {
             System.out.println("------------------------------------------------------");
@@ -127,14 +124,15 @@ public class MedicalRecordsController {
         }
     }
 
+    // Generate a new unique medical record ID
     private String generateMedicalRecordId() {
         if (medicalRecords.isEmpty()) {
             return "MR1"; // Start with MR1 if no records exist
         }
-    
+
         // Get the last medical record ID
-        String lastRecordId = medicalRecords.get(medicalRecords.size() - 1).getMedicalRecordId(); // Assuming each record has an getId() method
-    
+        String lastRecordId = medicalRecords.get(medicalRecords.size() - 1).getMedicalRecordId();
+
         // Extract the numeric part and increment it
         int lastIdNumber = Integer.parseInt(lastRecordId.substring(2));
         return String.format("%s%05d", "MR", lastIdNumber + 1);
@@ -142,7 +140,6 @@ public class MedicalRecordsController {
 
     // Method to create a medical record for a patient
     private void createMedicalRecord(String patientId, String doctorId) {
-
         if (findPatientById(patientId) == null) {
             System.out.println("Invalid patient ID.");
             return;
@@ -172,14 +169,13 @@ public class MedicalRecordsController {
         System.out.println(patientId + " Created Medical record successfully!");
     }
 
+    // Method to update a medical record for a patient
     private void updateMedicalRecord(String patientId, String doctorId) {
-        // Find all medical records associated with the patient ID
-        int counter = 1;
-
         if (findPatientById(patientId) == null) {
             System.out.println("Invalid patient ID.");
             return;
         }
+
         List<MedicalRecord> recordsToUpdate = new ArrayList<>();
         for (MedicalRecord record : medicalRecords) {
             if (record.getPatientId().equals(patientId) && record.getDoctorId().equals(doctorId)) {
@@ -187,65 +183,56 @@ public class MedicalRecordsController {
             }
         }
 
-        // If no records are found, print a message and return
         if (recordsToUpdate.isEmpty()) {
             System.out.println("No medical records found for Patient ID: " + patientId);
             return;
         }
 
-        // Display records for user to choose from
         System.out.println("\n--- Medical Records for Patient ID: " + patientId + " ---");
+        int counter = 1;
         for (MedicalRecord record : recordsToUpdate) {
             System.out.println(counter + ".");
             System.out.println(record);
+            counter++;
         }
-
-        counter = 1;
 
         while (true) {
             System.out.println("Select a medical record to update (0 to return): ");
             int updateChoice = scanner.nextInt();
-            if (updateChoice==0) return;
-            else if (updateChoice>recordsToUpdate.size()) {
-                System.out.println("Invalid choice. Pleae enter a valid selection");
+            if (updateChoice == 0) {
+                return;
+            }
+            if (updateChoice > recordsToUpdate.size()) {
+                System.out.println("Invalid choice. Please enter a valid selection");
                 continue;
             }
-            for (MedicalRecord recordToUpdate : recordsToUpdate) {
-                if (updateChoice == counter) {
 
-                    System.out.print("Enter new diagnosis (or press Enter to keep current): ");
-                    if (scanner.hasNextLine()) {
-                        scanner.nextLine();
-                    }
-                    String diagnosisInput = scanner.nextLine().trim();
-                    if (!diagnosisInput.isEmpty()) {
-                        String diagnosis = diagnosisInput.equalsIgnoreCase("NIL") ? null : diagnosisInput; // Set to null if NIL
-                        recordToUpdate.setDiagnosis(diagnosis);
-                    }
+            MedicalRecord recordToUpdate = recordsToUpdate.get(updateChoice - 1);
 
-                    // Update treatment
-                    System.out.print("Enter new treatment (or press Enter to keep current): ");
-                    String treatmentInput = scanner.nextLine().trim();
-                    if (!treatmentInput.isEmpty()) {
-                        recordToUpdate.setTreatment(treatmentInput.equalsIgnoreCase("NIL") ? "" : treatmentInput);
-                    }
-
-                    System.out.println("Medical record updated successfully for Patient ID: " + patientId);
-
-                    // Write updated record to file (consider changing how you manage the file writing if needed)
-                    FileUtils.updateToFile(MEDICALRECORDS_TXT, recordToUpdate.getMedicalRecordId() + '|' + doctorId + '|' +patientId + '|' + recordToUpdate.getDiagnosis() + '|' + recordToUpdate.getTreatment(), recordToUpdate.getMedicalRecordId());
-                    return;
-                }      
-                counter++;
+            System.out.print("Enter new diagnosis (or press Enter to keep current): ");
+            scanner.nextLine(); // Consume newline
+            String diagnosisInput = scanner.nextLine().trim();
+            if (!diagnosisInput.isEmpty()) {
+                String diagnosis = diagnosisInput.equalsIgnoreCase("NIL") ? "-" : diagnosisInput; // Set to null if NIL
+                recordToUpdate.setDiagnosis(diagnosis);
             }
-        }    
+
+            System.out.print("Enter new treatment (or press Enter to keep current): ");
+            String treatmentInput = scanner.nextLine().trim();
+            if (!treatmentInput.isEmpty()) {
+                recordToUpdate.setTreatment(treatmentInput.equalsIgnoreCase("NIL") ? "-" : treatmentInput);
+            }
+
+            System.out.println("Medical record updated successfully for Patient ID: " + patientId);
+
+            // Write updated record to file
+            FileUtils.updateToFile(MEDICALRECORDS_TXT, recordToUpdate.getMedicalRecordId() + '|' + doctorId + '|' + patientId + '|' + recordToUpdate.getDiagnosis() + '|' + recordToUpdate.getTreatment(), recordToUpdate.getMedicalRecordId());
+            return;
+        }
     }
-    
+
+    // Method to delete a medical record for a patient
     private void deleteMedicalRecord(String patientId, String doctorId) {
-        // Find all medical records associated with the patient ID
-
-        int counter = 1;
-
         if (findPatientById(patientId) == null) {
             System.out.println("Invalid patient ID.");
             return;
@@ -258,51 +245,45 @@ public class MedicalRecordsController {
             }
         }
 
-        // If no records are found, print a message and return
         if (recordsToDelete.isEmpty()) {
             System.out.println("No medical records found for Patient ID: " + patientId);
             return;
         }
 
-        // Display records for user to choose from
         System.out.println("\n--- Medical Records for Patient ID: " + patientId + " ---");
+        int counter = 1;
         for (MedicalRecord record : recordsToDelete) {
-            System.out.println(counter+".");
+            System.out.println(counter + ".");
             System.out.println(record);
             counter++;
         }
 
-        counter = 1;
-
         while (true) {
             System.out.println("Select medical record to delete (0 to return): ");
             int medicalRecordChoice = scanner.nextInt();
-            if (medicalRecordChoice==0) return;
-            else if (medicalRecordChoice>recordsToDelete.size()) {
-                System.out.println("Invalid choice. Pleae enter a valid selection");
+            if (medicalRecordChoice == 0) {
+                return;
+            }
+            if (medicalRecordChoice > recordsToDelete.size()) {
+                System.out.println("Invalid choice. Please enter a valid selection");
                 continue;
             }
-            for (MedicalRecord recordToDelete : recordsToDelete) {
-                if (medicalRecordChoice == counter) {
- 
-                    System.out.print("Are you sure you want to delete this medical record? (yes/no): ");
-                    if (scanner.hasNextLine()) {
-                        scanner.nextLine();
-                    }
-                    String confirmation = scanner.nextLine().trim().toLowerCase();
-            
-                    if (confirmation.equals("yes")) {
-                        FileUtils.deleteFromFile(MEDICALRECORDS_TXT, recordToDelete.getMedicalRecordId());
-                        medicalRecords.remove(recordToDelete);  // Remove the selected medical record from the list
-                        System.out.println("Medical record for Patient ID: " + patientId + " has been deleted successfully.");
-                    } else {
-                        System.out.println("Deletion canceled for Patient ID: " + patientId);
-                    } 
-                    return;      
-                }
-                counter++;
-            }    
-        }     
+
+            MedicalRecord recordToDelete = recordsToDelete.get(medicalRecordChoice - 1);
+
+            System.out.print("Are you sure you want to delete this medical record? (yes/no): ");
+            scanner.nextLine(); // Consume newline
+            String confirmation = scanner.nextLine().trim().toLowerCase();
+
+            if (confirmation.equals("yes")) {
+                FileUtils.deleteFromFile(MEDICALRECORDS_TXT, recordToDelete.getMedicalRecordId());
+                medicalRecords.remove(recordToDelete);  // Remove the selected medical record from the list
+                System.out.println("Medical record for Patient ID: " + patientId + " has been deleted successfully.");
+            } else {
+                System.out.println("Deletion canceled for Patient ID: " + patientId);
+            }
+            return;
+        }
     }
 
     // Method to display medical records for a given patient ID
@@ -324,7 +305,6 @@ public class MedicalRecordsController {
 
         for (MedicalRecord record : medicalRecords) {
             if (record.getPatientId().equals(patientId)) {
-                //System.out.println("Record ID: " + record.getMedicalRecordId());
                 System.out.println("Diagnosis: " + record.getDiagnosis());
                 System.out.println("Treatment: " + record.getTreatment());
                 System.out.println("--------------------------------------");
@@ -339,10 +319,9 @@ public class MedicalRecordsController {
         PrintUtils.pause();
     }
 
+    // Print the list of patients
     private void printPatients() {
-
         int i = 1;
-
         System.out.println("======================================");
         System.out.println("Patient List");
         System.out.println("======================================");
@@ -352,110 +331,88 @@ public class MedicalRecordsController {
         }
     }
 
+    // Display medical records for a selected patient
     private void displayMedicalRecords() {
-        
-        int counter = 1;
-
         printPatients();
         while (true) {
             System.out.println("Select a patient (0 to return): ");
             int patientChoice = scanner.nextInt();
-            if (patientChoice==0) return;
-            else if (patientChoice>patients.size()) {
-                System.out.println("Invalid choice. Pleae enter a valid selection");
+            if (patientChoice == 0) {
+                return;
+            }
+            if (patientChoice > patients.size()) {
+                System.out.println("Invalid choice. Please enter a valid selection");
                 continue;
             }
-            for (Patient patient : patients) {
-                if (patientChoice == counter) {
-                    displayMedicalRecords(patient.getUserId());
-                    return;      
-                }
-                counter++;
-            }    
+            Patient patient = patients.get(patientChoice - 1);
+            displayMedicalRecords(patient.getUserId());
+            return;
         }
     }
 
-    private void createMedicalRecord(String doctorId) { 
-
-        int counter = 1;
-
+    // Create a medical record for a selected patient
+    private void createMedicalRecord(String doctorId) {
         printPatients();
         while (true) {
             System.out.println("Select a patient (0 to return): ");
             int patientChoice = scanner.nextInt();
-            if (patientChoice==0) return;
-            else if (patientChoice>patients.size()) {
-                System.out.println("Invalid choice. Pleae enter a valid selection");
+            if (patientChoice == 0) {
+                return;
+            }
+            if (patientChoice > patients.size()) {
+                System.out.println("Invalid choice. Please enter a valid selection");
                 continue;
             }
-            for (Patient patient : patients) {
-                if (patientChoice == counter) {
-                    createMedicalRecord(patient.getUserId(), doctorId);
-                    return;      
-                }
-                counter++;
-            }    
-        }  
+            Patient patient = patients.get(patientChoice - 1);
+            createMedicalRecord(patient.getUserId(), doctorId);
+            return;
+        }
     }
 
+    // Update a medical record for a selected patient
     private void updateMedicalRecord(String doctorId) {
-
-        int counter = 1;
-
         printPatients();
         while (true) {
             System.out.println("Select a patient (0 to return): ");
             int patientChoice = scanner.nextInt();
-            if (patientChoice==0) return;
-            else if (patientChoice>patients.size()) {
-                System.out.println("Invalid choice. Pleae enter a valid selection");
+            if (patientChoice == 0) {
+                return;
+            }
+            if (patientChoice > patients.size()) {
+                System.out.println("Invalid choice. Please enter a valid selection");
                 continue;
             }
-            for (Patient patient : patients) {
-                if (patientChoice == counter) {
-                    updateMedicalRecord(patient.getUserId(), doctorId);  
-                    return;      
-                }
-                counter++;
-            }    
-        }     
-    }
-
-    private void deleteMedicalRecord(String doctorId) {
-        
-        int counter = 1;
-
-        printPatients();
-        while (true) {
-            System.out.println("Select a patient (0 to return): ");
-            int patientChoice = scanner.nextInt();
-            if (patientChoice==0) return;
-            else if (patientChoice>patients.size()) {
-                System.out.println("Invalid choice. Pleae enter a valid selection");
-                continue;
-            }
-            for (Patient patient : patients) {
-                if (patientChoice == counter) {
-                    deleteMedicalRecord(patient.getUserId(), doctorId);  
-                    return;      
-                }
-                counter++;
-            }    
+            Patient patient = patients.get(patientChoice - 1);
+            updateMedicalRecord(patient.getUserId(), doctorId);
+            return;
         }
-        
-
     }
 
-    // Method to view all medical records with associated patient information 
-    public void viewMedicalRecords(User user) {
+    // Delete a medical record for a selected patient
+    private void deleteMedicalRecord(String doctorId) {
+        printPatients();
+        while (true) {
+            System.out.println("Select a patient (0 to return): ");
+            int patientChoice = scanner.nextInt();
+            if (patientChoice == 0) {
+                return;
+            }
+            if (patientChoice > patients.size()) {
+                System.out.println("Invalid choice. Please enter a valid selection");
+                continue;
+            }
+            Patient patient = patients.get(patientChoice - 1);
+            deleteMedicalRecord(patient.getUserId(), doctorId);
+            return;
+        }
+    }
 
+    // Method to view all medical records with associated patient information
+    public void viewMedicalRecords(User user) {
         if (user instanceof Patient) {
             displayMedicalRecords(user.getUserId());
         } else if (user instanceof Doctor) {
-            Scanner scanner = new Scanner(System.in);
-            String patientId;
             while (true) {
-
                 System.out.println("Select an option:");
                 System.out.println("1: View medical record");
                 System.out.println("2: Create medical record");
@@ -470,15 +427,12 @@ public class MedicalRecordsController {
                         displayMedicalRecords();
                         break;
                     case "2":
-                        // Call the updateMedicalRecord method with patientId and the current appointmentOutcomeIds
                         createMedicalRecord(user.getUserId());
                         break;
                     case "3":
-                        // Call the updateMedicalRecord method
-                       updateMedicalRecord(user.getUserId());
+                        updateMedicalRecord(user.getUserId());
                         break;
                     case "4":
-                        // Call the deleteMedicalRecord method
                         deleteMedicalRecord(user.getUserId());
                         break;
                     case "0":
@@ -489,7 +443,6 @@ public class MedicalRecordsController {
                         continue;  // Restart the loop if the choice is invalid
                 }
             }
-
         }
     }
 }

@@ -13,6 +13,7 @@ public class PrescriptionController {
     private static final String PRESCRIPTION_FILE = "data/prescription.txt";
     private static final String MEDICINE_FILE = "data/medicine.txt";
 
+    // Update the status of a specific prescription and adjust the medicine stock level
     public void updatePrescriptionStatus() {
         System.out.println("\n--- Update Prescription Status ---");
         System.out.println("=======================================================");
@@ -59,14 +60,15 @@ public class PrescriptionController {
         }
 
         updateFileContent(PRESCRIPTION_FILE, selectedPrescription.getPrescriptionId(), "DISPENSED", 3);
-        updateFileContent(MEDICINE_FILE, selectedPrescription.getMedicineId(),
-                String.valueOf(Math.max(0, currentStock - selectedPrescription.getQuantity())), 3);
+        updateFileContent(MEDICINE_FILE, selectedPrescription.getMedicineId(), 
+                          String.valueOf(Math.max(0, currentStock - selectedPrescription.getQuantity())), 3);
 
         System.out.println("\nPrescription successfully dispensed.");
         System.out.println("=======================================================");
         PrintUtils.pause();
     }
 
+    // Retrieve pending prescriptions associated with a specific appointment ID
     private List<Prescription> getPendingPrescriptions(String appointmentId) {
         List<Prescription> prescriptions = new ArrayList<>();
         try (BufferedReader outcomeReader = new BufferedReader(new FileReader(APPOINTMENT_OUTCOME_FILE))) {
@@ -89,6 +91,7 @@ public class PrescriptionController {
         return prescriptions;
     }
 
+    // Retrieve a specific prescription by its ID
     private Prescription getPrescription(String prescriptionId) {
         try (BufferedReader prescriptionReader = new BufferedReader(new FileReader(PRESCRIPTION_FILE))) {
             String line;
@@ -105,6 +108,7 @@ public class PrescriptionController {
         return null;
     }
 
+    // Retrieve the stock level of a specific medicine
     private int getStockLevel(String medicineId) {
         try (BufferedReader reader = new BufferedReader(new FileReader(MEDICINE_FILE))) {
             String line;
@@ -120,6 +124,7 @@ public class PrescriptionController {
         return 0;
     }
 
+    // Update content in a file by ID and field index
     private void updateFileContent(String filePath, String id, String newValue, int fieldIndex) {
         List<String> lines = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
@@ -145,6 +150,7 @@ public class PrescriptionController {
         }
     }
 
+    // Retrieve the name of a specific medicine by its ID
     private String getMedicineName(String medicineId) {
         try (BufferedReader reader = new BufferedReader(new FileReader(MEDICINE_FILE))) {
             String line;

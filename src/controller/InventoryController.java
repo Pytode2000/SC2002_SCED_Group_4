@@ -1,9 +1,6 @@
 package controller;
 
 import entity.Medicine;
-import utility.FileUtils;
-import utility.PrintUtils;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -12,18 +9,22 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import utility.FileUtils;
+import utility.PrintUtils;
 
 public class InventoryController {
+
     private List<Medicine> medicines;
     private static final String MEDICINE_FILE = "data/medicine.txt";
     private static final String MEDICINE_REPLENISHMENT_REQUESTS = "data/medicineReplenishmentRequests.txt";
 
+    // Constructor to initialize the inventory controller and load medicines from file
     public InventoryController() {
         this.medicines = new ArrayList<>();
         loadMedicinesFromFile();
     }
 
-    // Load medicines from medicine.txt
+    // Load medicines from the file into the medicines list
     private void loadMedicinesFromFile() {
         try (BufferedReader reader = new BufferedReader(new FileReader(MEDICINE_FILE))) {
             String line;
@@ -38,7 +39,7 @@ public class InventoryController {
         }
     }
 
-    // Save medicines to medicine.txt
+    // Save the current list of medicines to the file
     private void saveMedicinesToFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(MEDICINE_FILE))) {
             for (Medicine medicine : medicines) {
@@ -53,11 +54,9 @@ public class InventoryController {
         }
     }
 
-    // Generate the next medicine ID by reading the last ID from the file and
-    // incrementing it
+    // Generate a new unique medicine ID
     private String generateMedicineId() {
-        String lastId = "MD00000"; // Default ID if no entries are found
-
+        String lastId = "MD00000";
         try (BufferedReader reader = new BufferedReader(new FileReader(MEDICINE_FILE))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -66,12 +65,11 @@ public class InventoryController {
         } catch (IOException e) {
             System.out.println("Error reading medicine file: " + e.getMessage());
         }
-
         int lastNum = Integer.parseInt(lastId.substring(2));
         return String.format("MD%05d", lastNum + 1);
     }
 
-    // Display entire inventory
+    // Display the current inventory of medicines
     public void displayInventory() {
         System.out.println("\n------- Inventory ---------");
         System.out.println(String.format("%-10s %-15s %-25s %-15s %-35s %-12s %-18s %-15s",
@@ -94,7 +92,7 @@ public class InventoryController {
         PrintUtils.pause();
     }
 
-    // Method to add a new medicine
+    // Add a new medicine to the inventory
     public void addMedicine(Scanner scanner) {
         System.out.println("\n--- Add Medicine ---");
 
@@ -105,292 +103,92 @@ public class InventoryController {
 
             String medicineId = generateMedicineId();
 
-            String name;
-            while (true) {
-                System.out.print("Enter Medicine Name (max 20 characters), or -1 to cancel: ");
-                name = scanner.nextLine().trim();
+            String name = promptForInput(scanner, "Enter Medicine Name (max 20 characters), or -1 to cancel: ", 1, 20, true);
+            if (name == null) return;
 
-                if (name.equals("-1")) {
-                    System.out.println("Operation cancelled. Exiting add medicine menu.");
-                    return;
-                }
+            String description = promptForInput(scanner, "Enter Medicine Description (max 30 characters), or -1 to cancel: ", 1, 30, true);
+            if (description == null) return;
 
-                if (name == null || name.isEmpty() || name.length() > 20) {
-                    System.out.println("Medicine name must be between 1 and 20 characters. Please enter a valid name.");
-                } else if (findMedicineById(name) != null) {
-                    System.out.println("Medicine name already exists. Please enter a unique name.");
-                } else {
-                    break;
-                }
-            }
+            int stockLevel = promptForIntegerInput(scanner, "Enter Stock Level, or -1 to cancel: ", 0, Integer.MAX_VALUE);
+            if (stockLevel == -1) return;
 
-            String description;
-            while (true) {
-                System.out.print("Enter Medicine Description (max 30 characters), or -1 to cancel: ");
-                description = scanner.nextLine().trim();
+            int lowStockLevel = promptForIntegerInput(scanner, "Enter Low Stock Level, or -1 to cancel: ", 0, stockLevel);
+            if (lowStockLevel == -1) return;
 
-                if (description.equals("-1")) {
-                    System.out.println("Operation cancelled. Exiting add medicine menu.");
-                    return;
-                }
+            String medicineType = promptForInput(scanner, "Enter Medicine Type (max 15 characters), or -1 to cancel: ", 1, 15, true);
+            if (medicineType == null) return;
 
-                if (description == null || description.isEmpty() || description.length() > 30) {
-                    System.out.println(
-                            "Medicine description must be between 1 and 30 characters. Please enter a valid description.");
-                } else {
-                    break;
-                }
-            }
-
-            int stockLevel;
-            while (true) {
-                System.out.print("Enter Stock Level, or -1 to cancel: ");
-                String stockLevelStr = scanner.nextLine().trim();
-
-                if (stockLevelStr.equals("-1")) {
-                    System.out.println("Operation cancelled. Exiting add medicine menu.");
-                    return;
-                }
-
-                try {
-                    stockLevel = Integer.parseInt(stockLevelStr);
-
-                    if (stockLevel < 0) {
-                        System.out.println("Stock level cannot be negative. Please enter a valid number.");
-                    } else {
-                        break;
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Stock level must be a valid integer. Please try again.");
-                }
-            }
-
-            int lowStockLevel;
-            while (true) {
-                System.out.print("Enter Low Stock Level, or -1 to cancel: ");
-                String lowStockLevelStr = scanner.nextLine().trim();
-
-                if (lowStockLevelStr.equals("-1")) {
-                    System.out.println("Operation cancelled. Exiting add medicine menu.");
-                    return;
-                }
-
-                try {
-                    lowStockLevel = Integer.parseInt(lowStockLevelStr);
-
-                    if (lowStockLevel < 0) {
-                        System.out.println("Low stock level cannot be negative. Please enter a valid number.");
-                    } else if (lowStockLevel > stockLevel) {
-                        System.out.println("Low stock level cannot be greater than stock level. Please try again.");
-                    } else {
-                        break;
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Low stock level must be a valid integer. Please try again.");
-                }
-            }
-
-            String medicineType;
-            while (true) {
-                System.out.print("Enter Medicine Type (max 15 characters), or -1 to cancel: ");
-                medicineType = scanner.nextLine().trim();
-
-                if (medicineType.equals("-1")) {
-                    System.out.println("Operation cancelled. Exiting add medicine menu.");
-                    return;
-                }
-
-                if (medicineType == null || medicineType.isEmpty() || medicineType.length() > 15) {
-                    System.out.println("Medicine type must be between 1 and 15 characters. Please enter a valid type.");
-                } else {
-                    break;
-                }
-            }
-
-            // Create and add new Medicine object
             Medicine newMedicine = new Medicine(medicineId, name, description, stockLevel, lowStockLevel, medicineType);
             medicines.add(newMedicine);
-
-            // Save the updated list to the file
             saveMedicinesToFile();
 
             System.out.println("Medicine added successfully with ID: " + medicineId);
-        } catch (NullPointerException e) {
-            System.out.println("Error: null pointer reference. Please try again.");
         } catch (Exception e) {
             System.out.println("An error occurred while adding the medicine: " + e.getMessage());
         }
     }
 
-    // Update an existing medicine
+    // Update an existing medicine in the inventory
     public void updateMedicine(Scanner scanner) {
         System.out.println("\n--- Update Medicine ---");
 
-        while (true) {
-            System.out.print("Enter the index of the medicine to update (or -1 to cancel): ");
-            int index;
-            try {
-                index = Integer.parseInt(scanner.nextLine().trim());
-                if (index == -1) {
-                    System.out.println("Operation cancelled. Exiting update medicine menu.");
-                    return;
-                } else if (index < 0 || index > medicines.size()) {
-                    System.out.println(
-                            "Invalid index. Please enter a valid number between 1 and " + medicines.size() + ".");
-                    continue;
-                }
-                index--;
+        int index = promptForIntegerInput(scanner, "Enter the index of the medicine to update (or -1 to cancel): ", 1, medicines.size());
+        if (index == -1) return;
 
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid index format. Please enter a valid integer.");
-                continue;
-            }
+        Medicine medicine = medicines.get(index - 1);
+        boolean anyFieldUpdated = false;
 
-            Medicine medicine = medicines.get(index);
-            boolean anyFieldUpdated = false;
+        String name = promptForInput(scanner, "Enter the new name (leave blank to keep current value): ", 1, 20, false);
+        if (name != null) {
+            medicine.setName(name);
+            anyFieldUpdated = true;
+        }
 
-            while (true) {
-                System.out.print("Enter the new name (leave blank to keep current value): ");
-                String name = scanner.nextLine().trim();
-                if (!name.isEmpty()) {
-                    if (name.length() > 20) {
-                        System.out.println(
-                                "Name length is too long. Please enter a name with a maximum length of 20 characters.");
-                        continue;
-                    }
-                    medicine.setName(name);
-                    anyFieldUpdated = true;
-                }
-                break;
-            }
+        String description = promptForInput(scanner, "Enter the new description (leave blank to keep current value): ", 1, 30, false);
+        if (description != null) {
+            medicine.setDescription(description);
+            anyFieldUpdated = true;
+        }
 
-            while (true) {
-                System.out.print("Enter the new description (leave blank to keep current value): ");
-                String description = scanner.nextLine().trim();
-                if (!description.isEmpty()) {
-                    if (description.length() > 30) {
-                        System.out.println(
-                                "Description length is too long. Please enter a description with a maximum length of 30 characters.");
-                        continue;
-                    }
-                    medicine.setDescription(description);
-                    anyFieldUpdated = true;
-                }
-                break;
-            }
+        int stockLevel = promptForIntegerInput(scanner, "Enter the new stock level (leave blank to keep current value): ", 0, Integer.MAX_VALUE);
+        if (stockLevel != -1) {
+            medicine.setStockLevel(stockLevel);
+            anyFieldUpdated = true;
+        }
 
-            while (true) {
-                System.out.print("Enter the new stock level (leave blank to keep current value): ");
-                String stockLevelInput = scanner.nextLine().trim();
-                if (!stockLevelInput.isEmpty()) {
-                    try {
-                        int stockLevel = Integer.parseInt(stockLevelInput);
-                        if (stockLevel < 0) {
-                            System.out.println("Stock level cannot be negative. Please enter a positive integer.");
-                            continue;
-                        }
-                        medicine.setStockLevel(stockLevel);
-                        anyFieldUpdated = true;
-                    } catch (NumberFormatException e) {
-                        System.out.println("Invalid number format. Please enter valid integers for stock levels.");
-                        continue;
-                    }
-                }
-                break;
-            }
+        int lowStockLevel = promptForIntegerInput(scanner, "Enter the new low stock level (leave blank to keep current value): ", 0, stockLevel);
+        if (lowStockLevel != -1) {
+            medicine.setLowStockLevel(lowStockLevel);
+            anyFieldUpdated = true;
+        }
 
-            while (true) {
-                System.out.print("Enter the new low stock level (leave blank to keep current value): ");
-                String lowStockLevelInput = scanner.nextLine().trim();
-                if (!lowStockLevelInput.isEmpty()) {
-                    try {
-                        int lowStockLevel = Integer.parseInt(lowStockLevelInput);
-                        if (lowStockLevel < 0) {
-                            System.out.println("Low stock level cannot be negative. Please enter a positive integer.");
-                            continue;
-                        }
-                        if (lowStockLevel > medicine.getStockLevel()) {
-                            System.out.println("Low stock level cannot be greater than stock level. Please try again.");
-                            continue;
-                        }
-                        medicine.setLowStockLevel(lowStockLevel);
-                        anyFieldUpdated = true;
-                    } catch (NumberFormatException e) {
-                        System.out.println("Invalid number format. Please enter valid integers for stock levels.");
-                        continue;
-                    }
-                }
-                break;
-            }
+        String medicineType = promptForInput(scanner, "Enter the new medicine type (leave blank to keep current value): ", 1, 15, false);
+        if (medicineType != null) {
+            medicine.setMedicineType(medicineType);
+            anyFieldUpdated = true;
+        }
 
-            while (true) {
-                System.out.print("Enter the new medicine type (leave blank to keep current value): ");
-                String medicineType = scanner.nextLine().trim();
-                if (!medicineType.isEmpty()) {
-                    if (medicineType.length() > 15) {
-                        System.out.println(
-                                "Medicine type length is too long. Please enter a medicine type with a maximum length of 15 characters.");
-                        continue;
-                    }
-                    medicine.setMedicineType(medicineType);
-                    anyFieldUpdated = true;
-                }
-                break;
-            }
-
-            if (!anyFieldUpdated) {
-                System.out.println("No fields were updated for medicine ID: " + medicine.getMedicineId());
-            } else {
-                // Save the updated list to the file
-                saveMedicinesToFile();
-                System.out.println("Update successful for medicine ID: " + medicine.getMedicineId());
-            }
-            break;
+        if (!anyFieldUpdated) {
+            System.out.println("No fields were updated for medicine ID: " + medicine.getMedicineId());
+        } else {
+            saveMedicinesToFile();
+            System.out.println("Update successful for medicine ID: " + medicine.getMedicineId());
         }
     }
 
-    // Remove a specific medicine by its index
+    // Remove a medicine from the inventory
     public void removeMedicine(Scanner scanner) {
         System.out.println("\n--- Remove Medicine ---");
 
-        while (true) {
-            System.out.print("Enter the index of the medicine to remove (or -1 to cancel): ");
-            int index;
-            try {
-                index = Integer.parseInt(scanner.nextLine().trim());
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid index entered. Please enter a valid number.");
-                continue;
-            }
+        int index = promptForIntegerInput(scanner, "Enter the index of the medicine to remove (or -1 to cancel): ", 1, medicines.size());
+        if (index == -1) return;
 
-            if (index == -1) {
-                System.out.println("Operation cancelled. Exiting remove medicine menu.");
-                return;
-            }
-
-            index--; // Convert to zero-based index after cancel check
-
-            if (index < 0 || index >= medicines.size()) {
-                System.out
-                        .println("Invalid index. Please enter a valid number between 1 and " + medicines.size() + ".");
-                continue;
-            }
-
-            try {
-                medicines.remove(index);
-
-                // Save the updated list to the file
-                saveMedicinesToFile();
-
-                System.out.println("Medicine removed successfully.");
-                break;
-            } catch (Exception e) {
-                System.out.println("An error occurred while removing the medicine: " + e.getMessage());
-            }
-        }
+        medicines.remove(index - 1);
+        saveMedicinesToFile();
+        System.out.println("Medicine removed successfully.");
     }
 
-    // Approve replenishment requests
+    // Approve replenishment requests for low stock medicines
     public void approveReplenishmentRequests() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("\n--- Approve Replenishment Requests ---");
@@ -424,7 +222,6 @@ public class InventoryController {
                 return;
             }
 
-            // Ask the user for the medicine ID to replenish
             System.out.print("\nEnter the Medicine ID to approve replenishment (enter -1 to cancel): ");
             String medicineId = scanner.nextLine().trim();
 
@@ -444,7 +241,6 @@ public class InventoryController {
             }
 
             int totalReplenishmentAmount = 0;
-            // Read the replenishment amount from the request file
             try (BufferedReader reader2 = new BufferedReader(new FileReader(MEDICINE_REPLENISHMENT_REQUESTS))) {
                 String line2;
                 List<String> lines = new ArrayList<>();
@@ -461,10 +257,8 @@ public class InventoryController {
                     medicine.setStockLevel(medicine.getStockLevel() + totalReplenishmentAmount);
                     System.out.println("Replenished " + totalReplenishmentAmount + " units of " + medicine.getName());
 
-                    // Update the stock level in medicine.txt
                     updateMedicineStockInFile(medicine);
 
-                    // Remove the request entry from the request file
                     try (BufferedWriter writer = new BufferedWriter(new FileWriter(MEDICINE_REPLENISHMENT_REQUESTS))) {
                         for (String lineToWrite : lines) {
                             writer.write(lineToWrite);
@@ -484,18 +278,15 @@ public class InventoryController {
         }
     }
 
-    // Helper method to update the medicine.txt file with the replenished stock
-    // level
+    // Update the stock level of a medicine in the file
     private void updateMedicineStockInFile(Medicine updatedMedicine) {
         List<String> fileContent = new ArrayList<>();
 
-        // Read all lines from the medicine file and update the specific entry
         try (BufferedReader reader = new BufferedReader(new FileReader(MEDICINE_FILE))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split("\\|");
                 if (data[0].equals(updatedMedicine.getMedicineId())) {
-                    // Update the stock level for the specified medicine
                     data[3] = String.valueOf(updatedMedicine.getStockLevel());
                     line = String.join("|", data);
                 }
@@ -506,7 +297,6 @@ public class InventoryController {
             return;
         }
 
-        // Write the updated content back to the file
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(MEDICINE_FILE))) {
             for (String fileLine : fileContent) {
                 writer.write(fileLine);
@@ -517,7 +307,7 @@ public class InventoryController {
         }
     }
 
-    // Check low stock medicines and display them to the user
+    // Check and display medicines with low stock levels
     public List<Medicine> checkLowStock() {
         System.out.println("\n--- Check Low Stock Medicines ---");
 
@@ -555,17 +345,15 @@ public class InventoryController {
         return lowStockMedicines;
     }
 
-    // Replenishment request (updated to use String medicineId)
+    // Submit a replenishment request for a medicine
     public void requestReplenishment() {
         System.out.println("\n--- Submit Replenishment Request ---");
         System.out.println("=========================================================================");
         Scanner scanner = new Scanner(System.in);
 
-        // Prompt for Medicine ID
         System.out.print("Enter Medicine ID for replenishment request: ");
         String medicineId = scanner.nextLine().trim();
 
-        // Find the medicine by ID
         Medicine medicine = findMedicineById(medicineId);
         if (medicine == null) {
             System.out.println("Medicine ID: " + medicineId + " not found in inventory.");
@@ -574,7 +362,6 @@ public class InventoryController {
             return;
         }
 
-        // Check if replenishment is necessary
         if (!medicine.isLowStockLevelAlert() && medicine.getStockLevel() != 0) {
             System.out.println(
                     "Replenishment not needed for medicine ID: " + medicineId + " as stock is sufficient.");
@@ -583,7 +370,6 @@ public class InventoryController {
             return;
         }
 
-        // Prompt for replenishment amount
         System.out.print("Enter replenishment amount: ");
         int replenishmentAmount;
         try {
@@ -595,17 +381,13 @@ public class InventoryController {
                 return;
             }
 
-            // Add the replenishment request to the file
             FileUtils.writeToFile(MEDICINE_REPLENISHMENT_REQUESTS,
                     medicineId + "|" + replenishmentAmount + "|" + medicine.getName());
             System.out
                     .println("Replenishment request submitted for medicine ID: " + medicineId + " with amount: "
                             + replenishmentAmount);
 
-            // Set status to "Pending Replenishment Request"
             medicine.setPendingReplenishmentRequest();
-
-            // Save changes to file
             saveMedicinesToFile();
         } catch (NumberFormatException e) {
             System.out.println("Invalid amount format. Please enter a valid numeric value.");
@@ -615,22 +397,62 @@ public class InventoryController {
         PrintUtils.pause();
     }
 
-    // Find a specific medicine by its ID
+    // Find a medicine by its ID
     public Medicine findMedicineById(String medicineId) {
         for (Medicine medicine : medicines) {
-            if (medicine.getMedicineId().equals(medicineId)) { // Compare using equals for Strings
+            if (medicine.getMedicineId().equals(medicineId)) {
                 return medicine;
             }
         }
-        return null; // Medicine not found
+        return null;
     }
 
-    // Return to main menu
+    // Prompt the user to return to the menu
     private void promptReturnToMenu() {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Please enter 0 to return: ");
-        while (!"0".equals(scanner.nextLine().trim())) {
-            System.out.print("Invalid input. Please enter 0 to return: ");
+        System.out.print("Please enter -1 to return: ");
+        while (!"-1".equals(scanner.nextLine().trim())) {
+            System.out.print("Invalid input. Please enter -1 to return: ");
+        }
+    }
+
+    // Prompt the user for input with validation
+    private String promptForInput(Scanner scanner, String prompt, int minLength, int maxLength, boolean isRequired) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+            if (input.equals("-1")) {
+                System.out.println("Operation cancelled.");
+                return null;
+            }
+            if (input.length() >= minLength && input.length() <= maxLength) {
+                return input;
+            }
+            if (!isRequired && input.isEmpty()) {
+                return null;
+            }
+            System.out.printf("Input must be between %d and %d characters. Please try again.%n", minLength, maxLength);
+        }
+    }
+
+    // Prompt the user for integer input with validation
+    private int promptForIntegerInput(Scanner scanner, String prompt, int minValue, int maxValue) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+            if (input.equals("-1")) {
+                System.out.println("Operation cancelled.");
+                return -1;
+            }
+            try {
+                int value = Integer.parseInt(input);
+                if (value >= minValue && value <= maxValue) {
+                    return value;
+                }
+                System.out.printf("Input must be between %d and %d. Please try again.%n", minValue, maxValue);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid number.");
+            }
         }
     }
 }

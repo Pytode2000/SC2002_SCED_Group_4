@@ -1272,7 +1272,6 @@ public class AccountController {
     }
 
     // Helper validation methods
-    // Helper validation methods
     private boolean isValidContactNumber(String contactNumber) {
         return contactNumber.length() >= 8
                 && contactNumber.length() <= 15
