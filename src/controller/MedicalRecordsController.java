@@ -151,23 +151,30 @@ public class MedicalRecordsController {
         System.out.println("║         Creating Medical Record        ║");
         System.out.println("╚════════════════════════════════════════╝");
 
-        System.out.print("Enter diagnosis (or NIL if none): ");
+        System.out.print("Enter diagnosis: ");
         String diagnosisInput = scanner.nextLine().trim();
-        String diagnosis = diagnosisInput.equalsIgnoreCase("NIL") ? null : diagnosisInput; // Set to null if NIL
+        while (true) {
+            if (diagnosisInput.isEmpty()) {
+                System.out.println("Diagnosis cannot be empty. Please re-enter:");
+                diagnosisInput = scanner.nextLine().trim();
+                continue;
+            }
+            break;
+        }
 
         System.out.print("Enter treatment (or NIL if none): ");
         String treatment = scanner.nextLine().trim();
-        if (treatment.equalsIgnoreCase("NIL")) {
-            treatment = "";
+        if (treatment.equalsIgnoreCase("NIL") || treatment.isEmpty()) {
+            treatment = "NIL";
         }
         String medicalRecordID = generateMedicalRecordId();
 
-        MedicalRecord newRecord = new MedicalRecord(medicalRecordID, doctorId, patientId, diagnosis, treatment);
+        MedicalRecord newRecord = new MedicalRecord(medicalRecordID, doctorId, patientId, diagnosisInput, treatment);
         medicalRecords.add(newRecord);
         System.out.println("Medical record created successfully for patient ID: " + patientId);
 
         // Write to file
-        FileUtils.writeToFile(MEDICALRECORDS_TXT, medicalRecordID + '|' + doctorId + '|' + patientId + '|' + diagnosis + '|' + treatment);
+        FileUtils.writeToFile(MEDICALRECORDS_TXT, medicalRecordID + '|' + doctorId + '|' + patientId + '|' + diagnosisInput + '|' + treatment);
 
         // Display success message
         System.out.println(patientId + " Created Medical record successfully!");
@@ -370,6 +377,8 @@ public class MedicalRecordsController {
         while (true) {
             System.out.println("Select a patient (0 to return): ");
             int patientChoice = scanner.nextInt();
+            //Consumes next line from nextInt
+            scanner.nextLine();
             if (patientChoice == 0) {
                 return;
             }
@@ -389,6 +398,8 @@ public class MedicalRecordsController {
         while (true) {
             System.out.println("Select a patient (0 to return): ");
             int patientChoice = scanner.nextInt();
+            //Consume next line from next.Int
+            scanner.nextLine();
             if (patientChoice == 0) {
                 return;
             }
