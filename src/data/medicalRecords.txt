@@ -1,7 +1,2 @@
-MR00001|DR00003|PA00004|Toothache|Surgery
-MR00002|DR00003|PA00001|Headache|Dispensed Painkillers
-MR00003|DR00001|PA00001|Knee pain|-
-MR00004|DR00001|PA00001|Fever|Dispensed Painkillers
-MR00006|DR00003|PA00005|Numbess in legs|Order xray
-MR00007|DR00003|PA00002|Food poisoning|Meds and 3 days MC
-MR00008|DR00003|PA00005|Eye sore|close eyes
+MR1|DR00003|PA00002|Kidney Failure|Dialysis
+MR00002|DR00006|PA00002|Cancer|Chemotheraphy

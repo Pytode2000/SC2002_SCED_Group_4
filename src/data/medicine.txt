@@ -1,4 +1,10 @@
 MD00001|Paracetamol|Used for fever|0|10|Tablet
-MD00002|Ibuprofen|Used for pain|46|10|Tablet
-MD00004|Aspirin|Used for inflammation|30|15|Tablet
-MD00005|Panadol|Fever|5|10|Pill
+MD00002|Ibuprofen|Used for pain|46|10|Capsule
+MD00003|Aspirin|Used for inflammation|30|15|Tablet
+MD00004|Amoxicillin|Used for bacterial infections|25|10|Capsule
+MD00005|Cetirizine|Used for allergies|40|10|Tablet
+MD00006|Hydrocortisone|Used for skin irritation|15|5|Cream
+MD00007|Metformin|Used for diabetes|35|10|Tablet
+MD00008|Omeprazole|Used for acid reflux|20|10|Capsule
+MD00009|Lorazepam|Used for anxiety|10|5|Pill
+MD00010|Lisinopril|Used for high blood pressure|50|15|Tablet
