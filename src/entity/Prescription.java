@@ -7,13 +7,13 @@ public class Prescription {
     private int quantity;           // Quantity of medicine prescribed
     private Status status;          // Enum for prescription status
 
-    // Enum for status options
+    // Enum for status options (PENDING or DISPENSED)
     public enum Status {
-        PENDING,
-        DISPENSED
+        PENDING,  // Prescription is pending
+        DISPENSED // Prescription has been dispensed
     }
 
-    // Constructor
+    // Constructor to initialize prescription details
     public Prescription(String prescriptionId, String medicineId, int quantity, Status status) {
         this.prescriptionId = prescriptionId;
         this.medicineId = medicineId;
@@ -21,7 +21,7 @@ public class Prescription {
         this.status = status;
     }
 
-    // Getters and Setters
+    // Getters and Setters for prescription attributes
     public String getPrescriptionId() {
         return prescriptionId;
     }
@@ -54,6 +54,7 @@ public class Prescription {
         this.status = status;
     }
 
+    // Override toString method to return a formatted string of prescription details
     @Override
     public String toString() {
         return "Prescription{"

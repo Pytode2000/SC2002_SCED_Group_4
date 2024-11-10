@@ -11,16 +11,18 @@ import java.util.Scanner;
 public class AdministratorMenu implements MenuInterface {
 
     private final Administrator administrator;
-    AccountController accountController = new AccountController(); // For Login and Register methods.
-    AppointmentController appointmentController = new AppointmentController();
-    InventoryController inventoryController = new InventoryController();
-    ForgetPasswordController forgetPasswordController = new ForgetPasswordController();
+    private final AccountController accountController;
+    private final AppointmentController appointmentController;
+    private final InventoryController inventoryController;
+    private final ForgetPasswordController forgetPasswordController;
 
-
-    // Import controller thats patient need e.g., appointment etc.
-    // All the functions should be in controller. this menu class just uses it.
+    // Initialize AdministratorMenu with necessary controllers for admin actions
     public AdministratorMenu(Administrator administrator) {
         this.administrator = administrator;
+        this.accountController = new AccountController();
+        this.appointmentController = new AppointmentController();
+        this.inventoryController = new InventoryController();
+        this.forgetPasswordController = new ForgetPasswordController();
     }
 
     @Override
@@ -30,36 +32,29 @@ public class AdministratorMenu implements MenuInterface {
 
         while (!exit) {
             System.out.println("\n--- Administrator Menu ---");
-            System.out.println("1. View and Manage Hospital Staff"); // AccountController
-            System.out.println("2. View Appointments Details"); // AppointmentController
-            System.out.println("3. View and Manage Medication Inventory"); // InventoryController
-            System.out.println("4. Approve Replenishment Requests"); // InventoryController
-            System.out.println("5. Manage Forget Password Requests"); // ForgetPasswordController
-
+            System.out.println("1. View and Manage Hospital Staff");
+            System.out.println("2. View Appointment Details");
+            System.out.println("3. View and Manage Medication Inventory");
+            System.out.println("4. Approve Replenishment Requests");
+            System.out.println("5. Manage Forget Password Requests");
             System.out.println("0. Logout");
             System.out.print("Enter your choice: ");
             String choice = scanner.nextLine().trim();
 
             switch (choice) {
                 case "1":
-                    // View and Manage Hospital Staff();
                     manageStaff(scanner);
                     break;
                 case "2":
-                    // View Appointments details();
                     appointmentController.displayDoctorAppointmentDetails();
                     break;
                 case "3":
-                    // View and Manage Medication Inventory();
                     manageInventory(scanner);
                     break;
                 case "4":
-                    // Approve Replenishment Requests();
                     inventoryController.approveReplenishmentRequests();
                     break;
-
-                    case "5":
-                    // Approve Replenishment Requests();
+                case "5":
                     forgetPasswordController.processForgetPasswordRequests();
                     break;
                 case "0":
@@ -73,13 +68,14 @@ public class AdministratorMenu implements MenuInterface {
         }
     }
 
+    // Manage hospital staff options
     private void manageStaff(Scanner scanner) {
         boolean backToMenu = false;
 
         while (!backToMenu) {
             System.out.println("\n--- Staff Management ---");
             accountController.viewStaff();
-            System.err.println("1. Filter Staff by Role/Gender/Age");
+            System.out.println("1. Filter Staff by Role/Gender/Age");
             System.out.println("2. Add Staff");
             System.out.println("3. Update Staff");
             System.out.println("4. Remove Staff");
@@ -89,23 +85,19 @@ public class AdministratorMenu implements MenuInterface {
 
             switch (choice) {
                 case "1":
-                    // Call a method to filter staff
                     filterStaff(scanner);
                     break;
                 case "2":
-                    // Call a method to add staff
-                    accountController.register(true); // isAdmin = false.
+                    accountController.register(true);
                     break;
                 case "3":
-                    // Call a method to update staff
                     accountController.updateStaff(scanner);
                     break;
                 case "4":
-                    // Call a method to remove staff
                     accountController.removeStaff(scanner);
                     break;
                 case "0":
-                    backToMenu = true; // Go back to the main menu
+                    backToMenu = true;
                     break;
                 default:
                     System.out.println("Invalid choice. Please try again.");
@@ -114,6 +106,7 @@ public class AdministratorMenu implements MenuInterface {
         }
     }
 
+    // Filter hospital staff by different attributes
     private void filterStaff(Scanner scanner) {
         System.out.println("\n--- Filter Staff ---");
         System.out.println("1. Filter by Role");
@@ -122,6 +115,7 @@ public class AdministratorMenu implements MenuInterface {
         System.out.println("0. Back to Main Menu");
         System.out.print("Enter your choice: ");
         String choice = scanner.nextLine().trim();
+
         switch (choice) {
             case "1":
                 accountController.filterByRole(scanner);
@@ -140,6 +134,7 @@ public class AdministratorMenu implements MenuInterface {
         }
     }
 
+    // Manage medication inventory options
     private void manageInventory(Scanner scanner) {
         boolean backToMenu = false;
 
@@ -155,19 +150,16 @@ public class AdministratorMenu implements MenuInterface {
 
             switch (choice) {
                 case "1":
-                    // Call a method to add item
                     inventoryController.addMedicine(scanner);
                     break;
                 case "2":
-                    // Call a method to update item
                     inventoryController.updateMedicine(scanner);
                     break;
                 case "3":
-                    // Call a method to remove item
                     inventoryController.removeMedicine(scanner);
                     break;
                 case "0":
-                    backToMenu = true; // Go back to the main menu
+                    backToMenu = true;
                     break;
                 default:
                     System.out.println("Invalid choice. Please try again.");
@@ -175,5 +167,4 @@ public class AdministratorMenu implements MenuInterface {
             }
         }
     }
-
 }

@@ -5,9 +5,9 @@ import java.time.format.DateTimeFormatter;
 
 public class ForgetPassword {
 
-    private String userId;
-    private String message;
-    private LocalDateTime requestDateTime;
+    private String userId;           // ID of the user requesting password reset
+    private String message;          // Message related to the password reset request
+    private LocalDateTime requestDateTime; // Date and time when the request was created
 
     // Constructor to initialize userId, message, and capture current date and time
     public ForgetPassword(String userId, String message) {
@@ -16,7 +16,7 @@ public class ForgetPassword {
         this.requestDateTime = LocalDateTime.now(); // Captures current date and time
     }
 
-    // Method to display the ForgetPassword details
+    // Displays the details of the forget password request
     public void displayRequestDetails() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         System.out.println("Forget Password Request Details:");
@@ -25,15 +25,17 @@ public class ForgetPassword {
         System.out.println("Created: " + requestDateTime.format(formatter));
     }
 
-    // Getters
+    // Getter for userId
     public String getUserId() {
         return userId;
     }
 
+    // Getter for message
     public String getMessage() {
         return message;
     }
 
+    // Getter for request date and time
     public LocalDateTime getRequestDateTime() {
         return requestDateTime;
     }

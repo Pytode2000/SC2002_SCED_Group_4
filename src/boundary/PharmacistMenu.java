@@ -1,23 +1,19 @@
 package boundary;
 
-import entity.Pharmacist;
-import controller.PrescriptionController;
-import controller.InventoryController;//new here
 import controller.AppointmentOutcomeController;
-import entity.Medicine;
+import controller.InventoryController;
+import controller.PrescriptionController;
+import entity.Pharmacist;
 import interfaces.MenuInterface;
 import java.util.Scanner;
 
 public class PharmacistMenu implements MenuInterface {
 
     private final Pharmacist pharmacist;
-    //testing
-    InventoryController inventoryController = new InventoryController();
-    AppointmentOutcomeController appointmentOutcomeController = new AppointmentOutcomeController();
+    private final InventoryController inventoryController = new InventoryController();
+    private final AppointmentOutcomeController appointmentOutcomeController = new AppointmentOutcomeController();
 
-
-    // Import controller thats patient need e.g., appointment etc.
-    // All the functions should be in controller. this menu class just uses it.
+    // Constructor initializes the pharmacist instance.
     public PharmacistMenu(Pharmacist pharmacist) {
         this.pharmacist = pharmacist;
     }
@@ -28,37 +24,36 @@ public class PharmacistMenu implements MenuInterface {
         Scanner scanner = new Scanner(System.in);
         boolean exit = false;
 
+        // Display the Pharmacist menu and handle choices
         while (!exit) {
             System.out.println("\n--- Pharmacist Menu ---");
-            System.out.println("1. View Appointment Outcome Record"); // AppointmentOutcomeController
-            System.out.println("2. Update Prescription Status"); // AppointmentOutcomeController
-            System.out.println("3. View Medication Inventory"); // InventoryController
-            System.out.println("4. Submit Replenishment Request"); // InventoryController
+            System.out.println("1. View Appointment Outcome Record");
+            System.out.println("2. Update Prescription Status");
+            System.out.println("3. View Medication Inventory");
+            System.out.println("4. Submit Replenishment Request");
             System.out.println("0. Logout");
             System.out.print("Enter your choice: ");
             String choice = scanner.nextLine().trim();
 
             switch (choice) {
                 case "1":
-                    // View Appointment Outcome Record();
+                    // Display all pending appointment outcomes
                     appointmentOutcomeController.displayAllPendingAppointmentOutcomes();
                     break;
                 case "2":
-                    // Update Prescription Status;
+                    // Update prescription status
                     prescriptionController.updatePrescriptionStatus();
-
                     break;
                 case "3":
-                    // View Medication Inventory;
-                    inventoryController = new InventoryController(); //refresh Inventory
+                    // Display current medication inventory
                     inventoryController.displayInventory();
-                    
                     break;
                 case "4":
-                    // Submit Replenishment Request();
+                    // Submit a replenishment request for medications
                     inventoryController.requestReplenishment();
                     break;
                 case "0":
+                    // Log out and exit menu
                     System.out.println("Logging out...");
                     exit = true;
                     break;
@@ -68,5 +63,4 @@ public class PharmacistMenu implements MenuInterface {
             }
         }
     }   
-
 }

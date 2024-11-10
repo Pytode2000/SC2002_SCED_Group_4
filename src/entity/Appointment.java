@@ -10,18 +10,18 @@ public class Appointment {
     private String patientId = "-";                 // Patient assigned to the appointment, defaults to empty
     private LocalDate date;               // Date of the appointment
     private LocalTime time;               // Time of the appointment
-    private Status status = Status.AVAILABLE;           // Default status as OPEN
+    private Status status = Status.AVAILABLE;           // Default status as AVAILABLE
     private String requestMessage = "-";            // Message for additional requests, defaults to empty
-
-    private String rescheduleDate = "-";
-    private String rescheduleTime = "-";
-    private String rescheduleMessage = "-";
+    private String rescheduleDate = "-";         // Reschedule date if applicable
+    private String rescheduleTime = "-";         // Reschedule time if applicable
+    private String rescheduleMessage = "-";      // Reschedule message if applicable
 
     // Enum for appointment status
     public enum Status {
         AVAILABLE, PENDING, BOOKED, RESCHEDULE;
     }
 
+    // Constructor to initialize an Appointment object with essential details
     public Appointment(String appointmentId, String doctorId, LocalDate date, LocalTime time) {
         this.appointmentId = appointmentId;
         this.doctorId = doctorId;
@@ -29,6 +29,7 @@ public class Appointment {
         this.time = time;
     }
 
+    // String representation of the appointment object
     @Override
     public String toString() {
         return "Appointment ID: " + appointmentId
@@ -37,10 +38,9 @@ public class Appointment {
                 + "\nDate: " + date
                 + "\nTime: " + time
                 + "\nStatus: " + status;
-        //+ "\nRequest Message: " + requestMessage;
     }
 
-    // Getters and setters (optional, if you plan to update fields later)
+    // Getters and setters for appointment details
     public String getAppointmentId() {
         return appointmentId;
     }

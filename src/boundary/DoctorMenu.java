@@ -11,20 +11,18 @@ import java.util.Scanner;
 public class DoctorMenu implements MenuInterface {
 
     private final Doctor doctor;
-    private MedicalRecordsController medicalRecordsController;
-    private AppointmentController appointmentController;
-    private AppointmentOutcomeController appointmentOutcomeController;
-    private FeedbackController feedbackController;
+    private final MedicalRecordsController medicalRecordsController;
+    private final AppointmentController appointmentController;
+    private final AppointmentOutcomeController appointmentOutcomeController;
+    private final FeedbackController feedbackController;
 
-
-    // Import controller thats doctors need e.g., appointment, schedule etc.
-    // All the functions should be in controller. this menu class just uses it.
+    // Initialize DoctorMenu with necessary controllers for doctor actions
     public DoctorMenu(Doctor doctor) {
         this.doctor = doctor;
-        medicalRecordsController = new MedicalRecordsController();
-        appointmentController = new AppointmentController();
-        appointmentOutcomeController = new AppointmentOutcomeController();
-        feedbackController = new FeedbackController();
+        this.medicalRecordsController = new MedicalRecordsController();
+        this.appointmentController = new AppointmentController();
+        this.appointmentOutcomeController = new AppointmentOutcomeController();
+        this.feedbackController = new FeedbackController();
     }
 
     @Override
@@ -34,13 +32,13 @@ public class DoctorMenu implements MenuInterface {
 
         while (!exit) {
             System.out.println("\n--- Doctor Menu ---");
-            System.out.println("1. Patient Medical Records"); // MedicalRecordController
-            System.out.println("2. View Personal Schedule"); // DoctorScheduleController
-            System.out.println("3. Set Availability for Appointments"); // DoctorScheduleController (?)
-            System.out.println("4. Accept or Decline Appointment Requests"); // AppointmentController
-            System.out.println("5. View Upcoming Appointments"); // AppointmentController
-            System.out.println("6. Record Appointment Outcome"); // AppointmentOutcomeController
-            System.out.println("7. View Feedbacks"); // FeedbackController
+            System.out.println("1. Patient Medical Records");
+            System.out.println("2. View Personal Schedule");
+            System.out.println("3. Set Availability for Appointments");
+            System.out.println("4. Accept or Decline Appointment Requests");
+            System.out.println("5. View Upcoming Appointments");
+            System.out.println("6. Record Appointment Outcome");
+            System.out.println("7. View Feedbacks");
             System.out.println("0. Logout");
 
             System.out.print("Enter your choice: ");
@@ -48,31 +46,31 @@ public class DoctorMenu implements MenuInterface {
 
             switch (choice) {
                 case "1":
-                    // Patient Medical Records();
+                    // View patient medical records
                     medicalRecordsController.viewMedicalRecords(doctor);
                     break;
                 case "2":
-                    // View Personal Schedule();
+                    // View personal schedule
                     appointmentController.viewPersonalSchedule(doctor.getUserId());
                     break;
                 case "3":
-                    // Set Availability for Appointments();
+                    // Set availability for appointments
                     appointmentController.setAvailability(doctor.getUserId());
                     break;
                 case "4":
-                    // Accept or Decline Appointment Requests();
+                    // Accept or decline appointment requests
                     appointmentController.viewAppointmentRequest(doctor.getUserId());
                     break;
                 case "5":
-                    // View Upcoming Appointments()
+                    // View upcoming appointments
                     appointmentController.viewUpcomingAppointments(doctor.getUserId());
                     break;
                 case "6":
-                    // Record Appointment Outcome();
+                    // Record outcome of an appointment
                     appointmentOutcomeController.viewDoctorMenu(doctor.getUserId());
                     break;
                 case "7":
-                    // Record Appointment Outcome();
+                    // View doctor feedback
                     feedbackController.viewDoctorRatings(doctor.getUserId());
                     break;
                 case "0":
@@ -85,5 +83,4 @@ public class DoctorMenu implements MenuInterface {
             }
         }
     }
-
 }

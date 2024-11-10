@@ -9,12 +9,13 @@ public class HospitalManagementSystem {
 
     public static void main(String[] args) {
 
-        AccountController accountController = new AccountController(); // For Login and Register methods.
+        // Initialize controllers for account and password management
+        AccountController accountController = new AccountController();
         ForgetPasswordController forgetPasswordController = new ForgetPasswordController();
         Scanner scanner = new Scanner(System.in);
         String choice;
 
-        // Loop until user decides to exit with option 0.
+        // Main loop to display options until user chooses to exit
         do {
             System.out.println("\n--- Hospital Management System ---");
             System.out.println("1. Login");
@@ -24,8 +25,10 @@ public class HospitalManagementSystem {
             System.out.print("\nEnter your choice: ");
             choice = scanner.nextLine();
 
+            // Process user's choice
             switch (choice) {
                 case "1":
+                    // Log in the user and display the menu if successful
                     User currentUser = accountController.login();
                     if (currentUser != null) {
                         MenuController menuController = new MenuController(currentUser);
@@ -34,13 +37,17 @@ public class HospitalManagementSystem {
                     break;
 
                 case "2":
-                    accountController.register(false); // isAdmin = false.
+                    // Register a new user (not an admin)
+                    accountController.register(false);
                     break;
+
                 case "3":
+                    // Handle a forgotten password request
                     forgetPasswordController.handleForgetPasswordRequest();
                     break;
 
                 case "0":
+                    // Exit the program
                     System.out.println("Exiting. Thank you for using the Hospital Management System.");
                     break;
 

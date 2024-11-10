@@ -13,8 +13,7 @@ public class PatientMenu implements MenuInterface {
 
     private final Patient patient;
 
-    // Import controller thats patient need e.g., appointment etc.
-    // All the functions should be in controller. this menu class just uses it.
+    // Constructor initializes patient instance
     public PatientMenu(Patient patient) {
         this.patient = patient;
     }
@@ -32,15 +31,14 @@ public class PatientMenu implements MenuInterface {
 
         while (!exit) {
             System.out.println("\n--- Patient Menu ---");
-            System.out.println("1. View Personal Information"); // AccountController
-            System.out.println("2. View Medical Record"); // MedicalRecordController
-            System.out.println("3. View Past Appointment Outcome Records"); // AppointmentOutcomeController
-            System.out.println("4. View Scheduled Appointment"); // AppointmentController
-            System.out.println("5. Schedule an Appointment"); // AppointmentController
-            System.out.println("6. Reschedule an Appointment"); // AppointmentController
-            System.out.println("7. Cancel an Appointment/Request"); // AppointmentController
-            System.out.println("8. Rate a Doctor"); // FeedbackController
-
+            System.out.println("1. View Personal Information");
+            System.out.println("2. View Medical Record");
+            System.out.println("3. View Past Appointment Outcome Records");
+            System.out.println("4. View Scheduled Appointment");
+            System.out.println("5. Schedule an Appointment");
+            System.out.println("6. Reschedule an Appointment");
+            System.out.println("7. Cancel an Appointment/Request");
+            System.out.println("8. Rate a Doctor");
             System.out.println("0. Logout");
 
             System.out.print("Enter your choice: ");
@@ -48,42 +46,37 @@ public class PatientMenu implements MenuInterface {
 
             switch (choice) {
                 case "1":
-                    // Update Personal Information(); // AccountController Update
-                    accountController.updatePersonalInformation(this.patient);
-
+                    // Update personal information
+                    accountController.updatePersonalInformation(patient);
                     break;
                 case "2":
-                    // View Medical Record(); // MedicalRecordController Read
+                    // View medical records
                     medicalRecordsController.viewMedicalRecords(patient);
                     break;
                 case "3":
-                    // View Past Appointment Outcome Records(); // Read 
-                    appointmentOutcomeController.displayAppointmentOutcomesByPatientId(this.patient.getUserId());
-
+                    // View past appointment outcome records
+                    appointmentOutcomeController.displayAppointmentOutcomesByPatientId(patient.getUserId());
                     break;
                 case "4":
-                    // View Scheduled Appointment() // // AppointmentController Read
-                    appointmentController.displayAndSelectBookedAppointments(this.patient.getUserId());
-
+                    // View scheduled appointments
+                    appointmentController.displayAndSelectBookedAppointments(patient.getUserId());
                     break;
                 case "5":
-                    // Schedule an Appointment(); // AppointmentController Create
-                    appointmentController.scheduleAppointment(this.patient.getUserId());
-
+                    // Schedule a new appointment
+                    appointmentController.scheduleAppointment(patient.getUserId());
                     break;
                 case "6":
-                    // Reschedule an Appointment(); // AppointmentController Update --> give up current, then choose another again.
-                    appointmentController.requestRescheduleAppointment(this.patient.getUserId());
+                    // Reschedule an existing appointment
+                    appointmentController.requestRescheduleAppointment(patient.getUserId());
                     break;
                 case "7":
-                    // Cancel an Appointment(); // AppointmentController Update?
-                    appointmentController.deleteBookedAppointment(this.patient.getUserId());
+                    // Cancel an appointment or request
+                    appointmentController.deleteBookedAppointment(patient.getUserId());
                     break;
                 case "8":
-                    // Rate doctor // FeedbackController
-                    feedbackController.provideFeedback(this.patient.getUserId());
+                    // Provide feedback on a doctor
+                    feedbackController.provideFeedback(patient.getUserId());
                     break;
-
                 case "0":
                     System.out.println("Logging out...");
                     exit = true;
@@ -94,5 +87,4 @@ public class PatientMenu implements MenuInterface {
             }
         }
     }
-
 }
