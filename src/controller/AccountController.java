@@ -296,6 +296,7 @@ public class AccountController {
         // Display success message
         System.out.println(userRole + " registered successfully!");
         System.out.println("The account's credentials are: " + userId + " | \"password\".");
+        PrintUtils.pause();
         return true;
 
     }

@@ -302,6 +302,7 @@ public class AppointmentController {
                 // Display sorted appointments
                 if (bookedAppointments.isEmpty()) {
                     System.out.println("You have no upcoming appointments!");
+                    PrintUtils.pause();
                     return;
                 }
 

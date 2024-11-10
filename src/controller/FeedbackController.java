@@ -43,16 +43,22 @@ public class FeedbackController {
         collectFeedback(patientId, doctorId);
     }
 
-    // Collect feedback details from the patient
     private void collectFeedback(String patientId, String doctorId) {
         int rating = getValidSelection(10, "Enter a rating (1-10): ");
         System.out.print("Enter your comments (press Enter to skip): ");
-        String comments = scanner.nextLine().trim().isEmpty() ? "-" : scanner.nextLine().trim();
-
+        
+        // Capture comment in a single line to avoid double reading issues
+        String comments = scanner.nextLine().trim();
+        if (comments.isEmpty()) {
+            comments = "-"; // Set to "-" if no comment is provided
+        }
+    
+        // Save feedback to the file
         FileUtils.writeToFile(FEEDBACK_FILE, String.join("|", patientId, doctorId, String.valueOf(rating), comments));
         System.out.println("Thank you for your feedback!");
         PrintUtils.pause();
     }
+    
 
     // Retrieve and display all ratings for a doctor with average rating
     public void viewDoctorRatings(String doctorId) {
