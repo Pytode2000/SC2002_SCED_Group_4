@@ -17,11 +17,26 @@ public class FileUtils {
         }
     }
 
+    // Reads all lines from the specified file and returns them as a List
+    public static List<String> readAllLines(String filePath) {
+        List<String> lines = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lines.add(line);
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading the file: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return lines;
+    }
+
     // Updates an entry in the file by replacing the line matching the specified ID
     public static void updateToFile(String filePath, String data, String id) {
         File file = new File(filePath);
         List<String> lines = new ArrayList<>();
-        
+
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -32,7 +47,7 @@ public class FileUtils {
             e.printStackTrace();
             return;
         }
-        
+
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             for (String updatedLine : lines) {
                 writer.write(updatedLine);
@@ -48,18 +63,20 @@ public class FileUtils {
     public static void deleteFromFile(String filePath, String id) {
         File file = new File(filePath);
         List<String> lines = new ArrayList<>();
-        
+
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                if (!line.startsWith(id)) lines.add(line);
+                if (!line.startsWith(id)) {
+                    lines.add(line);
+                }
             }
         } catch (IOException e) {
             System.out.println("Error reading the file: " + e.getMessage());
             e.printStackTrace();
             return;
         }
-        
+
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             for (String updatedLine : lines) {
                 writer.write(updatedLine);
@@ -76,13 +93,15 @@ public class FileUtils {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                if (line.startsWith(id)) return line;
+                if (line.startsWith(id)) {
+                    return line;
+                }
             }
         } catch (IOException e) {
             System.out.println("Error reading the file: " + e.getMessage());
             e.printStackTrace();
         }
-        
+
         System.out.println("No entry found with ID: " + id);
         return null;
     }
@@ -92,7 +111,7 @@ public class FileUtils {
         File file = new File(filePath);
         List<String> lines = new ArrayList<>();
         boolean updated = false;
-        
+
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -120,7 +139,7 @@ public class FileUtils {
             System.out.println("No entry found with ID: " + id);
             return;
         }
-        
+
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             for (String line : lines) {
                 writer.write(line);

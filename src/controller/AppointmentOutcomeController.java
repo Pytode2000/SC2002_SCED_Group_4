@@ -20,7 +20,6 @@ import java.util.Scanner;
 import java.util.Set;
 import utility.FileUtils;
 import utility.PrintUtils;
-//testZL
 
 public class AppointmentOutcomeController {
 
@@ -29,12 +28,11 @@ public class AppointmentOutcomeController {
     private static final String APPOINTMENT_FILE = "data/appointment.txt";
     private static final String PATIENT_FILE = "data/patient.txt";
     private static final String MEDICINE_FILE = "data/medicine.txt";
-
     private static final String PRESCRIPTION_FILE = "data/prescription.txt";
+    private static final String BILL_FILE = "data/bill.txt";
 
     private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
-    //testZL
     public void displayAllPendingAppointmentOutcomes() {
 
         System.out.println("\n╔════════════════════════════════════════╗");
@@ -539,6 +537,8 @@ public class AppointmentOutcomeController {
 
                     FileUtils.updateEntry(APPOINTMENT_FILE, appointmentId, "CLOSED", 5);
                     System.out.println("\nAppointment outcome record created successfully.");
+                    BillController.createBill(BILL_FILE, appointmentId, patientId);
+
                     return;
                 } else {
                     System.out.println("Invalid index. Please select a valid appointment index.");

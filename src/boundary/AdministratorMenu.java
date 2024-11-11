@@ -2,6 +2,7 @@ package boundary;
 
 import controller.AccountController;
 import controller.AppointmentController;
+import controller.BillController;
 import controller.ForgetPasswordController;
 import controller.InventoryController;
 import entity.Administrator;
@@ -15,6 +16,7 @@ public class AdministratorMenu implements MenuInterface {
     private final AppointmentController appointmentController;
     private final InventoryController inventoryController;
     private final ForgetPasswordController forgetPasswordController;
+    private final BillController billController = new BillController();
 
     // Initialize AdministratorMenu with necessary controllers for admin actions
     public AdministratorMenu(Administrator administrator) {
@@ -39,6 +41,7 @@ public class AdministratorMenu implements MenuInterface {
             System.out.println("3. View and Manage Medication Inventory");
             System.out.println("4. Approve Replenishment Requests");
             System.out.println("5. Manage Forget Password Requests");
+            System.out.println("6. Send Bills to Patients");
 
             System.out.println("0. Logout");
             System.out.println("══════════════════════════════════════════");
@@ -62,6 +65,9 @@ public class AdministratorMenu implements MenuInterface {
                     break;
                 case "5":
                     forgetPasswordController.processForgetPasswordRequests();
+                    break;
+                case "6":
+                    BillController.viewAndUpdatePendingBills();
                     break;
                 case "0":
                     System.out.println("Logging out...");
