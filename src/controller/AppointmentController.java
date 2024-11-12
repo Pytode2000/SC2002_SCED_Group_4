@@ -866,29 +866,31 @@ public class AppointmentController {
         }
 
         Scanner scanner = new Scanner(System.in);
-        String appointmentId;
+        int appointmentId;
 
         // Prompt the user to enter the appointment ID to delete
         while (true) {
             // Prompt the user to enter the appointment ID to delete
-            System.out.print("Enter the ID of the slot you wish to delete (or type '0' to cancel): ");
-            appointmentId = scanner.nextLine().trim();
+            System.out.print("Enter the slot you wish to delete (or type '0' to cancel): ");
+            appointmentId = scanner.nextInt();
+            scanner.nextLine();
 
             // Check if the user wants to cancel
-            if (appointmentId.equals("0")) {
+            if (appointmentId==0) {
                 System.out.println("Deletion canceled.");
                 return;
             }
 
-            for (String appointmentToDelete : currentDoctorSchedule) {
-                if (appointmentToDelete.startsWith(appointmentId + "|")) {
-                    FileUtils.deleteFromFile(APPOINTMENT_FILE, appointmentId);
-                    System.out.println("Appointment ID " + appointmentId + " deleted successfully.");
-                    return; // Exit the loop after successful deletion
-                }
+            if (appointmentId>currentDoctorSchedule.size()){
+                System.out.println("Invalid choice. Please re-enter.");
+                continue;
             }
-
-            System.out.println("Invalid ID. Please check and try again.");
+            String appointmentToDelete = currentDoctorSchedule.get(appointmentId-1);
+            String[] fields = appointmentToDelete.split("\\|");
+            
+            FileUtils.deleteFromFile(APPOINTMENT_FILE, fields[0]);
+            System.out.println("Appointment ID " + appointmentId + " deleted successfully.");
+            break;
         }
     }
 
