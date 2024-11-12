@@ -15,6 +15,8 @@ public class DoctorMenu implements MenuInterface {
     private final AppointmentController appointmentController;
     private final AppointmentOutcomeController appointmentOutcomeController;
     private final FeedbackController feedbackController;
+    public static final String ANSI_TRUE_LIGHT_BLUE = "\u001B[38;2;173;216;230m"; 
+
 
     // Initialize DoctorMenu with necessary controllers for doctor actions
     public DoctorMenu(Doctor doctor) {
@@ -31,7 +33,7 @@ public class DoctorMenu implements MenuInterface {
         boolean exit = false;
 
         while (!exit) {
-            System.out.println("\n╔════════════════════════════════════════╗");
+            System.out.println(ANSI_TRUE_LIGHT_BLUE+"\n╔════════════════════════════════════════╗");
             System.out.println("║               Doctor Menu              ║");
             System.out.println("╚════════════════════════════════════════╝");
             System.out.println("1. Patient Medical Records");

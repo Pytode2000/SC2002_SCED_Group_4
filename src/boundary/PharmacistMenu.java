@@ -12,6 +12,7 @@ public class PharmacistMenu implements MenuInterface {
     private final Pharmacist pharmacist;
     private final InventoryController inventoryController = new InventoryController();
     private final AppointmentOutcomeController appointmentOutcomeController = new AppointmentOutcomeController();
+    public static final String ANSI_TRUE_LIGHT_PURPLE = "\u001B[38;2;221;160;221m"; // Light Purple (#DDA0DD)
 
     // Constructor initializes the pharmacist instance.
     public PharmacistMenu(Pharmacist pharmacist) {
@@ -26,7 +27,7 @@ public class PharmacistMenu implements MenuInterface {
 
         // Display the Pharmacist menu and handle choices
         while (!exit) {
-            System.out.println("\n╔════════════════════════════════════════╗");
+            System.out.println(ANSI_TRUE_LIGHT_PURPLE + "\n╔════════════════════════════════════════╗");
             System.out.println("║             Pharmacist Menu            ║");
             System.out.println("╚════════════════════════════════════════╝");
             System.out.println("1. View Appointment Outcome Record");

@@ -17,6 +17,7 @@ public class AdministratorMenu implements MenuInterface {
     private final InventoryController inventoryController;
     private final ForgetPasswordController forgetPasswordController;
     private final BillController billController = new BillController();
+    public static final String ANSI_TRUE_LIGHT_RED = "\u001B[38;2;255;182;193m"; 
 
     // Initialize AdministratorMenu with necessary controllers for admin actions
     public AdministratorMenu(Administrator administrator) {
@@ -33,7 +34,7 @@ public class AdministratorMenu implements MenuInterface {
         boolean exit = false;
 
         while (!exit) {
-            System.out.println("\n╔════════════════════════════════════════╗");
+            System.out.println(ANSI_TRUE_LIGHT_RED + "\n╔════════════════════════════════════════╗");
             System.out.println("║           Administrator Menu           ║");
             System.out.println("╚════════════════════════════════════════╝");
             System.out.println("1. View and Manage Hospital Staff");

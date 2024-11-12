@@ -8,6 +8,8 @@ import utility.PrintUtils;
 
 public class HospitalManagementSystem {
 
+    public static final String ANSI_RESET = "\u001B[0m";
+
     public static void main(String[] args) {
 
         // Initialize controllers for account and password management
@@ -18,7 +20,7 @@ public class HospitalManagementSystem {
 
         // Main loop to display options until user chooses to exit
         do {
-            System.out.println(" ___       __   _______   ___       ________  ________  _____ ______   _______      ");
+            System.out.println(ANSI_RESET + " ___       __   _______   ___       ________  ________  _____ ______   _______      ");
             System.out.println("|\\  \\     |\\  \\|\\  ___ \\ |\\  \\     |\\   ____\\|\\   __  \\|\\   _ \\  _   \\|\\  ___ \\     ");
             System.out.println("\\ \\  \\    \\ \\  \\ \\   __/|\\ \\  \\    \\ \\  \\___|\\ \\  \\|\\  \\ \\  \\\\\\__\\ \\  \\ \\   __/|    ");
             System.out.println(" \\ \\  \\  __\\ \\  \\ \\  \\_|/_\\ \\  \\    \\ \\  \\    \\ \\  \\\\\\  \\ \\  \\\\|__| \\  \\ \\  \\_|/__  ");
