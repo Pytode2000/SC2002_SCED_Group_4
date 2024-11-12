@@ -13,7 +13,7 @@ import java.util.Scanner;
 public class PatientMenu implements MenuInterface {
 
     private final Patient patient;
-    public static final String ANSI_TRUE_LIGHT_GREEN = "\u001B[38;2;144;238;144m"; // Light Green (#90EE90)
+    public static final String ANSI_TRUE_LIGHT_YELLOW = "\u001B[38;2;255;255;224m"; // Light Yellow (#FFFFE0)
 
 
     // Constructor initializes patient instance
@@ -33,7 +33,7 @@ public class PatientMenu implements MenuInterface {
         boolean exit = false;
 
         while (!exit) {
-            System.out.println(ANSI_TRUE_LIGHT_GREEN  + "\n╔════════════════════════════════════════╗");
+            System.out.println(ANSI_TRUE_LIGHT_YELLOW  + "\n╔════════════════════════════════════════╗");
             System.out.println("║               Patient Menu             ║");
             System.out.println("╚════════════════════════════════════════╝");
             System.out.println("1. View Personal Information");
