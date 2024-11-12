@@ -291,8 +291,8 @@ public class MedicalRecordsController {
             String confirmation = scanner.nextLine().trim().toLowerCase();
 
             if (confirmation.equals("yes")) {
-                FileUtils.deleteFromFile(MEDICALRECORDS_TXT, recordToDelete.getMedicalRecordId());
                 medicalRecords.remove(recordToDelete);  // Remove the selected medical record from the list
+                FileUtils.deleteFromFile(MEDICALRECORDS_TXT, recordToDelete.getMedicalRecordId());
                 System.out.println("Medical record for Patient ID: " + patientId + " has been deleted successfully.");
             } else {
                 System.out.println("Deletion canceled for Patient ID: " + patientId);
