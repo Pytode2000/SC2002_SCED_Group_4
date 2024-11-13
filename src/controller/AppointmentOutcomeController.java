@@ -60,7 +60,7 @@ public class AppointmentOutcomeController {
                 String consultationNotes = data[6].trim();
 
                 // Check if any of the prescription IDs in this appointment are pending
-                String[] prescriptionIdArray = prescriptionIds.split(";");
+                String[] prescriptionIdArray = prescriptionIds.split(",");
                 List<String> medications = new ArrayList<>();
                 boolean hasPendingPrescription = false;
 
@@ -172,12 +172,15 @@ public class AppointmentOutcomeController {
             outcomes.sort(Comparator.comparing(AppointmentOutcome::getDateOfAppointment));
 
             // Print table headers
-            System.out.println("\nAppointment Outcomes for Patient ID: " + patientId + "\n");
+            System.out.println("\n╔════════════════════════════════════════╗");
+            System.out.println("║          Appointment Outcomes          ║");
+            System.out.println("╚════════════════════════════════════════╝");
+
             System.out.printf("%-15s | %-20s | %-20s | %-50s | %-51s |%n",
                     "Date", "Doctor", "Service Type",
                     "Medications", "Consultation Notes");
             System.out.println(
-                    "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                    "══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════");
 
             // Display each appointment outcome in a table row format
             for (AppointmentOutcome outcome : outcomes) {
@@ -217,9 +220,9 @@ public class AppointmentOutcomeController {
                                 ""); // Empty Consultation Notes column here
                     }
                 }
-
                 System.out.println(
-                        "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                        "══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════");
+
             }
         }
         PrintUtils.pause();
@@ -305,7 +308,7 @@ public class AppointmentOutcomeController {
             return prescriptionIds;
         }
         if (prescriptionField != null && !prescriptionField.isEmpty()) {
-            String[] idsArray = prescriptionField.split(";");
+            String[] idsArray = prescriptionField.split(",");
             for (String id : idsArray) {
                 prescriptionIds.add(id.trim()); // Add each prescription ID to the list
             }
