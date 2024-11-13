@@ -303,6 +303,24 @@ public class MedicalRecordsController {
 
     // Method to display medical records for a given patient ID
     public void displayMedicalRecords(String patientId) {
+
+        this.patients = new ArrayList<>();
+        this.medicalRecords = new ArrayList<>();
+
+        // Load patient records
+        try {
+            loadPatientsFromFile(PATIENT_TXT);
+        } catch (IOException e) {
+            System.out.println("Error loading patients: " + e.getMessage());
+        }
+
+        // Load medical records
+        try {
+            loadMedicalRecordsFromFile(MEDICALRECORDS_TXT);
+        } catch (IOException e) {
+            System.out.println("Error loading medical records: " + e.getMessage());
+        }
+
         Patient patient = findPatientById(patientId);
 
         // Print patient's information
@@ -318,10 +336,9 @@ public class MedicalRecordsController {
 
         // Display medical records for the patient
         boolean recordFound = false;
-          System.out.println("\n╔════════════════════════════════════════╗");
-            System.out.println("║             Medical Records            ║");
-            System.out.println("╚════════════════════════════════════════╝");
-        
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║             Medical Records            ║");
+        System.out.println("╚════════════════════════════════════════╝");
 
         for (MedicalRecord record : medicalRecords) {
             if (record.getPatientId().equals(patientId)) {
