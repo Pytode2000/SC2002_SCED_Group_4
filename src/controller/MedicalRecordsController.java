@@ -375,6 +375,7 @@ public class MedicalRecordsController {
         while (true) {
             System.out.println("Select a patient (0 to return): ");
             int patientChoice = scanner.nextInt();
+            scanner.nextLine();
             if (patientChoice == 0) {
                 return;
             }
