@@ -351,7 +351,10 @@ public class AccountController {
                         }
                     }
 
-                    System.out.println("Login successful. Welcome, " + user.getFirstName());
+                    System.out.println("══════════════════════════════════════════\n");
+
+                    System.out.println("Welcome, " + user.getFirstName() + " " + user.getLastName() + "!");
+
                     return user;
                 }
 
