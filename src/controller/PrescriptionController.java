@@ -78,7 +78,7 @@ public class PrescriptionController {
             while ((line = outcomeReader.readLine()) != null) {
                 String[] fields = line.split("\\|");
                 if (fields[0].trim().equals(appointmentId)) {
-                    for (String prescriptionId : fields[5].trim().split(";")) {
+                    for (String prescriptionId : fields[5].trim().split(",")) {
                         Prescription prescription = getPrescription(prescriptionId.trim());
                         if (prescription != null && prescription.getStatus() == Prescription.Status.PENDING) {
                             prescriptions.add(prescription);
