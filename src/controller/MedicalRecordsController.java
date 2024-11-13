@@ -129,7 +129,7 @@ public class MedicalRecordsController {
     // Generate a new unique medical record ID
     private String generateMedicalRecordId() {
         if (medicalRecords.isEmpty()) {
-            return "MR1"; // Start with MR1 if no records exist
+            return "MR00001"; // Start with MR00001 if no records exist
         }
 
         // Get the last medical record ID
