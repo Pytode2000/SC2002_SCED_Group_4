@@ -95,22 +95,22 @@ public class AppointmentOutcomeController {
                 System.out.println("No appointment outcomes with pending prescriptions found.");
             } else {
                 // Adjust column widths to make Service Type wider by 1.5x (adding space)
-                System.out.printf("%-15s | %-12s | %-18s | %-20s | %-40s | %-40s |%n", // Adjusted Service Type width
+                System.out.printf("%-15s ║ %-12s ║ %-18s ║ %-20s ║ %-40s ║ %-40s ║%n", // Adjusted Service Type width
                         "Appointment ID", "Date", "Doctor", "Service Type", "Medications", "Consultation Notes");
-                System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                System.out.println("══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════");
 
                 for (String[] appointment : pendingAppointments) {
                     // Print the first line with all data, including consultation notes
-                    System.out.printf("%-15s | %-12s | %-18s | %-20s | %-40s | %-40s |%n", // Adjusted Service Type width
+                    System.out.printf("%-15s ║ %-12s ║ %-18s ║ %-20s ║ %-40s ║ %-40s ║%n", // Adjusted Service Type width
                             appointment[0], appointment[1], appointment[2], appointment[3], appointment[4].split("\n")[0], appointment[5]);
 
                     // Print additional lines for each medication if there are multiple
                     String[] medications = appointment[4].split("\n");
                     for (int i = 1; i < medications.length; i++) {
-                        System.out.printf("%-15s | %-12s | %-18s | %-20s | %-40s | %-40s |%n", // Adjusted Service Type width
+                        System.out.printf("%-15s ║ %-12s ║ %-18s ║ %-20s ║ %-40s ║ %-40s ║%n", // Adjusted Service Type width
                                 "", "", "", "", medications[i], "");
                     }
-                    System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                    System.out.println("══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════");
                 }
             }
 
@@ -176,7 +176,10 @@ public class AppointmentOutcomeController {
             System.out.println("║          Appointment Outcomes          ║");
             System.out.println("╚════════════════════════════════════════╝");
 
-            System.out.printf("%-15s | %-20s | %-20s | %-50s | %-51s |%n",
+            System.out.println(
+                    "══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════");
+
+            System.out.printf("%-15s ║ %-20s ║ %-20s ║ %-50s ║ %-51s ║%n",
                     "Date", "Doctor", "Service Type",
                     "Medications", "Consultation Notes");
             System.out.println(
@@ -191,7 +194,7 @@ public class AppointmentOutcomeController {
                 List<Prescription> prescriptions = getPrescriptionsByIds(outcome.getPrescribedMedications());
                 if (prescriptions.isEmpty()) {
                     // No prescriptions, display "No Prescription" on the first row
-                    System.out.printf("%-15s | %-20s | %-20s | %-50s | %-51s |%n",
+                    System.out.printf("%-15s ║ %-20s ║ %-20s ║ %-50s ║ %-51s ║%n",
                             outcome.getDateOfAppointment().format(dateFormatter),
                             doctorName,
                             outcome.getServiceType(),
@@ -201,7 +204,7 @@ public class AppointmentOutcomeController {
                     // Print the first row with the first prescription
                     Prescription firstPrescription = prescriptions.get(0);
                     String medicineName = getMedicineName(firstPrescription.getMedicineId());
-                    System.out.printf("%-15s | %-20s | %-20s | %-50s | %-51s |%n",
+                    System.out.printf("%-15s ║ %-20s ║ %-20s ║ %-50s ║ %-51s ║%n",
                             outcome.getDateOfAppointment().format(dateFormatter),
                             doctorName,
                             outcome.getServiceType(),
@@ -213,7 +216,7 @@ public class AppointmentOutcomeController {
                     for (int i = 1; i < prescriptions.size(); i++) {
                         Prescription prescription = prescriptions.get(i);
                         medicineName = getMedicineName(prescription.getMedicineId());
-                        System.out.printf("%-15s | %-20s | %-20s | %-50s | %-51s |%n",
+                        System.out.printf("%-15s ║ %-20s ║ %-20s ║ %-50s ║ %-51s ║%n",
                                 "", "", "",
                                 String.format("%d. %dx %s (%s)", i + 1, prescription.getQuantity(), medicineName,
                                         prescription.getStatus()),
@@ -451,8 +454,9 @@ public class AppointmentOutcomeController {
         upcomingAppointments.sort(Comparator.comparing(this::extractDateTimeFromAppointment));
 
         // Display sorted upcoming appointments with index starting from 1
-        System.out.println("\nUpcoming Appointments:");
-        System.out.println("-------------------------------------------");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║          Upcoming Appointment          ║");
+        System.out.println("╚════════════════════════════════════════╝");
 
         List<String[]> appointmentDetailsList = new ArrayList<>();
 
@@ -465,6 +469,7 @@ public class AppointmentOutcomeController {
             appointmentDetailsList.add(new String[]{fields[0], patientId, date, time});
             System.out.printf("%d. %s (%s %s)\n", i + 1, patientName, date, time);
         }
+        System.out.println("══════════════════════════════════════════");
 
         Scanner scanner = new Scanner(System.in);
         int selectedIndex;
@@ -793,16 +798,18 @@ public class AppointmentOutcomeController {
         outcomes.sort(Comparator.comparing(AppointmentOutcome::getDateOfAppointment));
 
         // Display sorted outcomes with index
-        System.out.println("\nAppointment Outcome Records:");
-        System.out.println("-------------------------------------------");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║       Appointment Outcome Records      ║");
+        System.out.println("╚════════════════════════════════════════╝");
         for (int i = 0; i < outcomes.size(); i++) {
             AppointmentOutcome outcome = outcomes.get(i);
-            System.out.printf("%d. Appointment ID: %s | Date: %s | Service Type: %s | Notes: %s\n",
+            System.out.printf("%d. Appointment ID: %s ║ Date: %s ║ Service Type: %s ║ Notes: %s\n",
                     i + 1, outcome.getAppointmentId(),
                     outcome.getDateOfAppointment().format(dateFormatter),
                     outcome.getServiceType(),
                     outcome.getConsultationNotes());
         }
+        System.out.println("══════════════════════════════════════════");
 
         Scanner scanner = new Scanner(System.in);
         int selectedIndex;
