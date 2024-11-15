@@ -9,6 +9,12 @@ import entity.Administrator;
 import interfaces.MenuInterface;
 import java.util.Scanner;
 
+/**
+ * Represents the menu interface for an administrator in the hospital management system.
+ * This class provides various options for the administrator to manage hospital staff, view appointment details,
+ * manage medication inventory, approve replenishment requests, process forget password requests, and send bills to patients.
+ */
+
 public class AdministratorMenu implements MenuInterface {
 
     private final Administrator administrator;
@@ -19,7 +25,11 @@ public class AdministratorMenu implements MenuInterface {
     private final BillController billController = new BillController();
     public static final String ANSI_TRUE_LIGHT_RED = "\u001B[38;2;255;182;193m"; 
 
-    // Initialize AdministratorMenu with necessary controllers for admin actions
+    /**
+     * Constructs an AdministratorMenu with the specified administrator and necessary controllers.
+     * 
+     * @param administrator the administrator whose menu is being managed
+     */
     public AdministratorMenu(Administrator administrator) {
         this.administrator = administrator;
         this.accountController = new AccountController();
@@ -28,6 +38,9 @@ public class AdministratorMenu implements MenuInterface {
         this.forgetPasswordController = new ForgetPasswordController();
     }
 
+    /**
+     * Displays the main menu with available administrator options, allowing the administrator to select various management actions.
+     */
     @Override
     public void displayMenu() {
         Scanner scanner = new Scanner(System.in);
@@ -81,6 +94,11 @@ public class AdministratorMenu implements MenuInterface {
         }
     }
 
+    /**
+     * Provides options for managing hospital staff, including filtering, adding, updating, or removing staff members.
+     * 
+     * @param scanner the Scanner object for user input
+     */
     // Manage hospital staff options
     private void manageStaff(Scanner scanner) {
         boolean backToMenu = false;
@@ -122,6 +140,11 @@ public class AdministratorMenu implements MenuInterface {
         }
     }
 
+    /**
+     * Provides options for filtering hospital staff based on role, gender, or age.
+     * 
+     * @param scanner the Scanner object for user input
+     */
     // Filter hospital staff by different attributes
     private void filterStaff(Scanner scanner) {
         System.out.println("\n╔════════════════════════════════════════╗");
@@ -154,6 +177,11 @@ public class AdministratorMenu implements MenuInterface {
         }
     }
 
+    /**
+     * Provides options for managing the hospital's medication inventory, including adding, updating, or removing medicines.
+     * 
+     * @param scanner the Scanner object for user input
+     */
     // Manage medication inventory options
     private void manageInventory(Scanner scanner) {
         boolean backToMenu = false;
