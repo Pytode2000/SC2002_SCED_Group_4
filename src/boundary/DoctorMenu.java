@@ -1,11 +1,3 @@
-/**
- * The DoctorMenu class provides an interface for doctors to manage various
- * tasks related to appointments, medical records, feedback, and schedules.
- * Implements the MenuInterface to display and handle menu interactions.
- * 
- * @version 1.0
- * @since 2024-11-15
- */
 package boundary;
 
 import controller.AppointmentController;
@@ -15,6 +7,15 @@ import controller.MedicalRecordsController;
 import entity.Doctor;
 import interfaces.MenuInterface;
 import java.util.Scanner;
+
+/**
+ * The DoctorMenu class provides an interface for doctors to manage various
+ * tasks related to appointments, medical records, feedback, and schedules.
+ * Implements the MenuInterface to display and handle menu interactions.
+ * 
+ * @version 1.0
+ * @since 2024-11-15
+ */
 
 public class DoctorMenu implements MenuInterface {
 

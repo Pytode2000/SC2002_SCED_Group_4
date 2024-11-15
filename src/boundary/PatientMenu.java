@@ -10,17 +10,40 @@ import entity.Patient;
 import interfaces.MenuInterface;
 import java.util.Scanner;
 
+/**
+ * The PatientMenu class implements the MenuInterface and represents the menu
+ * of options available to a patient within the hospital management system. 
+ * It handles patient-specific actions such as viewing personal information, 
+ * managing appointments, viewing medical records, and handling bills.
+ */
+
 public class PatientMenu implements MenuInterface {
 
+
+    /** Patient object representing the currently logged-in patient. */
     private final Patient patient;
+
+    /** ANSI color code for light yellow text in the console. */
     public static final String ANSI_TRUE_LIGHT_YELLOW = "\u001B[38;2;255;255;224m"; // Light Yellow (#FFFFE0)
 
 
-    // Constructor initializes patient instance
+     /**
+     * Constructs a PatientMenu instance with the specified patient.
+     * 
+     * @param patient The Patient object representing the currently logged-in patient.
+     */
     public PatientMenu(Patient patient) {
         this.patient = patient;
     }
 
+     /**
+     * Displays the menu of options available to the patient and handles their input.
+     * This method allows the patient to perform various actions such as viewing
+     * personal information, managing appointments, viewing medical records,
+     * managing bills, and providing feedback for doctors.
+     * <p>
+     * It continuously prompts the user until the user chooses to log out.
+     */
     @Override
     public void displayMenu() {
         AccountController accountController = new AccountController();
