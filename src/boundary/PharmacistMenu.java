@@ -7,6 +7,13 @@ import entity.Pharmacist;
 import interfaces.MenuInterface;
 import java.util.Scanner;
 
+/**
+ * The PharmacistMenu class implements the MenuInterface and represents the menu
+ * of options available to a pharmacist within the hospital management system.
+ * It allows the pharmacist to perform various actions such as viewing appointment
+ * outcomes, updating prescription statuses, managing the medication inventory,
+ * and submitting replenishment requests.
+ */
 public class PharmacistMenu implements MenuInterface {
 
     private final Pharmacist pharmacist;
@@ -14,11 +21,24 @@ public class PharmacistMenu implements MenuInterface {
     private final AppointmentOutcomeController appointmentOutcomeController = new AppointmentOutcomeController();
     public static final String ANSI_TRUE_LIGHT_PURPLE = "\u001B[38;2;221;160;221m"; // Light Purple (#DDA0DD)
 
+    /**
+     * Constructs a PharmacistMenu instance with the specified pharmacist.
+     * 
+     * @param pharmacist The Pharmacist object representing the currently logged-in pharmacist.
+     */
     // Constructor initializes the pharmacist instance.
     public PharmacistMenu(Pharmacist pharmacist) {
         this.pharmacist = pharmacist;
     }
 
+    /**
+     * Displays the menu of options available to the pharmacist and handles their input.
+     * This method allows the pharmacist to perform various actions such as viewing appointment
+     * outcomes, updating prescription statuses, managing the medication inventory, and submitting
+     * replenishment requests.
+     * <p>
+     * It continuously prompts the user until the user chooses to log out.
+     */
     @Override
     public void displayMenu() {
         PrescriptionController prescriptionController = new PrescriptionController();
