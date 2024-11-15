@@ -1,3 +1,11 @@
+/**
+ * The DoctorMenu class provides an interface for doctors to manage various
+ * tasks related to appointments, medical records, feedback, and schedules.
+ * Implements the MenuInterface to display and handle menu interactions.
+ * 
+ * @version 1.0
+ * @since 2024-11-15
+ */
 package boundary;
 
 import controller.AppointmentController;
@@ -10,13 +18,31 @@ import java.util.Scanner;
 
 public class DoctorMenu implements MenuInterface {
 
+     /** Doctor object representing the currently logged-in doctor. */
     private final Doctor doctor;
+
+    /** Controller for managing patient medical records. */
     private final MedicalRecordsController medicalRecordsController;
+
+    /** Controller for managing appointments. */
     private final AppointmentController appointmentController;
+
+    /** Controller for managing appointment outcomes. */
     private final AppointmentOutcomeController appointmentOutcomeController;
+
+     /** Controller for managing feedback and ratings. */
     private final FeedbackController feedbackController;
+
+    /** ANSI color code for light blue text in the console. */
     public static final String ANSI_TRUE_LIGHT_BLUE = "\u001B[38;2;173;216;230m"; 
 
+
+    /**
+     * Constructs a DoctorMenu with the given Doctor instance.
+     * Initializes the required controllers for doctor operations.
+     *
+     * @param doctor the currently logged-in doctor
+     */
 
     // Initialize DoctorMenu with necessary controllers for doctor actions
     public DoctorMenu(Doctor doctor) {
@@ -27,6 +53,11 @@ public class DoctorMenu implements MenuInterface {
         this.feedbackController = new FeedbackController();
     }
 
+    /**
+     * Displays the doctor menu and handles user interaction for performing
+     * various tasks such as managing appointments, viewing feedback,
+     * accessing medical records, and managing schedules.
+     */
     @Override
     public void displayMenu() {
         Scanner scanner = new Scanner(System.in);
