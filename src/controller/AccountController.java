@@ -30,7 +30,6 @@ public class AccountController {
     private static final String STAFF_TXT = "data/staff.txt";
 
     // Register method to add new patient
-    // Register method to add new patient
     public boolean register(boolean isAdmin) {
 
         String firstName = "";
@@ -71,8 +70,8 @@ public class AccountController {
                         userRole = "Pharmacist";
                         break;
                     // case "3":
-                    //     userRole = "Administrator";
-                    //     break;
+                    // userRole = "Administrator";
+                    // break;
                     default:
                         System.out.println("Invalid choice. Please enter either '1' or '2'.");
                 }
@@ -87,26 +86,34 @@ public class AccountController {
         String userId = generateUserId(userRole);
 
         // Input and validation for first name
-        while (firstName.length() < 1 || firstName.length() > 15) {
+        boolean firstNameValid = false;
+        while (!firstNameValid) {
             System.out.print("Enter first name (1-15 characters, 0 to cancel): ");
             firstName = scanner.nextLine().trim();
             if (firstName.equals("0")) {
                 return false;
             }
-            if (firstName.length() < 1 || firstName.length() > 15) {
-                System.out.println("First name must be between 1 and 15 characters. Please try again.");
+            if (firstName.length() < 1 || firstName.length() > 15 || !firstName.matches("^[a-zA-Z]+$")) {
+                System.out.println(
+                        "First name must be between 1 and 15 characters and contain only alphanumeric characters. Please try again.");
+            } else {
+                firstNameValid = true;
             }
         }
 
         // Input and validation for last name
-        while (lastName.length() < 1 || lastName.length() > 15) {
+        boolean lastNameValid = false;
+        while (!lastNameValid) {
             System.out.print("Enter last name (1-15 characters, 0 to cancel): ");
             lastName = scanner.nextLine().trim();
             if (lastName.equals("0")) {
                 return false;
             }
-            if (lastName.length() < 1 || lastName.length() > 15) {
-                System.out.println("Last name must be between 1 and 15 characters. Please try again.");
+            if (lastName.length() < 1 || lastName.length() > 15 || !lastName.matches("^[a-zA-Z]+$")) {
+                System.out.println(
+                        "Last name must be between 1 and 15 characters and contain only alphanumeric characters. Please try again.");
+            } else {
+                lastNameValid = true;
             }
         }
 
@@ -279,9 +286,10 @@ public class AccountController {
                             userRole);
                     break;
                 // case "Administrator":
-                //     newUser = new Administrator(userId, firstName, lastName, gender, dateOfBirth, contactNumber,
-                //             emailAddress, userRole);
-                //     break;
+                // newUser = new Administrator(userId, firstName, lastName, gender, dateOfBirth,
+                // contactNumber,
+                // emailAddress, userRole);
+                // break;
                 case "Pharmacist":
                     newUser = new Pharmacist(userId, firstName, lastName, gender, dateOfBirth, contactNumber,
                             emailAddress, userRole);
@@ -1122,7 +1130,7 @@ public class AccountController {
                 }
 
                 while (true) {
-                    System.out.println("Do you want to update your password? (yes/no): ");
+                    System.out.print("Do you want to update your password? (yes/no): ");
                     String input2 = scanner.nextLine().toLowerCase().trim();
                     if (input2.equals("yes")) {
                         updateStaffPasswordFlow((staffId), scanner);
@@ -1248,6 +1256,7 @@ public class AccountController {
         }
     }
 
+    /************* ✨ Codeium Command 🌟 *************/
     // Remove staff
     public void removeStaff(Scanner scanner) {
         try {
@@ -1279,6 +1288,9 @@ public class AccountController {
 
                 String[] fields = staff.get(index).split("\\|");
                 String userId = fields[0];
+                String firstName = fields[1];
+                String lastName = fields[2];
+
                 staff.remove(index);
                 Files.write(Paths.get(STAFF_TXT), staff);
 
@@ -1292,7 +1304,9 @@ public class AccountController {
                 }
                 Files.write(Paths.get(ACCOUNT_TXT), updatedAccounts);
 
-                System.out.println("Remove successful for index: " + (index + 1));
+                System.out
+                        .println("User removed successfully: " + userId + " (" + firstName + " " + lastName + ")");
+
             }
         } catch (IOException e) {
             System.out.println("An error occurred while removing the staff information.");
@@ -1300,6 +1314,8 @@ public class AccountController {
             e.printStackTrace();
         }
     }
+
+    /****** fa13d76b-dac3-4721-9f3c-bfff0c00d37c *******/
 
     // Helper validation methods
     private boolean isValidContactNumber(String contactNumber) {
