@@ -30,6 +30,12 @@ The project applies OOP principles to model and manage key hospital operations, 
 The HMS streamlines hospital operations through a role-based architecture, ensuring secure and efficient data management. The system is built with:
 - **Boundary-Control-Entity (BCE)** architecture to enforce high cohesion and loose coupling.
 - Applied OOP principles like inheritance, polymorphism, encapsulation, and abstraction.
+- SOLID principles for maintainable and scalable design:
+1. Single Responsibility Principle (SRP): Each class handles a single responsibility, such as user authentication or record management.
+2. Open/Closed Principle (OCP): Classes are designed to be easily extendable without modifying existing functionality, allowing seamless integration of new roles or features.
+3. Liskov Substitution Principle (LSP): Subclasses like Doctor, Pharmacist, and Administrator are substitutable for their Staff base class, ensuring consistent behavior.
+4. Interface Segregation Principle (ISP): Segmented interfaces ensure classes only depend on methods relevant to their role, avoiding unnecessary dependencies.
+5. Dependency Inversion Principle (DIP): High-level modules like HospitalController depend on abstractions, ensuring flexibility in integrating new features.
 - Role-based access control for secure functionality segregation.  
 
 ---
@@ -117,13 +123,17 @@ This journey emphasized the importance of iterative design, fostering a mindset 
 ### **Running the Program**
 To execute the HMS, you have two options:
 - Option 1: Run Java Program Directly
+  
 Navigate to the /src/ directory in your terminal and execute the following: `java HospitalManagementSystem`
+
 - Option 2: Build and Run with PowerShell Script
+  
 Execute the provided PowerShell script to build and run the project: `.\build.ps1`
+
 ---
 
 ## **7. Contributors**  
-- Liew Wei Jie
-- Lim Zu Liang
-- Jacob Ong Jia Chun
-- Tan Yi Xiang, Dylan
+- Liew Wei Jie [@lweijiie](https://github.com/lweijiie)
+- Lim Zu Liang [@lzliang](https://github.com/lzuliang)
+- Jacob Ong Jia Chun [@Pytode2000](https://github.com/Pytode2000)
+- Tan Yi Xiang, Dylan [@DylanTYX](https://github.com/DylanTYX)
