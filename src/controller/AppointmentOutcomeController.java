@@ -33,12 +33,25 @@ public class AppointmentOutcomeController {
 
     private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
+    /**
+     * Displays all appointment outcomes with at least one pending prescription.
+     *
+     * The method reads all appointment outcomes from the file and filters those
+     * with
+     * at least one pending prescription. It then displays the results in a table
+     * format, with each row representing an appointment outcome and columns for
+     * appointment ID, date, doctor, service type, medications, and consultation
+     * notes. The medications column is formatted to show each medication on a new
+     * line, indented 4 spaces. If there are no appointment outcomes with pending
+     * prescriptions, the method informs the user.
+     */
     public void displayAllPendingAppointmentOutcomes() {
 
         System.out.println("\n╔════════════════════════════════════════╗");
         System.out.println("║       Appointment Outcome Records      ║");
         System.out.println("╚════════════════════════════════════════╝");
-        System.out.println("\n══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════");
+        System.out.println(
+                "\n══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════");
 
         try {
             // Step 1: Load all pending prescription IDs
@@ -72,45 +85,51 @@ public class AppointmentOutcomeController {
                     Prescription prescription = getPrescriptionDetails(prescriptionId.trim());
                     if (prescription != null) {
                         String medicineName = getMedicineName(prescription.getMedicineId());
-                        medications.add(String.format("%dx %s (%s)", prescription.getQuantity(), medicineName, prescription.getStatus()));
+                        medications.add(String.format("%dx %s (%s)", prescription.getQuantity(), medicineName,
+                                prescription.getStatus()));
                     }
                 }
 
                 // Add to list if it has at least one pending prescription
                 if (hasPendingPrescription) {
-                    pendingAppointments.add(new String[]{
-                        appointmentId,
-                        date,
-                        getDoctorName(doctorId),
-                        serviceType,
-                        medications.isEmpty() ? "- No Prescription" : String.join("\n", medications),
-                        consultationNotes.isEmpty() ? "-" : consultationNotes
+                    pendingAppointments.add(new String[] {
+                            appointmentId,
+                            date,
+                            getDoctorName(doctorId),
+                            serviceType,
+                            medications.isEmpty() ? "- No Prescription" : String.join("\n", medications),
+                            consultationNotes.isEmpty() ? "-" : consultationNotes
                     });
                 }
             }
             br.close();
 
-// Step 3: Display the results in table format
+            // Step 3: Display the results in table format
             if (pendingAppointments.isEmpty()) {
                 System.out.println("No appointment outcomes with pending prescriptions found.");
             } else {
                 // Adjust column widths to make Service Type wider by 1.5x (adding space)
                 System.out.printf("%-15s ║ %-12s ║ %-18s ║ %-20s ║ %-40s ║ %-40s ║%n", // Adjusted Service Type width
                         "Appointment ID", "Date", "Doctor", "Service Type", "Medications", "Consultation Notes");
-                System.out.println("══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════");
+                System.out.println(
+                        "══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════");
 
                 for (String[] appointment : pendingAppointments) {
                     // Print the first line with all data, including consultation notes
-                    System.out.printf("%-15s ║ %-12s ║ %-18s ║ %-20s ║ %-40s ║ %-40s ║%n", // Adjusted Service Type width
-                            appointment[0], appointment[1], appointment[2], appointment[3], appointment[4].split("\n")[0], appointment[5]);
+                    System.out.printf("%-15s ║ %-12s ║ %-18s ║ %-20s ║ %-40s ║ %-40s ║%n", // Adjusted Service Type
+                                                                                           // width
+                            appointment[0], appointment[1], appointment[2], appointment[3],
+                            appointment[4].split("\n")[0], appointment[5]);
 
                     // Print additional lines for each medication if there are multiple
                     String[] medications = appointment[4].split("\n");
                     for (int i = 1; i < medications.length; i++) {
-                        System.out.printf("%-15s ║ %-12s ║ %-18s ║ %-20s ║ %-40s ║ %-40s ║%n", // Adjusted Service Type width
+                        System.out.printf("%-15s ║ %-12s ║ %-18s ║ %-20s ║ %-40s ║ %-40s ║%n", // Adjusted Service Type
+                                                                                               // width
                                 "", "", "", "", medications[i], "");
                     }
-                    System.out.println("══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════");
+                    System.out.println(
+                            "══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════");
                 }
             }
 
@@ -120,7 +139,17 @@ public class AppointmentOutcomeController {
         PrintUtils.pause();
     }
 
-    // Helper method to retrieve prescription details
+    /**
+     * Retrieves details of a specific prescription by its ID.
+     *
+     * This method reads from the prescription file to find the prescription
+     * with the specified ID. If found, it returns a Prescription object
+     * containing the prescription ID, associated medicine ID, quantity, and
+     * status. If the prescription is not found, it returns null.
+     *
+     * @param prescriptionId the ID of the prescription to be retrieved
+     * @return a Prescription object with the specified ID, or null if not found
+     */
     private Prescription getPrescriptionDetails(String prescriptionId) {
         try (BufferedReader br = new BufferedReader(new FileReader(PRESCRIPTION_FILE))) {
             String line;
@@ -139,7 +168,16 @@ public class AppointmentOutcomeController {
         return null;
     }
 
-    // Helper method to retrieve all pending prescription IDs from prescription file
+    /**
+     * Retrieves a set of prescription IDs with a status of "PENDING".
+     *
+     * This method reads from the prescription file, collecting the IDs of all
+     * prescriptions with a status of "PENDING". If an error occurs while
+     * reading the file, it prints an error message and continues. The set of
+     * pending prescription IDs is then returned.
+     *
+     * @return a set of prescription IDs with a status of "PENDING"
+     */
     private Set<String> getPendingPrescriptionIds() {
         Set<String> pendingPrescriptionIds = new HashSet<>();
         try (BufferedReader br = new BufferedReader(new FileReader(PRESCRIPTION_FILE))) {
@@ -158,10 +196,17 @@ public class AppointmentOutcomeController {
         }
         return pendingPrescriptionIds;
     }
-    //testZL
 
-    // Display appointment outcomes by patient ID with full prescription details in
-    // a table format
+    /**
+     * Displays appointment outcomes for the specified patient ID, sorted by date
+     * of appointment in ascending order. Each appointment outcome is displayed
+     * in a table row format, with columns for date, doctor, service type,
+     * medications, and consultation notes. If no appointment outcomes are
+     * found, an appropriate error message is displayed.
+     *
+     * @param patientId the ID of the patient for whom to display appointment
+     *                  outcomes
+     */
     public void displayAppointmentOutcomesByPatientId(String patientId) {
         List<AppointmentOutcome> outcomes = getAppointmentOutcomesByPatientId(patientId);
 
@@ -231,7 +276,21 @@ public class AppointmentOutcomeController {
         PrintUtils.pause();
     }
 
-    // Retrieve a list of Prescription objects by prescription IDs
+    /**
+     * Retrieves a list of prescriptions based on a list of prescription IDs.
+     *
+     * This method reads the prescription data from the prescription file and
+     * matches each prescription ID from the provided list with the records in
+     * the file. If a match is found, it creates a Prescription object and adds
+     * it to the result list.
+     *
+     * The prescription file is expected to have records in the format:
+     * "prescriptionId|medicineId|quantity|status".
+     *
+     * @param prescriptionIds a list of prescription IDs to be retrieved
+     * @return a list of Prescription objects corresponding to the provided IDs;
+     *         an empty list if no prescriptions match the given IDs
+     */
     private List<Prescription> getPrescriptionsByIds(List<String> prescriptionIds) {
         List<Prescription> prescriptions = new ArrayList<>();
 
@@ -254,7 +313,19 @@ public class AppointmentOutcomeController {
         return prescriptions;
     }
 
-    // Retrieve medicine name by medicineId from medicine file
+    /**
+     * Retrieves the name of a specific medicine by its ID.
+     * 
+     * The method reads the medicine data from the medicine file and matches the
+     * provided medicine ID with the records in the file. If a match is found, it
+     * returns the medicine name (assumed to be at index 1). If no match is found
+     * or if there is an error reading the file, the method returns "Unknown
+     * Medicine".
+     * 
+     * @param medicineId the ID of the medicine to be retrieved
+     * @return the name of the medicine with the given ID, or "Unknown Medicine"
+     *         if no match is found
+     */
     private String getMedicineName(String medicineId) {
         try (BufferedReader reader = new BufferedReader(new FileReader("data/medicine.txt"))) {
             String line;
@@ -270,7 +341,21 @@ public class AppointmentOutcomeController {
         return "Unknown Medicine";
     }
 
-    // Retrieve appointment outcomes by patient ID from file
+    /**
+     * Retrieves a list of appointment outcomes for a specific patient ID.
+     *
+     * This method reads the appointment outcome data from a file and filters
+     * the records by the provided patient ID. For each matching record, it
+     * parses the data to create an AppointmentOutcome object, which includes
+     * details such as appointment ID, doctor ID, date of appointment, service
+     * type, prescribed medications, and consultation notes. The list of
+     * AppointmentOutcome objects is then returned.
+     *
+     * @param patientId the ID of the patient for whom to retrieve appointment
+     *                  outcomes
+     * @return a list of AppointmentOutcome objects for the specified patient;
+     *         an empty list if no matching outcomes are found
+     */
     public List<AppointmentOutcome> getAppointmentOutcomesByPatientId(String patientId) {
         List<AppointmentOutcome> outcomes = new ArrayList<>();
 
@@ -304,7 +389,16 @@ public class AppointmentOutcomeController {
         return outcomes;
     }
 
-    // Helper method to parse prescription IDs from a semicolon-separated string
+    /**
+     * Parse the prescription IDs from the given string, which is
+     * semicolon-separated.
+     * If the string is empty or equals to "-", return an empty list.
+     * Otherwise, split the string into an array of IDs and add them to the result
+     * list.
+     * 
+     * @param prescriptionField the string to parse
+     * @return a list of prescription IDs
+     */
     private List<String> parsePrescriptionIds(String prescriptionField) {
         List<String> prescriptionIds = new ArrayList<>();
         if (prescriptionField.equals("-")) {
@@ -319,7 +413,17 @@ public class AppointmentOutcomeController {
         return prescriptionIds;
     }
 
-    // Helper method to retrieve doctor name from staff file
+    /**
+     * Retrieves the full name of a doctor given their ID.
+     *
+     * This method reads the staff file to find the doctor with the specified ID
+     * and returns their full name, which is a concatenation of their first and
+     * last names. If the doctor ID is not found or there is an error reading
+     * the file, it returns "Doctor not found.".
+     *
+     * @param doctorId the ID of the doctor whose name is to be retrieved
+     * @return the full name of the doctor or "Doctor not found." if not found
+     */
     private String getDoctorName(String doctorId) {
         try (BufferedReader reader = new BufferedReader(new FileReader(STAFF_FILE))) {
             String line;
@@ -335,7 +439,19 @@ public class AppointmentOutcomeController {
         return "Doctor not found.";
     }
 
-    // Print out menu for Doctor
+    /**
+     * Retrieves a list of upcoming booked appointments for a given doctor ID.
+     *
+     * This method reads the appointment file and filters the records by the
+     * provided doctor ID and a status of "BOOKED". It collects all matching
+     * records and returns them as a list of strings. If no matching records are
+     * found or there is an error reading the file, the method returns null.
+     *
+     * @param doctorId the ID of the doctor for whom to retrieve upcoming
+     *                 appointments
+     * @return a list of upcoming booked appointments for the given doctor,
+     *         or null if none are found
+     */
     private List<String> getUpcomingAppointments(String doctorId) {
 
         List<String> upcomingAppointments = new ArrayList<>();
@@ -359,6 +475,18 @@ public class AppointmentOutcomeController {
 
     }
 
+    /**
+     * Retrieves a list of patients from the patient file.
+     *
+     * This method reads the patient file, parsing each line into fields
+     * and collecting those entries that have more than 8 fields. It returns
+     * a list of strings where each string represents a patient record with
+     * patient details separated by the '|' character. If no valid records
+     * are found or an error occurs during file reading, it returns null.
+     *
+     * @return a list of strings representing patient records; null if no records
+     *         are found or an error occurs
+     */
     private List<String> getPatientList() {
 
         List<String> patientList = new ArrayList<>();
@@ -381,6 +509,21 @@ public class AppointmentOutcomeController {
         }
     }
 
+    /**
+     * Converts a list of patient records into a map of patient IDs to full names.
+     *
+     * This method takes a list of patient strings, where each string contains
+     * patient details separated by the '|' character. It parses each string to
+     * extract the patient ID, first name, and last name, and combines the first
+     * and last name into a full name. The resulting map associates each patient ID
+     * with the corresponding full name. Only entries with at least three fields
+     * (ID, first name, last name) are added to the map.
+     *
+     * @param patients a list of strings representing patient records, with details
+     *                 separated by the '|' character
+     * @return a map where each key is a patient ID and each value is the full name
+     *         of the patient
+     */
     public Map<String, String> getPatientMap(List<String> patients) {
         Map<String, String> patientMap = new HashMap<>();
 
@@ -395,6 +538,19 @@ public class AppointmentOutcomeController {
         return patientMap;
     }
 
+    /**
+     * Takes a list of appointments in string format and a map of patient IDs to
+     * full names, and returns a new list of strings where each string is an
+     * appointment entry with the patient ID replaced by the full name if the
+     * patient ID is present in the map.
+     *
+     * @param appointments a list of strings representing appointments, with
+     *                     details separated by the '|' character
+     * @param patientMap   a map where each key is a patient ID and each value is
+     *                     the full name of the patient
+     * @return a list of strings where each string is an appointment entry with
+     *         the patient ID replaced by the full name if available
+     */
     public List<String> formatAppointments(List<String> appointments, Map<String, String> patientMap) {
         List<String> formattedAppointments = new ArrayList<>();
 
@@ -415,6 +571,13 @@ public class AppointmentOutcomeController {
         return formattedAppointments;
     }
 
+    /**
+     * Displays the upcoming appointments for a doctor, with the patient ID
+     * replaced by the full name of the patient if available.
+     *
+     * @param doctorId the ID of the doctor whose upcoming appointments are
+     *                 being viewed
+     */
     private void viewUpcomingAppointments(String doctorId) {
 
         List<String> upcomingAppointments = getUpcomingAppointments(doctorId);
@@ -430,6 +593,18 @@ public class AppointmentOutcomeController {
         }
     }
 
+    /**
+     * Loads the list of medicines from the medicine file.
+     *
+     * The file is expected to have the format:
+     * medicine_id|medicine_name|medicine_price|medicine_stock
+     *
+     * The method reads the file line by line and splits each line into
+     * an array of strings using the "|" as the delimiter. The resulting
+     * list of arrays is then returned.
+     *
+     * @return the list of medicines
+     */
     private List<String[]> loadMedicines() {
         List<String[]> medicines = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(MEDICINE_FILE))) {
@@ -443,6 +618,19 @@ public class AppointmentOutcomeController {
         return medicines;
     }
 
+    /**
+     * Prompts the user to select an upcoming appointment to create a record.
+     *
+     * The method first loads the list of upcoming appointments for the given
+     * doctor ID and sorts them by date and time. It then displays the sorted
+     * appointments to the user, prompting the user to select an appointment
+     * by index. Once the user selects an appointment, the method prompts the
+     * user to select medicines to prescribe and record additional details.
+     * Finally, it creates a record in the appointment outcome file and updates
+     * the appointment status to "CLOSED" in the appointment file.
+     *
+     * @param doctorId the doctor ID to create the appointment outcome record for
+     */
     private void createAppointmentOutcome(String doctorId) {
         List<String> upcomingAppointments = getUpcomingAppointments(doctorId);
         if (upcomingAppointments == null || upcomingAppointments.isEmpty()) {
@@ -466,7 +654,7 @@ public class AppointmentOutcomeController {
             String patientName = getPatientNameById(patientId);
             String date = fields[3];
             String time = fields[4];
-            appointmentDetailsList.add(new String[]{fields[0], patientId, date, time});
+            appointmentDetailsList.add(new String[] { fields[0], patientId, date, time });
             System.out.printf("%d. %s (%s %s)\n", i + 1, patientName, date, time);
         }
         System.out.println("══════════════════════════════════════════");
@@ -521,7 +709,8 @@ public class AppointmentOutcomeController {
                             currentPrescriptionId = incrementPrescriptionId(currentPrescriptionId);
                             prescriptionIds.add(currentPrescriptionId);
 
-                            String prescriptionEntry = String.format("%s|%s|%d|PENDING", currentPrescriptionId, medicineId, quantity);
+                            String prescriptionEntry = String.format("%s|%s|%d|PENDING", currentPrescriptionId,
+                                    medicineId, quantity);
                             pendingPrescriptions.add(prescriptionEntry);
                         } else {
                             System.out.println("Invalid index. Please select a valid medicine index.");
@@ -558,7 +747,17 @@ public class AppointmentOutcomeController {
         }
     }
 
-    // Helper to get the last ID from the prescription file
+    /**
+     * Retrieves the last prescription ID from the prescription file.
+     *
+     * This method reads the prescription file line by line, extracting the
+     * prescription ID from each line, and updates the lastId with the most
+     * recent prescription ID found. If the file is empty or an error occurs
+     * during reading, it defaults to "PR00000".
+     *
+     * @return the last prescription ID found in the prescription file, or
+     *         "PR00000" if no entries are found or an error occurs.
+     */
     private String getLastPrescriptionId() {
         String lastId = "PR00000";
         try (BufferedReader reader = new BufferedReader(new FileReader(PRESCRIPTION_FILE))) {
@@ -572,20 +771,54 @@ public class AppointmentOutcomeController {
         return lastId;
     }
 
-    // Increment function for prescription ID in memory
+    /**
+     * Generates a new prescription ID by incrementing the last prescription ID
+     * found in the prescription file.
+     *
+     * This method takes the last prescription ID as a parameter, extracts the
+     * numerical part of the ID, increments it by one, and formats the new ID
+     * with the same prefix ("PR") and padding (5 digits).
+     *
+     * @param lastId the last prescription ID found in the prescription file
+     * @return the new prescription ID
+     */
     private String incrementPrescriptionId(String lastId) {
         int lastNum = Integer.parseInt(lastId.substring(2));
         return String.format("PR%05d", lastNum + 1);
     }
 
-// Extract date and time for sorting appointments
+    /**
+     * Extracts the date and time from an appointment string and returns it as a
+     * LocalDateTime object.
+     *
+     * This method takes an appointment string as input, splits it into fields,
+     * and combines the date and time fields into a single string. It then parses
+     * this string into a LocalDateTime object using the DateTimeFormatter
+     * with the pattern "dd-MM-yyyy HH:mm".
+     *
+     * @param appointment the appointment string from which to extract the date and
+     *                    time
+     * @return the extracted date and time as a LocalDateTime object
+     */
     private LocalDateTime extractDateTimeFromAppointment(String appointment) {
         String[] fields = appointment.split("\\|");
         String dateTimeString = fields[3] + " " + fields[4]; // Combine date and time fields
         return LocalDateTime.parse(dateTimeString, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
     }
 
-    // Method to select medicines and create prescription entries
+    /**
+     * Allows the doctor to select medicines for a prescription.
+     *
+     * Prompts the doctor to select medicines by displaying the list of available
+     * medicines and their indices. For each selected medicine, prompts for the
+     * quantity and generates a new prescription ID. Writes the prescription to
+     * the file and adds the prescription ID to the list. Finally, joins the
+     * prescription IDs with commas and returns the string for the appointment
+     * outcome.
+     *
+     * @param scanner the scanner to read user input
+     * @return a string of prescription IDs joined by commas
+     */
     private String selectMedicinesForPrescription(Scanner scanner) {
         List<String> selectedMedicineIds = new ArrayList<>();
         List<String[]> medicineList = loadMedicinesFromFile();
@@ -637,7 +870,16 @@ public class AppointmentOutcomeController {
         return String.join(",", selectedMedicineIds);
     }
 
-    // Load medicines from medicine.txt
+    /**
+     * Load the list of medicines from the medicine file.
+     * 
+     * This method reads the medicine file line by line and splits each line into
+     * an array of strings using the "|" character as the delimiter. Each array
+     * represents a medicine with its ID, name, description, stock level, low
+     * stock level, and type. The method returns a list of these arrays.
+     * 
+     * @return A list of strings arrays, each representing a medicine.
+     */
     private List<String[]> loadMedicinesFromFile() {
         List<String[]> medicines = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(MEDICINE_FILE))) {
@@ -652,7 +894,12 @@ public class AppointmentOutcomeController {
         return medicines;
     }
 
-    // Generate a unique prescription ID
+    /**
+     * Generates a new unique prescription ID based on the last ID found in the
+     * prescription file. If no entries are found, defaults to "PR00000".
+     *
+     * @return a unique prescription ID
+     */
     private String generatePrescriptionId() {
         String lastId = "PR00000"; // Default ID if no entries are found
 
@@ -672,7 +919,12 @@ public class AppointmentOutcomeController {
         return newId;
     }
 
-    // Helper method to retrieve patient name by ID
+    /**
+     * Retrieve the full name of a patient by their ID from the patient file.
+     * 
+     * @param patientId The ID of the patient to look up.
+     * @return The full name of the patient, or "Unknown Patient" if not found.
+     */
     private String getPatientNameById(String patientId) {
         try (BufferedReader reader = new BufferedReader(new FileReader(PATIENT_FILE))) {
             String line;
@@ -688,6 +940,19 @@ public class AppointmentOutcomeController {
         return "Unknown Patient";
     }
 
+    /**
+     * Prompt the user to select an appointment ID from a given list of upcoming
+     * appointments.
+     * 
+     * The user is repeatedly asked to enter an appointment ID until a valid one is
+     * selected, or the user enters '0' to return to the previous menu.
+     * 
+     * @param upcomingAppointments A list of strings representing the upcoming
+     *                             appointments, where each string contains the
+     *                             appointment details separated by the '|'
+     *                             character.
+     * @return The selected appointment ID, or "0" if the user chose to return.
+     */
     private String promptForAppointmentId(List<String> upcomingAppointments) {
         Scanner scanner = new Scanner(System.in);
         String inputAppointmentId;
@@ -709,18 +974,37 @@ public class AppointmentOutcomeController {
         }
     }
 
-    // Retrieves patientId and dateOfAppointment for a specific appointmentId
+    /**
+     * Returns the patient ID and date of appointment for a given appointment ID, or
+     * null if the appointment ID is not found.
+     * 
+     * @param appointments  A list of strings representing the upcoming
+     *                      appointments, where each string contains the appointment
+     *                      details separated by the '|'
+     *                      character.
+     * @param appointmentId The appointment ID to search for.
+     * @return An array of two strings containing the patient ID and date of
+     *         appointment, or null if the appointment ID is not found.
+     */
     private String[] getAppointmentDetailsById(List<String> appointments, String appointmentId) {
         for (String appointment : appointments) {
             String[] fields = appointment.split("\\|");
             if (fields[0].equals(appointmentId)) {
-                return new String[]{fields[2], fields[3]}; // {patientId, dateOfAppointment}
+                return new String[] { fields[2], fields[3] }; // {patientId, dateOfAppointment}
             }
         }
         return null;
     }
 
-    // Prompts user for additional appointment details
+    /**
+     * Prompts the user to enter details related to an appointment outcome.
+     *
+     * This method asks the user to input the type of service provided during the
+     * appointment and any consultation notes that should be recorded.
+     *
+     * @return An array of two strings containing the type of service and
+     *         consultation notes.
+     */
     private String[] promptForAppointmentDetails() {
         Scanner scanner = new Scanner(System.in);
 
@@ -730,10 +1014,23 @@ public class AppointmentOutcomeController {
         System.out.println("Enter consultation notes:");
         String consultationNotes = scanner.nextLine().trim();
 
-        return new String[]{typeOfService, consultationNotes};
+        return new String[] { typeOfService, consultationNotes };
     }
 
-    // Checks if the given appointmentId exists in the list of upcoming appointments
+    /**
+     * Checks if an appointment ID is found in the given list of appointments.
+     * 
+     * This method iterates through the list of appointments and checks if the
+     * appointment ID is equal to the first field of each appointment string.
+     * If a match is found, the method returns true. Otherwise, it returns false.
+     * 
+     * @param appointmentId The appointment ID to search for.
+     * @param appointments  A list of strings representing the upcoming
+     *                      appointments, where each string contains the
+     *                      appointment details separated by the '|'
+     *                      character.
+     * @return true if the appointment ID is found, false otherwise.
+     */
     private boolean checkAppointmentId(String appointmentId, List<String> appointments) {
         for (String appointment : appointments) {
             String[] fields = appointment.split("\\|");
@@ -744,6 +1041,17 @@ public class AppointmentOutcomeController {
         return false; // Appointment ID not found
     }
 
+    /**
+     * Displays a menu for the doctor to manage appointment outcome records.
+     * 
+     * This method provides the doctor with options to create a new appointment
+     * outcome record, edit an existing one, or return to the previous menu.
+     * The doctor is prompted to enter their choice, and the appropriate action
+     * is performed based on the selected option. If the input is invalid, the
+     * doctor is informed and prompted to try again.
+     * 
+     * @param doctorId the ID of the doctor using the menu
+     */
     public void viewDoctorMenu(String doctorId) {
 
         Scanner scanner = new Scanner(System.in);
@@ -790,7 +1098,14 @@ public class AppointmentOutcomeController {
         }
     }
 
-    // Method to update an appointment outcome record
+    /**
+     * Displays a list of appointment outcome records for the given doctor ID,
+     * allows the user to select a record to edit, prompts the user to enter new
+     * service type and consultation notes, and then updates the selected record
+     * in the data file.
+     *
+     * @param doctorId the doctor ID to update the appointment outcome record for
+     */
     private void updateAppointmentOutcomeRecord(String doctorId) {
         List<AppointmentOutcome> outcomes = getAppointmentOutcomesByDoctorId(doctorId);
 
@@ -858,7 +1173,16 @@ public class AppointmentOutcomeController {
         }
     }
 
-// Helper method to get appointment outcomes by doctor ID
+    /**
+     * Returns a list of appointment outcomes for the given doctor ID.
+     * 
+     * This method reads the appointment outcomes from the data file and
+     * filters the outcomes by the given doctor ID. The outcomes are then
+     * parsed and returned as a list of AppointmentOutcome objects.
+     * 
+     * @param doctorId the doctor ID to filter the appointment outcomes by
+     * @return a list of appointment outcomes for the given doctor ID
+     */
     private List<AppointmentOutcome> getAppointmentOutcomesByDoctorId(String doctorId) {
         List<AppointmentOutcome> outcomes = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(APPOINTMENT_OUTCOME_FILE))) {
@@ -880,7 +1204,20 @@ public class AppointmentOutcomeController {
         return outcomes;
     }
 
-// Helper method to update a single appointment outcome in file
+    /**
+     * Updates the appointment outcome file with the provided AppointmentOutcome
+     * details.
+     *
+     * This method reads the appointment outcome file and searches for the line with
+     * the matching appointment ID. If found, it updates the line with the new
+     * details
+     * from the AppointmentOutcome object. The updated contents are then written
+     * back
+     * to the file.
+     *
+     * @param outcome the AppointmentOutcome object containing updated details to be
+     *                saved
+     */
     private void updateAppointmentOutcomeInFile(AppointmentOutcome outcome) {
         List<String> fileContents = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(APPOINTMENT_OUTCOME_FILE))) {
