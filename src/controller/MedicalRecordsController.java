@@ -13,6 +13,12 @@ import java.util.Scanner;
 import utility.FileUtils;
 import utility.PrintUtils;
 
+/**
+ * The MedicalRecordsController class is responsible for managing and processing medical records in a hospital management system.
+ * It provides methods for CRUD operations on medical records, including creating, updating, deleting, and displaying records.
+ * It loads data from files, such as patient information and medical records, and allows interaction via console input.
+ */
+
 public class MedicalRecordsController {
 
     private List<Patient> patients;
@@ -21,7 +27,10 @@ public class MedicalRecordsController {
     private static final String PATIENT_TXT = "data/patient.txt";
     Scanner scanner = new Scanner(System.in);
 
-    // Constructor to initialize the controller and load data from files
+     /**
+     * Constructor that initializes the controller and loads data from files.
+     * It loads patient records and medical records from the specified file paths.
+     */
     public MedicalRecordsController() {
         this.patients = new ArrayList<>();
         this.medicalRecords = new ArrayList<>();
@@ -41,7 +50,11 @@ public class MedicalRecordsController {
         }
     }
 
-    // Load patients from file
+     /**
+     * Loads patient data from a specified file.
+     * @param filename The name of the file containing patient data.
+     * @throws IOException If an error occurs while reading the file.
+     */
     private void loadPatientsFromFile(String filename) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;
@@ -59,7 +72,11 @@ public class MedicalRecordsController {
         }
     }
 
-    // Load medical records from file
+    /**
+     * Loads medical records from a specified file.
+     * @param filename The name of the file containing medical records.
+     * @throws IOException If an error occurs while reading the file.
+     */
     private void loadMedicalRecordsFromFile(String filename) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;
@@ -90,7 +107,11 @@ public class MedicalRecordsController {
         }
     }
 
-    // Helper method to find a patient by ID
+     /**
+     * Finds a patient by their unique ID.
+     * @param patientId The ID of the patient to find.
+     * @return The Patient object if found, null otherwise.
+     */
     private Patient findPatientById(String patientId) {
         for (Patient patient : patients) {
             if (patient.getUserId().equals(patientId)) {
@@ -100,7 +121,10 @@ public class MedicalRecordsController {
         return null;
     }
 
-    // Method to select a patient to perform CRUD on medical records
+      /**
+     * Prompts the user to select a patient from the list and returns the selected patient's ID.
+     * @return The ID of the selected patient, or null if the user chooses to exit.
+     */
     private String selectPatient() {
         System.out.println("\n╔════════════════════════════════════════╗");
         System.out.println("║            Select a Patient            ║");
@@ -126,7 +150,10 @@ public class MedicalRecordsController {
         }
     }
 
-    // Generate a new unique medical record ID
+    /**
+     * Generates a unique medical record ID based on the existing medical records.
+     * @return A new medical record ID in the format "MR00001", incrementing from the last ID.
+     */
     private String generateMedicalRecordId() {
         if (medicalRecords.isEmpty()) {
             return "MR00001"; // Start with MR00001 if no records exist
@@ -140,7 +167,11 @@ public class MedicalRecordsController {
         return String.format("%s%05d", "MR", lastIdNumber + 1);
     }
 
-    // Method to create a medical record for a patient
+    /**
+     * Creates a new medical record for a patient.
+     * @param patientId The ID of the patient.
+     * @param doctorId The ID of the doctor.
+     */
     private void createMedicalRecord(String patientId, String doctorId) {
         if (findPatientById(patientId) == null) {
             System.out.println("Invalid patient ID.");
@@ -180,7 +211,11 @@ public class MedicalRecordsController {
         System.out.println(patientId + " Created Medical record successfully!");
     }
 
-    // Method to update a medical record for a patient
+    /**
+     * Updates an existing medical record for a patient.
+     * @param patientId The ID of the patient.
+     * @param doctorId The ID of the doctor.
+     */
     private void updateMedicalRecord(String patientId, String doctorId) {
         if (findPatientById(patientId) == null) {
             System.out.println("Invalid patient ID.");
@@ -244,7 +279,11 @@ public class MedicalRecordsController {
         }
     }
 
-    // Method to delete a medical record for a patient
+    /**
+     * deletess an existing medical record for a patient.
+     * @param patientId The ID of the patient.
+     * @param doctorId The ID of the doctor.
+     */
     private void deleteMedicalRecord(String patientId, String doctorId) {
         if (findPatientById(patientId) == null) {
             System.out.println("Invalid patient ID.");
@@ -301,7 +340,10 @@ public class MedicalRecordsController {
         }
     }
 
-    // Method to display medical records for a given patient ID
+    /**
+     * Prints out medical record for a patient.
+     * @param patientId The ID of the patient.
+     */
     public void displayMedicalRecords(String patientId) {
 
         this.patients = new ArrayList<>();
@@ -356,7 +398,9 @@ public class MedicalRecordsController {
         PrintUtils.pause();
     }
 
-    // Print the list of patients
+    /**
+     * Prints out lost of all patient.
+     */
     private void printPatients() {
         int i = 1;
 
@@ -369,7 +413,9 @@ public class MedicalRecordsController {
         }
     }
 
-    // Display medical records for a selected patient
+    /**
+     * Asks user to select a patient to view medical records.
+     */
     private void displayMedicalRecords() {
         printPatients();
         while (true) {
@@ -389,7 +435,10 @@ public class MedicalRecordsController {
         }
     }
 
-    // Create a medical record for a selected patient
+    /**
+     * Asks user to select a patient to create medical records.
+     * @param doctorId The ID of the doctor creating the medical records.
+     */
     private void createMedicalRecord(String doctorId) {
         printPatients();
         while (true) {
@@ -410,7 +459,10 @@ public class MedicalRecordsController {
         }
     }
 
-    // Update a medical record for a selected patient
+    /**
+     * Asks user to select a patient to update medical records.
+     * @param doctorId The ID of the doctor creating the medical records.
+     */
     private void updateMedicalRecord(String doctorId) {
         printPatients();
         while (true) {
@@ -431,7 +483,10 @@ public class MedicalRecordsController {
         }
     }
 
-    // Delete a medical record for a selected patient
+    /**
+     * Asks user to select a patient to delete medical records.
+     * @param doctorId The ID of the doctor creating the medical records.
+     */
     private void deleteMedicalRecord(String doctorId) {
         printPatients();
         while (true) {
