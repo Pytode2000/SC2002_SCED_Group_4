@@ -25,6 +25,17 @@ public class AppointmentController {
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
+    /**
+     * Schedules an appointment for a patient.
+     *
+     * This method presents the patient with options to either view all available
+     * appointment slots or select an appointment by doctor. The patient can also
+     * choose to exit the scheduling process. Based on the patient's choice, the
+     * method will call the appropriate function to display and select appointments.
+     *
+     * @param patientId the ID of the patient for whom the appointment is being
+     *                  scheduled
+     */
     public void scheduleAppointment(String patientId) {
         Scanner scanner = new Scanner(System.in);
 
@@ -54,12 +65,24 @@ public class AppointmentController {
         }
     }
 
+    /**
+     * Displays all available appointments by doctor, sorted by date and time.
+     *
+     * The method first reads the doctor details from the STAFF_TXT file and
+     * groups the available appointments by doctor ID. Then, it sorts each
+     * doctor's appointments by date and time. Finally, it displays the
+     * appointments to the user, prompting the user to select an appointment.
+     *
+     * @param patientId the ID of the patient for whom the appointment is being
+     *                  scheduled
+     */
     private void displayAppointmentsByDoctor(String patientId) {
         Map<String, List<String>> doctorAppointments = new HashMap<>();
         Scanner scanner = new Scanner(System.in);
 
         // Retrieve doctor details and group their appointments
-        try (BufferedReader staffReader = new BufferedReader(new FileReader(STAFF_FILE)); BufferedReader appointmentReader = new BufferedReader(new FileReader(APPOINTMENT_FILE))) {
+        try (BufferedReader staffReader = new BufferedReader(new FileReader(STAFF_FILE));
+                BufferedReader appointmentReader = new BufferedReader(new FileReader(APPOINTMENT_FILE))) {
 
             String line;
             Map<String, String[]> doctorDetails = new HashMap<>();
@@ -68,7 +91,7 @@ public class AppointmentController {
             while ((line = staffReader.readLine()) != null) {
                 String[] fields = line.split("\\|");
                 if ("Doctor".equalsIgnoreCase(fields[7])) {
-                    doctorDetails.put(fields[0], new String[]{fields[1] + " " + fields[2], fields[5], fields[6]});
+                    doctorDetails.put(fields[0], new String[] { fields[1] + " " + fields[2], fields[5], fields[6] });
                     doctorAppointments.put(fields[0], new ArrayList<>());
                 }
             }
@@ -151,7 +174,14 @@ public class AppointmentController {
         }
     }
 
-    // Main method to retrieve, display, and select AVAILABLE appointments
+    /**
+     * Displays all available appointments, sorted by date and time, and
+     * prompts the user to select one. If no available appointments are found,
+     * the method returns without doing anything else.
+     *
+     * @param patientId the ID of the patient for whom the appointment is being
+     *                  scheduled
+     */
     public void displayAndSelectAvailableAppointments(String patientId) {
         List<String> availableAppointments = getAvailableAppointments();
 
@@ -180,7 +210,14 @@ public class AppointmentController {
         processAppointmentSelection(selection, availableAppointments, patientId);
     }
 
-    // Fetches available appointments
+    /**
+     * Retrieves a list of available appointments from the appointment file.
+     * An appointment is considered available if its status is "AVAILABLE".
+     * 
+     * @return a list of strings representing available appointments, where each
+     *         string
+     *         contains the appointment details separated by the '|' character.
+     */
     private List<String> getAvailableAppointments() {
         List<String> availableAppointments = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(APPOINTMENT_FILE))) {
@@ -197,11 +234,20 @@ public class AppointmentController {
         return availableAppointments;
     }
 
-    // Displays appointments with a selection index
+    /**
+     * Displays a list of available appointments with their respective indices.
+     *
+     * This method prints the appointment details in a formatted manner, displaying
+     * the date and time of each appointment. The appointments are indexed for easy
+     * selection. An option to return to the main menu is also provided.
+     *
+     * @param appointments a list of strings, where each string contains the
+     *                     details of an appointment separated by the '|' character.
+     */
     private void displayAppointmentsWithIndex(List<String> appointments) {
-          System.out.println("\n╔════════════════════════════════════════╗");
-            System.out.println("║          Available Appointments        ║");
-            System.out.println("╚════════════════════════════════════════╝");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║          Available Appointments        ║");
+        System.out.println("╚════════════════════════════════════════╝");
 
         int index = 1;
         for (String appointment : appointments) {
@@ -213,9 +259,21 @@ public class AppointmentController {
         }
         System.out.println("0. Back to Main Menu");
         System.out.println("══════════════════════════════════════════");
-        }
+    }
 
-    // Get user selection for appointment
+    /**
+     * Retrieves a user's selection of an appointment from a list of available
+     * appointments.
+     * 
+     * This method repeatedly prompts the user to enter a valid number of an
+     * appointment until
+     * a valid selection is made. The user is given the option to return to the main
+     * menu by
+     * entering 0.
+     * 
+     * @param maxIndex the maximum index of the available appointments
+     * @return the index of the selected appointment
+     */
     private int getUserSelection(int maxIndex) {
         Scanner scanner = new Scanner(System.in);
         int selection = -1;
@@ -236,7 +294,19 @@ public class AppointmentController {
         return selection;
     }
 
-    // Process the user's appointment selection
+    /**
+     * Processes the selection of an appointment slot by a patient.
+     *
+     * This method updates the selected appointment with the patient's ID,
+     * changes its status to "PENDING", and adds any request message from
+     * the patient. The updated appointment is then saved back to the file.
+     * Finally, it informs the user that the appointment is pending approval
+     * from the doctor.
+     *
+     * @param selection    the index of the selected appointment in the list
+     * @param appointments a list of available appointment slots
+     * @param patientId    the ID of the patient scheduling the appointment
+     */
     private void processAppointmentSelection(int selection, List<String> appointments, String patientId) {
         String chosenAppointment = appointments.get(selection - 1);
         String[] fields = chosenAppointment.split("\\|");
@@ -259,7 +329,16 @@ public class AppointmentController {
         PrintUtils.pause();
     }
 
-    // Update a specific line in the file
+    /**
+     * Updates the appointment file by replacing a specific line with a new line.
+     *
+     * This method reads the appointment file and searches for the specified
+     * old line. If found, it replaces the old line with the provided new line
+     * in the file. The updated contents are then written back to the file.
+     *
+     * @param oldLine the existing line in the file to be replaced
+     * @param newLine the new line to replace the old line in the file
+     */
     private void updateAppointmentInFile(String oldLine, String newLine) {
         try {
             List<String> lines = new ArrayList<>();
@@ -279,8 +358,19 @@ public class AppointmentController {
         }
     }
 
-    // Method to display all booked appointments for a patient and allow selection
-    // to view doctor details
+    /**
+     * Displays a list of booked appointments for a patient and allows them to
+     * select
+     * an appointment to view the doctor's details.
+     * 
+     * This method reads the appointment file, filters out the booked appointments
+     * for the patient, sorts them by date and time, and displays them in a table
+     * format. The user is then prompted to select an appointment by index. If the
+     * selected appointment is valid, the method displays the doctor's details.
+     * 
+     * @param patientId the ID of the patient whose booked appointments are to be
+     *                  displayed
+     */
     public void displayAndSelectBookedAppointments(String patientId) {
         while (true) {
             List<String[]> bookedAppointments = new ArrayList<>();
@@ -361,8 +451,20 @@ public class AppointmentController {
         }
     }
 
-    // Method to retrieve and display doctor details from staff.txt based on
-    // doctorId
+    /**
+     * Prints out doctor details in a formatted table, given a doctor ID.
+     * 
+     * The method reads the STAFF_TXT file line by line, splits each line into
+     * fields, and checks if the doctor ID matches the ID in the line. If it
+     * does, the method prints out the doctor's name, gender, contact number,
+     * and email address in a formatted table.
+     * 
+     * The method also prints a header with the column names, and a footer with
+     * a horizontal line. Finally, the method calls {@link PrintUtils#pause()} to
+     * pause the console output.
+     * 
+     * @param doctorId the ID of the doctor whose details should be displayed
+     */
     private void displayDoctorDetails(String doctorId) {
         try (BufferedReader reader = new BufferedReader(new FileReader(STAFF_FILE))) {
             String line;
@@ -387,11 +489,30 @@ public class AppointmentController {
         }
     }
 
+    /**
+     * Deletes a booked appointment for a given patient.
+     * 
+     * This method retrieves all booked appointments for the specified patient from
+     * the
+     * appointment file, sorts them by date and time, and displays them in a
+     * formatted
+     * manner. The patient is prompted to select an appointment to delete. Upon
+     * confirmation,
+     * the appointment is marked as "AVAILABLE" by resetting the patient ID, status,
+     * and any
+     * request messages. The changes are then saved back to the file. If the
+     * appointment status
+     * is "RESCHEDULE", additional fields such as reschedule date and time are also
+     * reset.
+     * 
+     * @param patientId the ID of the patient whose booked appointment is to be
+     *                  deleted
+     */
     public void deleteBookedAppointment(String patientId) {
         List<String[]> bookedAppointments = new ArrayList<>();
-          System.out.println("\n╔════════════════════════════════════════╗");
-            System.out.println("║        Your Booked Appointments        ║");
-            System.out.println("╚════════════════════════════════════════╝");
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║        Your Booked Appointments        ║");
+        System.out.println("╚════════════════════════════════════════╝");
 
         // Retrieve booked appointments
         try (BufferedReader reader = new BufferedReader(new FileReader(APPOINTMENT_FILE))) {
@@ -405,7 +526,7 @@ public class AppointmentController {
                 // or RESCHEDULE
                 if (fields.length >= 6 && fields[2].equals(patientId)
                         && (fields[5].equals("BOOKED") || fields[5].equals("RESCHEDULE")
-                        || fields[5].equals("PENDING"))) {
+                                || fields[5].equals("PENDING"))) {
                     bookedAppointments.add(fields);
                 }
             }
@@ -499,12 +620,24 @@ public class AppointmentController {
         }
     }
 
+    /**
+     * Allows a patient to request rescheduling of their booked appointments.
+     *
+     * This method retrieves all booked appointments for a given patient ID,
+     * displays them,
+     * and allows the patient to select one for rescheduling. After selecting an
+     * appointment,
+     * the patient can specify a new date, time, and an optional message for the
+     * reschedule request.
+     * The updated appointment details are then saved to the appointment file.
+     *
+     * @param patientId the ID of the patient requesting the reschedule
+     */
     public void requestRescheduleAppointment(String patientId) {
         List<String[]> bookedAppointments = new ArrayList<>();
         System.out.println("\n╔════════════════════════════════════════╗");
         System.out.println("║        Your Booked Appointments        ║");
         System.out.println("╚════════════════════════════════════════╝");
-
 
         // Retrieve booked appointments
         try (BufferedReader reader = new BufferedReader(new FileReader(APPOINTMENT_FILE))) {
@@ -615,7 +748,20 @@ public class AppointmentController {
         }
     }
 
-    // Utility method for input with validation and exit option
+    /**
+     * Prompts the user for input and validates it within a specified range.
+     *
+     * This method continuously prompts the user to enter a number within
+     * the specified minimum and maximum range until a valid input is provided.
+     * It returns the input as a string. If the user enters "0", the method
+     * returns "0" immediately.
+     *
+     * @param prompt  the message to display to the user
+     * @param scanner the Scanner object used to read the user's input
+     * @param min     the minimum valid value (inclusive)
+     * @param max     the maximum valid value (inclusive)
+     * @return the validated input as a string or "0" if the operation is canceled
+     */
     private String promptForInput(String prompt, Scanner scanner, int min, int max) {
         while (true) {
             System.out.print(prompt);
@@ -636,7 +782,17 @@ public class AppointmentController {
         }
     }
 
-    // Utility method for confirmation with '1' to confirm and '0' to cancel
+    /**
+     * Prompts the user to confirm or cancel an action.
+     * 
+     * This method prints a confirmation prompt to the user, asking them to enter
+     * 1 to confirm or 0 to cancel. It then reads the user's input and continues
+     * to prompt until a valid input is provided. If the user enters 1, the
+     * method returns "1". If the user enters 0, the method returns "0".
+     * 
+     * @param scanner the Scanner object used to read the user's input
+     * @return "1" if the user confirmed, or "0" if the user canceled
+     */
     private String promptForConfirmation(Scanner scanner) {
         while (true) {
             System.out.println("1: Confirm");
@@ -651,6 +807,19 @@ public class AppointmentController {
         }
     }
 
+    /**
+     * Retrieves a list of appointments for a specific doctor that are either
+     * available or booked.
+     *
+     * This method reads from the appointment file, filtering the records based on
+     * the provided doctor ID
+     * and the status of the appointment. It collects appointments with a status of
+     * "AVAILABLE" or "BOOKED".
+     *
+     * @param doctorId the ID of the doctor whose appointments are being retrieved
+     * @return a list of appointment strings that are either available or booked for
+     *         the specified doctor
+     */
     public List<String> getAvailableAndBookedAppointment(String doctorId) {
         List<String> doctorAppointments = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(APPOINTMENT_FILE))) {
@@ -667,6 +836,17 @@ public class AppointmentController {
         return doctorAppointments;
     }
 
+    /**
+     * Retrieves the personal schedule of a doctor by filtering appointments.
+     *
+     * This method fetches all available and booked appointment slots for a given
+     * doctor ID, then filters and returns only the appointments that are associated
+     * with the specified doctor.
+     *
+     * @param doctorId the ID of the doctor whose personal schedule is being
+     *                 retrieved
+     * @return a list of appointment strings that belong to the specified doctor
+     */
     public List<String> getPersonalSchedule(String doctorId) {
         List<String> allAppointmentSlots = getAvailableAndBookedAppointment(doctorId);
         List<String> currentDoctorSchedule = new ArrayList<>();
@@ -682,6 +862,20 @@ public class AppointmentController {
         return currentDoctorSchedule;
     }
 
+    /**
+     * Displays the personal schedule of a doctor by printing all their
+     * appointments.
+     *
+     * This method retrieves the current schedule for the specified doctor by
+     * calling
+     * `getPersonalSchedule` and displays each appointment's details, including
+     * date,
+     * time, status, and any consultation notes, in a formatted manner. If no
+     * appointments
+     * are scheduled, it informs the user.
+     *
+     * @param doctorId the ID of the doctor whose schedule is being viewed
+     */
     public void viewPersonalSchedule(String doctorId) {
 
         List<String> currentDoctorSchedule = getPersonalSchedule(doctorId);
@@ -710,7 +904,8 @@ public class AppointmentController {
                 String consultationNotes = message.equals("-") ? "" : " - " + message;
 
                 // Print appointment details in the desired format
-                System.out.printf("%d. %s %s (%s)%s%n", appointmentNumber++, formattedDate, formattedTime, status, consultationNotes);
+                System.out.printf("%d. %s %s (%s)%s%n", appointmentNumber++, formattedDate, formattedTime, status,
+                        consultationNotes);
             }
         }
 
@@ -718,8 +913,12 @@ public class AppointmentController {
         PrintUtils.pause();
     }
 
-    // Generate the next appointment ID by reading the last ID from the file and
-    // incrementing it
+    /**
+     * Generates a unique appointment ID based on the last ID found in the
+     * appointment file. If no entries are found, defaults to "AP00000".
+     *
+     * @return a unique appointment ID
+     */
     private String generateAppointmentId() {
         String lastId = "AP00000"; // Default ID if no entries are found
 
@@ -736,6 +935,22 @@ public class AppointmentController {
         return String.format("AP%05d", lastNum + 1);
     }
 
+    /**
+     * Allows a doctor to add a new availability to their schedule.
+     *
+     * Prompts the doctor to enter a day, month, year, hour, and minute for the
+     * new availability. The entered values are validated and then written to the
+     * appointment file in the format
+     * "AP00000|doctor_id|patient_id|date|time|status|request_message|reschedule_date|reschedule_time|reschedule_message".
+     *
+     * If any of the entered values are invalid, the user is prompted to re-enter
+     * the value until a valid input is given.
+     *
+     * The doctor is displayed a confirmation message after the appointment has
+     * been successfully added.
+     *
+     * @param doctorId the doctor ID to associate with the new availability
+     */
     public void createAvailability(String doctorId) {
 
         Scanner scanner = new Scanner(System.in);
@@ -855,6 +1070,16 @@ public class AppointmentController {
         System.out.println("══════════════════════════════════════════\n");
     }
 
+    /**
+     * Prompts the user to enter the appointment ID to delete from the doctor's
+     * schedule.
+     * The user can enter '0' to cancel the deletion.
+     * The function will remove the selected appointment from the doctor's schedule
+     * and remove the corresponding
+     * record from the appointment file.
+     * 
+     * @param doctorId the doctor ID to delete the appointment from
+     */
     public void deleteAvailability(String doctorId) {
 
         List<String> currentDoctorSchedule = getPersonalSchedule(doctorId);
@@ -876,25 +1101,31 @@ public class AppointmentController {
             scanner.nextLine();
 
             // Check if the user wants to cancel
-            if (appointmentId==0) {
+            if (appointmentId == 0) {
                 System.out.println("Deletion canceled.");
                 return;
             }
 
-            if (appointmentId>currentDoctorSchedule.size()){
+            if (appointmentId > currentDoctorSchedule.size()) {
                 System.out.println("Invalid choice. Please re-enter.");
                 continue;
             }
-            String appointmentToDelete = currentDoctorSchedule.get(appointmentId-1);
+            String appointmentToDelete = currentDoctorSchedule.get(appointmentId - 1);
             String[] fields = appointmentToDelete.split("\\|");
-            
+
             FileUtils.deleteFromFile(APPOINTMENT_FILE, fields[0]);
             System.out.println("Appointment ID " + appointmentId + " deleted successfully.");
             break;
         }
     }
 
-    // Set Doctor's availability
+    /**
+     * Menu for doctor to set availability.
+     * The doctor can create or delete their availability slots.
+     * The doctor can also return to the main menu.
+     * 
+     * @param doctorId the doctor ID to set availability for
+     */
     public void setAvailability(String doctorId) {
 
         Scanner scanner = new Scanner(System.in);
@@ -922,6 +1153,15 @@ public class AppointmentController {
 
     }
 
+    /**
+     * Retrieve all appointment requests for a given doctor ID.
+     * 
+     * @param doctorId the doctor ID to retrieve appointment requests for
+     * @return a list of appointment requests for the given doctor ID. Each element
+     *         in the list is a string
+     *         containing the appointment details in the following format:
+     *         "appointmentId|doctorId|patientId|dateOfAppointment|timeOfAppointment|status|patientName"
+     */
     public List<String> getAppointmentRequests(String doctorId) {
         List<String> appointmentsRequests = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(APPOINTMENT_FILE))) {
@@ -939,6 +1179,14 @@ public class AppointmentController {
         return appointmentsRequests;
     }
 
+    /**
+     * Prints out all the pending appointment requests for a given doctor ID.
+     * For each appointment, it prints the appointment ID, patient ID, date, time,
+     * status, consultation notes (if the status is PENDING), and reschedule details
+     * (if the status is RESCHEDULE).
+     * 
+     * @param doctorId the doctor ID to print appointment requests for
+     */
     public void printAppointmentRequest(String doctorId) {
 
         // For each appointment in the appointment request, print the details
@@ -959,7 +1207,7 @@ public class AppointmentController {
             LocalTime time = LocalTime.parse(fields[4], timeFormatter);
             String status = fields[5];
             String patientId = fields[2];
-            String consultationNotes = fields[6];  // Notes for PENDING status
+            String consultationNotes = fields[6]; // Notes for PENDING status
             String rescheduleDate = fields.length > 7 ? fields[7] : "-";
             String rescheduleTime = fields.length > 8 ? fields[8] : "-";
             String rescheduleMessage = fields.length > 9 ? fields[9] : "-";
@@ -969,7 +1217,8 @@ public class AppointmentController {
             String formattedTime = time.format(timeFormatter);
 
             // Display basic appointment details
-            System.out.printf("%d. %s / %s: %s %s (%s)", counter++, fields[0], patientId, formattedDate, formattedTime, status);
+            System.out.printf("%d. %s / %s: %s %s (%s)", counter++, fields[0], patientId, formattedDate, formattedTime,
+                    status);
 
             // Display consultation notes if the status is PENDING
             if ("PENDING".equalsIgnoreCase(status) && !consultationNotes.equals("-")) {
@@ -978,7 +1227,8 @@ public class AppointmentController {
 
             // Display reschedule details if the status is RESCHEDULE
             if ("RESCHEDULE".equalsIgnoreCase(status)) {
-                System.out.printf(" - Rescheduled to: %s at %s | Message: %s", rescheduleDate, rescheduleTime, rescheduleMessage);
+                System.out.printf(" - Rescheduled to: %s at %s | Message: %s", rescheduleDate, rescheduleTime,
+                        rescheduleMessage);
             }
 
             System.out.println(); // Newline after each appointment
@@ -987,6 +1237,16 @@ public class AppointmentController {
         return;
     }
 
+    /**
+     * Prompts the user to accept or decline an appointment for the given doctor ID.
+     * It displays the pending or rescheduled appointments for the doctor, asks the
+     * user
+     * to select an appointment, prompts the user to accept or decline the
+     * appointment,
+     * and then updates the status and adds notes in the data.
+     * 
+     * @param doctorId the doctor ID to accept or decline appointments for
+     */
     public void acceptDeclineAppointment(String doctorId) {
         Scanner scanner = new Scanner(System.in);
         String decision, appointmentId, choice;
@@ -1062,6 +1322,19 @@ public class AppointmentController {
         System.out.println("Appointment " + (decision.equals("accept") ? "accepted" : "declined") + " successfully.");
     }
 
+    /**
+     * Displays the pending or rescheduled appointment requests for a given doctor,
+     * allows the user to accept or decline the appointments,
+     * and updates the appointment status and notes accordingly.
+     *
+     * This method retrieves pending appointment requests for the specified doctor
+     * and presents them to the user for review. The user can then choose to accept
+     * or decline each appointment, and the appointment data is updated based on
+     * the user's decision. After processing, the method pauses the output.
+     *
+     * @param doctorId the ID of the doctor whose appointment requests are being
+     *                 viewed
+     */
     public void viewAppointmentRequest(String doctorId) {
 
         printAppointmentRequest(doctorId);
@@ -1071,6 +1344,19 @@ public class AppointmentController {
         return;
     }
 
+    /**
+     * Displays the upcoming appointments for a given doctor.
+     *
+     * This method retrieves the list of upcoming booked appointments for the
+     * specified
+     * doctor from the appointment file. It displays each appointment's details,
+     * including appointment ID, patient ID, date, time, status, and consultation
+     * notes
+     * if available. If there are no upcoming appointments, it informs the user.
+     *
+     * @param doctorId the ID of the doctor whose upcoming appointments are being
+     *                 viewed
+     */
     public void viewUpcomingAppointments(String doctorId) {
         List<String> upcomingAppointments = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(APPOINTMENT_FILE))) {
@@ -1123,7 +1409,17 @@ public class AppointmentController {
         PrintUtils.pause();
     }
 
-    // Display doctor appointment details
+    /**
+     * Displays all appointments in the appointment file.
+     *
+     * This method retrieves the list of all appointments from the appointment file
+     * and displays each appointment's details, including appointment ID, doctor ID,
+     * patient ID, date, time, status, request message, reschedule date, reschedule
+     * time, and reschedule message. Appointments with invalid or missing details
+     * are
+     * skipped. After displaying all appointments, the method prompts the user for a
+     * patient ID to view the completed appointment outcome details.
+     */
     public void displayDoctorAppointmentDetails() {
         System.out.println("\n╔════════════════════════════════════════╗");
         System.out.println("║          View All Appointments         ║");

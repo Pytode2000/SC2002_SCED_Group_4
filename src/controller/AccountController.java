@@ -29,7 +29,28 @@ public class AccountController {
     private static final String PATIENT_TXT = "data/patient.txt";
     private static final String STAFF_TXT = "data/staff.txt";
 
-    // Register method to add new patient
+    /**
+     * Registers a new user.
+     * 
+     * The method asks the user for their first name, last name, gender, contact
+     * number, email address,
+     * date of birth, and blood type (for patients only). It then validates the
+     * input and checks if the user
+     * already exists in the system. If the user does not exist, it creates a new
+     * user object and writes it to
+     * the appropriate file (either {@code PATIENT_TXT} or {@code STAFF_TXT})
+     * depending on the user role.
+     * Finally, it displays a success message.
+     * 
+     * If the user cancels the registration process at any point, the method returns
+     * false.
+     * 
+     * The method does not handle any exceptions that may occur when writing to the
+     * files.
+     *
+     * @param isAdmin whether to register a staff member (true) or a patient (false)
+     * @return true if the registration is successful, false otherwise
+     */
     public boolean register(boolean isAdmin) {
 
         String firstName = "";
@@ -312,6 +333,21 @@ public class AccountController {
 
     }
 
+    /**
+     * Authenticates the user based on their User ID and Password.
+     * This method prompts the user to enter their credentials and performs the
+     * following:
+     * 1. Verifies the User ID and Password against stored records.
+     * 2. If the credentials are correct, loads the user's details.
+     * 3. If the user is still using the default password, forces a password change.
+     * 4. If the password is updated successfully, the user is granted access.
+     * 5. In case of failure to authenticate, the user will be given up to 3
+     * attempts to try again.
+     * 
+     * @return User object if authentication and password update are successful,
+     *         null if the login fails or if the user fails to update their password
+     *         after multiple attempts.
+     */
     public User login() {
         Scanner scanner = new Scanner(System.in);
         int attempt = 0;
@@ -375,7 +411,19 @@ public class AccountController {
         return null;
     }
 
-    /* HELPER FUNCTIONS BELOW */
+    /**
+     * Generates a unique user ID based on the given user role. The user ID is in
+     * the format
+     * "PREFIX00001", where PREFIX is a 2-character code based on the user role
+     * (e.g. "PA" for Patient,
+     * "DR" for Doctor, etc.). The numeric part is the highest existing ID number in
+     * the account file
+     * plus 1.
+     *
+     * @param userRole the user role to generate the user ID for
+     * @return a unique user ID string
+     * @throws IllegalArgumentException if the user role is invalid
+     */
     private String generateUserId(String userRole) {
         String prefix;
         switch (userRole) {
@@ -418,6 +466,23 @@ public class AccountController {
         return String.format("%s%05d", prefix, newIdNumber); // Format as "PREFIX00001"
     }
 
+    /**
+     * Checks if a user exists in the file specified by {@code isAdmin}.
+     * <p>
+     * The method reads the file line by line, normalizes each line by removing
+     * spaces and converting to lowercase, and checks if any normalized line
+     * contains the normalized input (first name and last name, also normalized).
+     * If a match is found, the method returns true. Otherwise, it returns false.
+     * <p>
+     * If an I/O exception occurs, the method prints the stack trace and returns
+     * false.
+     *
+     * @param firstName the first name of the user to search for
+     * @param lastName  the last name of the user to search for
+     * @param isAdmin   whether to search in the staff file (true) or patient file
+     *                  (false)
+     * @return true if the user is found, false otherwise
+     */
     private boolean checkIfUserExists(String firstName, String lastName, boolean isAdmin) {
 
         String fileToUse;
@@ -442,6 +507,14 @@ public class AccountController {
         }
     }
 
+    /**
+     * Hashes the given password using SHA-256 and returns the result as a
+     * hexadecimal string.
+     *
+     * @param password the password to hash
+     * @return the hashed password as a hexadecimal string
+     * @throws RuntimeException if there is an error hashing the password
+     */
     private String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -452,6 +525,14 @@ public class AccountController {
         }
     }
 
+    /**
+     * Authenticates the given user ID and password by checking against the
+     * account records in the account file.
+     *
+     * @param userId   the user ID to authenticate
+     * @param password the password to authenticate
+     * @return true if authentication is successful, false otherwise
+     */
     private boolean authenticate(String userId, String password) {
         try (BufferedReader br = new BufferedReader(new FileReader(ACCOUNT_TXT))) {
             String line;
@@ -467,6 +548,15 @@ public class AccountController {
         return false;
     }
 
+    /**
+     * Loads a User object based on the given userId by searching for matching
+     * records in patient.txt and staff.txt. If found, the User object is
+     * instantiated with the corresponding data fields and returned. If not
+     * found, null is returned.
+     *
+     * @param userId the userId to search for
+     * @return the User object if found, or null if not found
+     */
     private User loadUserDetails(String userId) {
         // First, check in patient.txt for a Patient record
         try (BufferedReader br = new BufferedReader(new FileReader(PATIENT_TXT))) {
@@ -519,6 +609,22 @@ public class AccountController {
         return null;
     }
 
+    /**
+     * Allows the user to update their personal information including password,
+     * contact number, and email address. This method provides a user interface
+     * for selecting which information to update and processes the update
+     * accordingly.
+     * The user is prompted with a menu displaying their current contact number and
+     * email address if they are a Patient. The user can choose to update their
+     * password, and if they are a Patient, can also update their contact number and
+     * email address. The method continuously prompts the user for their choice
+     * until
+     * they decide to return to the main menu.
+     *
+     * @param user the User object whose information is to be updated. This can be
+     *             any subclass of User, but additional options are available for
+     *             instances of Patient.
+     */
     public void updatePersonalInformation(User user) {
         Scanner scanner = new Scanner(System.in);
         boolean updating = true;
@@ -568,8 +674,20 @@ public class AccountController {
         }
     }
 
-    // Handles the update password flow for all users with a 3-attempt limit for
-    // both current and new passwords
+    /**
+     * Handles the update password flow for all users with a 3-attempt limit for
+     * both current and new passwords. First, the user is prompted to enter their
+     * current password with up to 3 attempts. If the current password is correct,
+     * the user is prompted to enter a new password with up to 3 attempts. The new
+     * password is required to have a minimum of 8 characters, at least 1 digit, and
+     * at least 1 special character. If the user fails to enter a valid new password
+     * after 3 attempts, the method will print a failure message. If the user fails
+     * to enter the correct current password after 3 attempts, the method will also
+     * print a failure message.
+     *
+     * @param user    the User object whose password is to be updated
+     * @param scanner the Scanner object used for reading user input
+     */
     private void updatePasswordFlow(User user, Scanner scanner) {
         int currentPasswordAttempts = 0;
         boolean currentPasswordCorrect = false;
@@ -619,7 +737,22 @@ public class AccountController {
         }
     }
 
-    // Update password in the account file after current password authentication
+    /**
+     * Updates the password for a given user by hashing the new password and
+     * updating the account record in the account file.
+     *
+     * This method attempts to update the password for the specified user ID
+     * by hashing the provided new password and writing it to the designated
+     * account text file. The password is stored in its hashed form to ensure
+     * security.
+     *
+     * @param userId      the unique identifier of the user whose password is to be
+     *                    updated
+     * @param newPassword the new password to be set for the user, which will be
+     *                    hashed
+     * @return true if the password update is successful, false if an IOException
+     *         occurs
+     */
     public boolean updatePassword(String userId, String newPassword) {
         try {
             return updateAccountFile(userId, hashPassword(newPassword), ACCOUNT_TXT, 1);
@@ -629,7 +762,18 @@ public class AccountController {
         }
     }
 
-    // Handles updating contact number for patients only, with 3 attempts
+    /**
+     * Allows the user to update their contact number with up to 3 attempts.
+     *
+     * This method prompts the user to enter their new contact number, which is
+     * validated before being written to the account file. If the update is
+     * successful, the user is notified and the method ends. If the update fails,
+     * the user is given up to 3 additional attempts to enter a valid contact
+     * number. If all 3 attempts fail, the user is notified and the method ends.
+     *
+     * @param patient the Patient object whose contact number is to be updated
+     * @param scanner the Scanner object used to read user input
+     */
     private void updateContactNumberFlow(Patient patient, Scanner scanner) {
         int attempts = 0;
         boolean contactUpdated = false;
@@ -658,7 +802,19 @@ public class AccountController {
         }
     }
 
-    // Handles updating email address for patients only, with 3 attempts
+    /**
+     * Allows the user to update their email address with up to 3 attempts.
+     *
+     * This method prompts the user to enter their new email address, which is
+     * validated before being written to the account file. If the update is
+     * successful, the user is notified and the method ends. If the update fails,
+     * the user is given up to 3 additional attempts to enter a valid email
+     * address. If all 3 attempts fail, the user is notified and the method ends.
+     *
+     * @param patient the Patient object whose email address is to be updated
+     * @param scanner the Scanner object used to read user input
+     */
+
     private void updateEmailAddressFlow(Patient patient, Scanner scanner) {
         int attempts = 0;
         boolean emailUpdated = false;
@@ -687,6 +843,15 @@ public class AccountController {
         }
     }
 
+    /**
+     * Updates the contact number for the given user ID in the patient account
+     * file. The contact number is written to the file in the 4th field.
+     *
+     * @param userId           the unique identifier of the patient whose contact
+     *                         number is to be updated
+     * @param newContactNumber the new contact number to be set for the patient
+     * @return true if the contact number is updated successfully, false otherwise
+     */
     public boolean updateContactNumber(String userId, String newContactNumber) {
         try {
             return updateAccountFile(userId, newContactNumber, PATIENT_TXT, 4);
@@ -696,6 +861,20 @@ public class AccountController {
         }
     }
 
+    /**
+     * Updates the email address for a given patient user ID in the patient account
+     * file.
+     *
+     * This method attempts to update the email address for the specified user ID
+     * by writing the new email address to the designated patient text file. The
+     * email address is stored in the 5th field of the file.
+     *
+     * @param userId          the unique identifier of the patient whose email
+     *                        address is to be updated
+     * @param newEmailAddress the new email address to be set for the patient
+     * @return true if the email address update is successful, false if an
+     *         IOException occurs
+     */
     public boolean updateEmailAddress(String userId, String newEmailAddress) {
         try {
             return updateAccountFile(userId, newEmailAddress, PATIENT_TXT, 5);
@@ -705,7 +884,24 @@ public class AccountController {
         }
     }
 
-    // General method to update a specific field in a file by userId
+    /**
+     * Updates a specific field in the account file for a given user ID.
+     * 
+     * This method reads the specified account file and searches for an entry with
+     * the matching user ID. If found, it updates the field at the specified index
+     * with the provided new value, and writes the updated content back to the file.
+     * 
+     * The method prints a success message if the update is successful, or a message
+     * indicating that the user was not found if no matching user ID is present.
+     *
+     * @param userId     the unique identifier of the user whose record is to be
+     *                   updated
+     * @param newValue   the new value to set at the specified field index
+     * @param filePath   the path to the account file to be updated
+     * @param fieldIndex the index of the field to be updated in the file
+     * @return true if the update is successful, false if the user ID is not found
+     * @throws IOException if an I/O error occurs while reading or writing the file
+     */
     private boolean updateAccountFile(String userId, String newValue, String filePath, int fieldIndex)
             throws IOException {
         List<String> fileContent = Files.readAllLines(Paths.get(filePath));
@@ -730,7 +926,20 @@ public class AccountController {
         return updated;
     }
 
-    // View all staff
+    /**
+     * Prints out a formatted table of all staff records in the STAFF_TXT file.
+     * 
+     * The method reads the file line by line, splits each line into fields,
+     * calculates the age of each staff member, and prints out the fields in a
+     * formatted table. If the file is empty, the method prints a "No results
+     * found" message.
+     * 
+     * The method also prints a header with the column names, and a footer with
+     * a horizontal line.
+     * 
+     * Finally, the method calls {@link PrintUtils#pause()} to pause the console
+     * output.
+     */
     public void viewStaff() {
         try {
             List<String> staff = Files.readAllLines(Paths.get(STAFF_TXT));
@@ -759,7 +968,21 @@ public class AccountController {
         PrintUtils.pause();
     }
 
-    // View staff by role
+    /**
+     * Prints out a formatted table of all staff records with a specific role in
+     * the STAFF_TXT file. The role is specified by the user input.
+     * 
+     * The method reads the file line by line, splits each line into fields,
+     * calculates the age of each staff member, and prints out the fields in a
+     * formatted table. If the file is empty, the method prints a "No results
+     * found" message.
+     *
+     * The method also prints a header with the column names, and a footer with
+     * a horizontal line.
+     * 
+     * Finally, the method calls {@link PrintUtils#pause()} to pause the console
+     * output.
+     */
     public void filterByRole(Scanner scanner) {
         System.out.println("\n╔════════════════════════════════════════╗");
         System.out.println("║          Filter Staff by Role          ║");
@@ -821,7 +1044,21 @@ public class AccountController {
         PrintUtils.pause();
     }
 
-    // View staff by gender
+    /**
+     * Prints out a formatted table of all staff records with a specific gender
+     * in the STAFF_TXT file. The gender is specified by the user input.
+     * 
+     * The method reads the file line by line, splits each line into fields,
+     * calculates the age of each staff member, and prints out the fields in a
+     * formatted table. If the file is empty, the method prints a "No results
+     * found" message.
+     * 
+     * The method also prints a header with the column names, and a footer with
+     * a horizontal line.
+     * 
+     * Finally, the method calls {@link PrintUtils#pause()} to pause the console
+     * output.
+     */
     public void filterByGender(Scanner scanner) {
         System.out.println("\n╔════════════════════════════════════════╗");
         System.out.println("║          Filter Staff by Gender        ║");
@@ -883,7 +1120,22 @@ public class AccountController {
         PrintUtils.pause();
     }
 
-    // View staff by age
+    /**
+     * Prints out a formatted table of all staff records in the STAFF_TXT file
+     * with a specific age. The age is specified by the user input.
+     * 
+     * The method reads the file line by line, splits each line into fields,
+     * calculates the age of each staff member, and checks if the age matches
+     * the user-specified age. If a match is found, the staff record is added
+     * to a filtered list. If the file is empty, the method prints a "No results
+     * found" message.
+     * 
+     * The method also prints a header with the column names, and a footer with
+     * a horizontal line.
+     * 
+     * Finally, the method calls {@link PrintUtils#pause()} to pause the console
+     * output.
+     */
     public void filterByAge(Scanner scanner) {
         System.out.println("\n╔════════════════════════════════════════╗");
         System.out.println("║           Filter Staff by Age          ║");
@@ -937,12 +1189,32 @@ public class AccountController {
         PrintUtils.pause();
     }
 
-    // Calculate age from date of birth
+    /**
+     * Calculates the age of a person given their birth date.
+     *
+     * @param birthDate the birth date of the person
+     * @return the age of the person
+     */
     private int calculateAge(LocalDate birthDate) {
         return Period.between(birthDate, LocalDate.now()).getYears();
     }
 
-    // Update staff
+    /**
+     * Allows the user to update an existing staff record.
+     * 
+     * The user is prompted to enter the index of the staff record to update,
+     * and then each field of the record is updated one by one. The user can
+     * choose to keep the current value of a field by leaving it blank.
+     * 
+     * The user is also prompted to update the password of the staff member.
+     * If the user chooses to update the password, the password is updated
+     * using the {@link #updateStaffPasswordFlow(String, Scanner)} method.
+     * 
+     * After all the fields have been updated, the updated record is written
+     * back to the staff file.
+     * 
+     * @param scanner the Scanner object to read user input from
+     */
     public void updateStaff(Scanner scanner) { // Pass the scanner as a parameter
         System.out.println("\n╔════════════════════════════════════════╗");
         System.out.println("║              Update Staff              ║");
@@ -1195,8 +1467,20 @@ public class AccountController {
         }
     }
 
-    // Handles the update password flow for all users with a 3-attempt limit for
-    // both current and new passwords
+    /**
+     * Updates the password for a given staff ID with up to 3 attempts.
+     * This method prompts the user to enter their current password with up to 3
+     * attempts. If the current password is correct, it then prompts the user to
+     * enter a new password with up to 3 attempts. The new password is required to
+     * have a minimum of 8 characters, at least 1 digit, and at least 1 special
+     * character. If the user fails to enter a valid new password after 3
+     * attempts, the method will print a failure message. If the user fails to
+     * enter the correct current password after 3 attempts, the method will also
+     * print a failure message.
+     *
+     * @param staffId the staff ID whose password is to be updated
+     * @param scanner the Scanner object used for reading user input
+     */
     private void updateStaffPasswordFlow(String staffId, Scanner scanner) {
         int currentPasswordAttempts = 0;
         boolean currentPasswordCorrect = false;
@@ -1246,7 +1530,14 @@ public class AccountController {
         }
     }
 
-    // Update password in the account file after current password authentication
+    /**
+     * Updates the password for a given staff ID in the account file.
+     * 
+     * @param staffId     the unique identifier of the staff whose password is to be
+     *                    updated
+     * @param newPassword the new password to be set for the staff
+     * @return true if the password update is successful, false otherwise
+     */
     public boolean updateStaffPassword(String staffId, String newPassword) {
         try {
             return updateAccountFile(staffId, hashPassword(newPassword), ACCOUNT_TXT, 1);
@@ -1256,8 +1547,17 @@ public class AccountController {
         }
     }
 
-    /************* ✨ Codeium Command 🌟 *************/
-    // Remove staff
+    /**
+     * Removes a staff member from the system based on user input.
+     *
+     * This method prompts the user to enter the index of the staff member
+     * to be removed from the list. The staff record is removed from both
+     * the staff list and the account file. If the user input is invalid
+     * or the index is out of range, an appropriate error message is displayed.
+     * The user can exit the removal process by entering 0.
+     *
+     * @param scanner the Scanner object used for reading user input
+     */
     public void removeStaff(Scanner scanner) {
         try {
             List<String> staff = Files.readAllLines(Paths.get(STAFF_TXT));
@@ -1315,29 +1615,71 @@ public class AccountController {
         }
     }
 
-    /****** fa13d76b-dac3-4721-9f3c-bfff0c00d37c *******/
-
-    // Helper validation methods
+    /**
+     * Checks if the contact number is valid.
+     * 
+     * A contact number is valid if it is a string of digits with a length between 8
+     * and 15 inclusive.
+     * 
+     * @param contactNumber the contact number to check
+     * @return true if the contact number is valid, false otherwise
+     */
     private boolean isValidContactNumber(String contactNumber) {
         return contactNumber.length() >= 8
                 && contactNumber.length() <= 15
                 && contactNumber.matches("[0-9]+"); // Ensures all characters are digits
     }
 
+    /**
+     * Checks if the given email address is valid.
+     * 
+     * A valid email address must contain both the '@' and '.' characters.
+     * 
+     * @param email the email address to check
+     * @return true if the email address is valid, false otherwise
+     */
     private boolean isValidEmail(String email) {
         return email.contains("@") && email.contains(".");
     }
 
+    /**
+     * Checks if the given password is valid.
+     * 
+     * A valid password must contain at least 8 characters, including at least
+     * one digit and one special character.
+     * 
+     * @param password the password to check
+     * @return true if the password is valid, false otherwise
+     */
     private boolean isValidPassword(String password) {
         String passwordPattern = "^(?=.*[0-9])(?=.*[!@#$%^&*()_+=-]).{8,}$";
         return password.matches(passwordPattern);
     }
 
+    /**
+     * Checks if the given phone number is valid.
+     * 
+     * A valid phone number must be exactly 8 digits long and consist of only
+     * numbers.
+     * 
+     * @param phoneNumber the phone number to check
+     * @return true if the phone number is valid, false otherwise
+     */
     private boolean isValidPhoneNumber(String phoneNumber) {
         String pattern = "^[0-9]{8}$";
         return phoneNumber.matches(pattern);
     }
 
+    /**
+     * Checks if the given date string is valid and follows the format "dd-MM-yyyy".
+     * 
+     * This method attempts to parse the input date string using the specified date
+     * format. If the parsing is successful, the date is considered valid. If a
+     * DateTimeParseException occurs, the date is considered invalid.
+     * 
+     * @param date the date string to check
+     * @return true if the date is valid, false otherwise
+     */
     private boolean isValidDate(String date) {
         try {
             LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
@@ -1347,7 +1689,18 @@ public class AccountController {
         }
     }
 
-    // Helper method to check if staff ID is valid
+    /**
+     * Checks if the given staff ID exists in the staff file.
+     * 
+     * This method reads the staff file line by line, splitting each line by the
+     * "|" character. It then checks if the first field (i.e. the staff ID) of any
+     * line matches the given staff ID. If a match is found, the method returns
+     * true. Otherwise, it returns false. If an I/O exception occurs, the method
+     * prints the stack trace and returns false.
+     * 
+     * @param staffId the staff ID to check
+     * @return true if the staff ID is valid, false otherwise
+     */
     private boolean isValidStaffId(String staffId) {
         try {
             List<String> staff = Files.readAllLines(Paths.get(STAFF_TXT));
