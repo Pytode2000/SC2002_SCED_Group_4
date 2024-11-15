@@ -15,11 +15,12 @@ The project applies OOP principles to model and manage key hospital operations, 
 3. [Design](#design)  
     - [Design Approaches](#design-approaches)  
     - [Design Patterns](#design-patterns)  
-4. [Testing](#testing)  
-5. [Usage](#usage)  
+4. [Testing](#testing)
+5. [Reflection](#reflection) 
+6. [Usage](#usage)  
     - [Prerequisites](#prerequisites)  
-    - [Installation](#installation)  
-6. [Reflection](#reflection)  
+    - [Installation](#installation)
+    - [Running the Program](#running-the-program)
 7. [Contributors](#contributors)  
 
 
@@ -90,20 +91,7 @@ The system was tested across multiple scenarios to ensure reliability:
 
 ---
 
-## **5. Usage**  
-
-### **Prerequisites**  
-- **Java**: Version 7 or higher.  
-- **IDE**: Any Java-supported IDE (Eclipse, IntelliJ IDEA, etc.).  
-
-### **Installation**  
-1. Clone the repository:  
-   ```bash
-   git clone https://github.com/Pytode2000/SC2002_SCED_Group_4.git
-
----
-
-## **6. Reflection**  
+## **5. Reflection**  
 The HMS project provided invaluable hands-on experience in applying Object-Oriented Design principles. Concepts such as the Boundary-Control-Entity architecture, design patterns, and SOLID principles were pivotal in shaping the system’s design.
 
 Key Takeaways
@@ -113,6 +101,25 @@ Key Takeaways
   
 This journey emphasized the importance of iterative design, fostering a mindset ready for tackling future projects.
 
+---
+
+## **6. Usage**  
+
+### **Prerequisites**  
+- **Java**: Version 7 or higher.  
+- **IDE**: Any Java-supported IDE (Eclipse, IntelliJ IDEA, etc.).  
+
+### **Installation** 
+- Clone the repository:  
+   ```bash
+   git clone https://github.com/Pytode2000/SC2002_SCED_Group_4.git
+
+### **Running the Program**
+To execute the HMS, you have two options:
+- Option 1: Run Java Program Directly
+Navigate to the /src/ directory in your terminal and execute the following: `java HospitalManagementSystem`
+- Option 2: Build and Run with PowerShell Script
+Execute the provided PowerShell script to build and run the project: `.\build.ps1`
 ---
 
 ## **7. Contributors**  
