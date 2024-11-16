@@ -13,9 +13,12 @@ import utility.FileUtils;
 import utility.PrintUtils;
 
 /**
- * Controller class for managing the inventory of medicines in a hospital management system.
- * This class provides functionality to display, add, update, remove medicines, and manage 
- * replenishment requests. Medicines are persisted in a file for long-term storage.
+ * Controller class for managing the inventory of medicines in a hospital
+ * management system.
+ * This class provides functionality to display, add, update, remove medicines,
+ * and manage
+ * replenishment requests. Medicines are persisted in a file for long-term
+ * storage.
  */
 public class InventoryController {
 
@@ -27,7 +30,8 @@ public class InventoryController {
      * Constructs an InventoryController instance and initializes the medicines list
      * by loading data from a file.
      */
-    // Constructor to initialize the inventory controller and load medicines from file
+    // Constructor to initialize the inventory controller and load medicines from
+    // file
     public InventoryController() {
         this.medicines = new ArrayList<>();
         loadMedicinesFromFile();
@@ -86,8 +90,9 @@ public class InventoryController {
 
     // Display the current inventory of medicines
     /**
-     * Displays the current inventory of medicines with details such as 
-     * Medicine ID, Name, Type, Description, Stock Level, Low Stock Level, and Status.
+     * Displays the current inventory of medicines with details such as
+     * Medicine ID, Name, Type, Description, Stock Level, Low Stock Level, and
+     * Status.
      */
     public void displayInventory() {
         System.out.println("\n╔════════════════════════════════════════╗");
@@ -115,7 +120,8 @@ public class InventoryController {
 
     // Add a new medicine to the inventory
     /**
-     * Allows the user to add a new medicine to the inventory. User input is validated for
+     * Allows the user to add a new medicine to the inventory. User input is
+     * validated for
      * constraints such as name length, description length, and numerical limits.
      *
      * @param scanner the Scanner instance used for user input.
@@ -132,27 +138,32 @@ public class InventoryController {
 
             String medicineId = generateMedicineId();
 
-            String name = promptForInput(scanner, "Enter Medicine Name (max 20 characters), or -1 to cancel: ", 1, 20, true);
+            String name = promptForInput(scanner, "Enter Medicine Name (max 20 characters), or -1 to cancel: ", 1, 20,
+                    true);
             if (name == null) {
                 return;
             }
 
-            String description = promptForInput(scanner, "Enter Medicine Description (max 30 characters), or -1 to cancel: ", 1, 30, true);
+            String description = promptForInput(scanner,
+                    "Enter Medicine Description (max 30 characters), or -1 to cancel: ", 1, 30, true);
             if (description == null) {
                 return;
             }
 
-            int stockLevel = promptForIntegerInput(scanner, "Enter Stock Level, or -1 to cancel: ", 0, Integer.MAX_VALUE);
+            int stockLevel = promptForIntegerInput(scanner, "Enter Stock Level, or -1 to cancel: ", 0,
+                    Integer.MAX_VALUE);
             if (stockLevel == -1) {
                 return;
             }
 
-            int lowStockLevel = promptForIntegerInput(scanner, "Enter Low Stock Level, or -1 to cancel: ", 0, stockLevel);
+            int lowStockLevel = promptForIntegerInput(scanner, "Enter Low Stock Level, or -1 to cancel: ", 0,
+                    stockLevel);
             if (lowStockLevel == -1) {
                 return;
             }
 
-            String medicineType = promptForInput(scanner, "Enter Medicine Type (max 15 characters), or -1 to cancel: ", 1, 15, true);
+            String medicineType = promptForInput(scanner, "Enter Medicine Type (max 15 characters), or -1 to cancel: ",
+                    1, 15, true);
             if (medicineType == null) {
                 return;
             }
@@ -169,8 +180,9 @@ public class InventoryController {
 
     // Update an existing medicine in the inventory
     /**
-     * Updates the details of an existing medicine in the inventory. 
-     * Allows modifications to name, description, stock level, low stock level, and type.
+     * Updates the details of an existing medicine in the inventory.
+     * Allows modifications to name, description, stock level, low stock level, and
+     * type.
      *
      * @param scanner the Scanner instance used for user input.
      */
@@ -179,7 +191,8 @@ public class InventoryController {
         System.out.println("║             Update Medicine            ║");
         System.out.println("╚════════════════════════════════════════╝");
 
-        int index = promptForIntegerInput(scanner, "Enter the index of the medicine to update (or -1 to cancel): ", 1, medicines.size());
+        int index = promptForIntegerInput(scanner, "Enter the index of the medicine to update (or -1 to cancel): ", 1,
+                medicines.size());
         if (index == -1) {
             return;
         }
@@ -187,32 +200,40 @@ public class InventoryController {
         Medicine medicine = medicines.get(index - 1);
         boolean anyFieldUpdated = false;
 
-        String name = promptForInput(scanner, "Enter the new name (leave blank to keep current value): ", 1, 20, false);
-        if (name != null) {
+        String name = promptForInput(scanner, "Enter the new name (leave blank to keep current value): ", 0, 20, false);
+        if (!name.isEmpty()) {
             medicine.setName(name);
             anyFieldUpdated = true;
         }
 
-        String description = promptForInput(scanner, "Enter the new description (leave blank to keep current value): ", 1, 30, false);
-        if (description != null) {
+        String description = promptForInput(scanner, "Enter the new description (leave blank to keep current value): ",
+                0, 30, false);
+        if (!description.isEmpty()) {
             medicine.setDescription(description);
             anyFieldUpdated = true;
         }
 
-        int stockLevel = promptForIntegerInput(scanner, "Enter the new stock level (leave blank to keep current value): ", 0, Integer.MAX_VALUE);
-        if (stockLevel != -1) {
+        String stockLevelInput = promptForInput(scanner,
+                "Enter the new stock level (leave blank to keep current value): ", 0,
+                Integer.toString(Integer.MAX_VALUE).length(), false);
+        if (!stockLevelInput.isEmpty()) {
+            int stockLevel = Integer.parseInt(stockLevelInput);
             medicine.setStockLevel(stockLevel);
             anyFieldUpdated = true;
         }
 
-        int lowStockLevel = promptForIntegerInput(scanner, "Enter the new low stock level (leave blank to keep current value): ", 0, stockLevel);
-        if (lowStockLevel != -1) {
+        String lowStockLevelInput = promptForInput(scanner,
+                "Enter the new low stock level (leave blank to keep current value): ", 0,
+                Integer.toString(Integer.MAX_VALUE).length(), false);
+        if (!lowStockLevelInput.isEmpty()) {
+            int lowStockLevel = Integer.parseInt(lowStockLevelInput);
             medicine.setLowStockLevel(lowStockLevel);
             anyFieldUpdated = true;
         }
 
-        String medicineType = promptForInput(scanner, "Enter the new medicine type (leave blank to keep current value): ", 1, 15, false);
-        if (medicineType != null) {
+        String medicineType = promptForInput(scanner,
+                "Enter the new medicine type (leave blank to keep current value): ", 0, 15, false);
+        if (!medicineType.isEmpty()) {
             medicine.setMedicineType(medicineType);
             anyFieldUpdated = true;
         }
@@ -235,7 +256,8 @@ public class InventoryController {
         System.out.println("║             Remove Medicine            ║");
         System.out.println("╚════════════════════════════════════════╝");
 
-        int index = promptForIntegerInput(scanner, "Enter the index of the medicine to remove (or -1 to cancel): ", 1, medicines.size());
+        int index = promptForIntegerInput(scanner, "Enter the index of the medicine to remove (or -1 to cancel): ", 1,
+                medicines.size());
         if (index == -1) {
             return;
         }
@@ -247,7 +269,7 @@ public class InventoryController {
 
     // Approve replenishment requests for low stock medicines
     /**
-     * Approves replenishment requests for medicines with low stock levels. 
+     * Approves replenishment requests for medicines with low stock levels.
      * Updates the stock levels based on approved replenishment amounts.
      */
     public void approveReplenishmentRequests() {
@@ -340,9 +362,10 @@ public class InventoryController {
             System.out.println("Error reading medicine replenishment request file: " + e.getMessage());
         }
     }
-    
+
     /**
-     * Updates the stock level of a medicine in the file after approval of replenishment requests.
+     * Updates the stock level of a medicine in the file after approval of
+     * replenishment requests.
      *
      * @param updatedMedicine the Medicine object with updated stock level.
      */
@@ -376,7 +399,8 @@ public class InventoryController {
 
     // Update the stock level of a medicine in the file
     /**
-     * Checks and returns a list of medicines with stock levels below their low stock threshold.
+     * Checks and returns a list of medicines with stock levels below their low
+     * stock threshold.
      *
      * @return a List of medicines with low stock.
      */
@@ -421,13 +445,14 @@ public class InventoryController {
 
     /**
      * Submits a replenishment request for a specific medicine.
-     * Reads the medicine ID and requested amount from the user and updates the requests file.
+     * Reads the medicine ID and requested amount from the user and updates the
+     * requests file.
      */
     public void requestReplenishment() {
         System.out.println("\n╔════════════════════════════════════════╗");
         System.out.println("║       Submit Replenishment Request     ║");
         System.out.println("╚════════════════════════════════════════╝");
-        //System.out.println("=========================================================================");
+        // System.out.println("=========================================================================");
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("Enter Medicine ID for replenishment request: ");
@@ -478,7 +503,8 @@ public class InventoryController {
 
     // Find a medicine by its ID
     /**
-     * Generates a new unique Medicine ID based on the highest existing ID in the file.
+     * Generates a new unique Medicine ID based on the highest existing ID in the
+     * file.
      *
      * @return a unique Medicine ID.
      */

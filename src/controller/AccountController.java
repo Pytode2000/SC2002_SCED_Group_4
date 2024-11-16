@@ -116,7 +116,7 @@ public class AccountController {
             }
             if (firstName.length() < 1 || firstName.length() > 15 || !firstName.matches("^[a-zA-Z]+$")) {
                 System.out.println(
-                        "First name must be between 1 and 15 characters and contain only alphanumeric characters. Please try again.");
+                        "First name must be between 1 and 15 characters and contain only alphabetic characters. Please try again.");
             } else {
                 firstNameValid = true;
             }
@@ -132,7 +132,7 @@ public class AccountController {
             }
             if (lastName.length() < 1 || lastName.length() > 15 || !lastName.matches("^[a-zA-Z]+$")) {
                 System.out.println(
-                        "Last name must be between 1 and 15 characters and contain only alphanumeric characters. Please try again.");
+                        "Last name must be between 1 and 15 characters and contain only alphabetic characters. Please try again.");
             } else {
                 lastNameValid = true;
             }
@@ -1258,8 +1258,9 @@ public class AccountController {
                         break;
                     }
 
-                    if (input2.trim().length() < 1 || input2.trim().length() > 15) {
-                        System.out.println("First name must be between 1 and 15 characters. Please try again.");
+                    if (!input2.trim().matches("[a-zA-Z]{1,15}")) {
+                        System.out.println(
+                                "First name must be between 1 and 15 alphabetic characters. Please try again.");
                     } else {
                         firstName = input2.trim();
                         anyFieldUpdated = true;
@@ -1274,8 +1275,9 @@ public class AccountController {
                         break;
                     }
 
-                    if (input2.trim().length() < 1 || input2.trim().length() > 15) {
-                        System.out.println("Last name must be between 1 and 15 characters. Please try again.");
+                    if (!input2.trim().matches("[a-zA-Z]{1,15}")) {
+                        System.out
+                                .println("Last name must be between 1 and 15 alphabetic characters. Please try again.");
                     } else {
                         lastName = input2.trim();
                         anyFieldUpdated = true;
@@ -1370,8 +1372,8 @@ public class AccountController {
                     System.out.println("Choose your new Role (leave blank to keep current value):");
                     System.out.println("1. Doctor");
                     System.out.println("2. Pharmacist");
-                    System.out.println("3. Administrator");
-                    System.out.print("Enter your choice (1-3): ");
+                    // System.out.println("3. Administrator");
+                    System.out.print("Enter your choice (1-2): ");
                     String choiceInput = scanner.nextLine().trim();
                     if (choiceInput == null || choiceInput.isEmpty()) {
                         break;
@@ -1386,9 +1388,9 @@ public class AccountController {
                             case 2:
                                 role = "Pharmacist";
                                 break;
-                            case 3:
-                                role = "Administrator";
-                                break;
+                            // case 3:
+                            // role = "Administrator";
+                            // break;
                             default:
                                 System.out.println("Invalid choice. Please enter a valid choice.");
                                 continue;
