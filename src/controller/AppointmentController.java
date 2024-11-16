@@ -1308,11 +1308,19 @@ public class AppointmentController {
                 fields[5] = "BOOKED";
             }
         } else {
-            fields[5] = "BOOKED";
-            fields[6] = "Reschdule appointment declined";
-            fields[7] = "-";
-            fields[8] = "-";
-            fields[9] = "-";
+            if (fields[5].equals("RESCHEDULE")) {
+                fields[5] = "BOOKED";
+                fields[6] = "Reschdule appointment declined";
+                fields[7] = "-";
+                fields[8] = "-";
+                fields[9] = "-";
+            } else {
+                fields[2] = "-";
+                fields[3] = "-";
+                fields[4] = "-";
+                fields[5] = "AVAILABLE";
+            }
+
         }
 
         String updatedData = String.join("|", fields);
