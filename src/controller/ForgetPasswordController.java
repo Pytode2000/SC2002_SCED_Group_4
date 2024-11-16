@@ -11,6 +11,12 @@ import java.util.List;
 import java.util.Scanner;
 import utility.PrintUtils;
 
+/**
+ * The ForgetPasswordController class manages the forget password functionality.
+ * It allows users to submit password reset requests and enables administrators 
+ * to process these requests, either resetting the password to a default value 
+ * or rejecting the request.
+ */
 public class ForgetPasswordController {
 
     private static final String ACCOUNT_FILE = "data/account.txt";
@@ -19,6 +25,11 @@ public class ForgetPasswordController {
     private AccountController accountController = new AccountController();
 
     // Handle a forget password request from the user
+     /**
+     * Handles a forget password request from the user.
+     * Prompts the user for their User ID and a message, validates the input,
+     * and stores the request in the forget password file.
+     */
     public void handleForgetPasswordRequest() {
         Scanner scanner = new Scanner(System.in);
 
@@ -49,6 +60,11 @@ public class ForgetPasswordController {
     }
 
     // Admin view and process forget password requests
+    /**
+     * Admin view and processing of forget password requests.
+     * Allows administrators to view all pending requests and process them
+     * by resetting the password or rejecting the request.
+     */
     public void processForgetPasswordRequests() {
         List<ForgetPassword> requests = readAllRequests();
         if (requests.isEmpty()) {
@@ -74,6 +90,12 @@ public class ForgetPasswordController {
     }
 
     // Check if the user ID exists in the account file
+    /**
+     * Checks if the given User ID exists in the account file.
+     * 
+     * @param userId the User ID to check
+     * @return true if the User ID exists, false otherwise
+     */
     private boolean isUserIdExist(String userId) {
         try (BufferedReader reader = new BufferedReader(new FileReader(ACCOUNT_FILE))) {
             String line;
@@ -89,6 +111,11 @@ public class ForgetPasswordController {
     }
 
     // Read all forget password requests from file
+    /**
+     * Reads all forget password requests from the forget password file.
+     * 
+     * @return a list of {@link ForgetPassword} objects representing the requests
+     */
     private List<ForgetPassword> readAllRequests() {
         List<ForgetPassword> requests = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(FORGET_PASSWORD_FILE))) {
@@ -106,6 +133,11 @@ public class ForgetPasswordController {
     }
 
     // Display all requests for selection
+    /**
+     * Displays all forget password requests in a formatted table.
+     * 
+     * @param requests the list of requests to display
+     */
     private void displayRequests(List<ForgetPassword> requests) {
         System.out.println("\n╔════════════════════════════════════════╗");
         System.out.println("║         Password Reset Requests        ║");
@@ -121,7 +153,13 @@ public class ForgetPasswordController {
         }
     }
 
-    // Get valid request index from the admin
+    /**
+     * Gets a valid request index from the administrator.
+     * 
+     * @param scanner the scanner for reading input
+     * @param maxIndex the maximum valid index
+     * @return the valid request index or 0 to cancel
+     */
     private int getRequestIndex(Scanner scanner, int maxIndex) {
         while (true) {
             System.out.print("\nEnter the request number to process (or 0 to cancel): ");
@@ -140,7 +178,13 @@ public class ForgetPasswordController {
         }
     }
 
-    // Process selected request based on admin choice
+    /**
+     * Processes the selected forget password request based on the admin's choice.
+     * 
+     * @param scanner the scanner for reading input
+     * @param selectedRequest the selected request to process
+     * @return true if the request was processed successfully, false otherwise
+     */
     private boolean processRequestSelection(Scanner scanner, ForgetPassword selectedRequest) {
         System.out.println("\nSelected Request: " + selectedRequest.getUserId());
         System.out.println("1. Reset to default password");
@@ -168,11 +212,21 @@ public class ForgetPasswordController {
         }
     }
 
+    /**
+     * Resets the password of the given User ID to the default password.
+     * 
+     * @param userId the User ID whose password will be reset
+     */
     // Reset the password in the account file to the default password
     private void resetPassword(String userId) {
         accountController.updatePassword(userId, DEFAULT_PASSWORD);
     }
 
+    /**
+     * Updates the forget password file after processing requests.
+     * 
+     * @param requests the updated list of requests to write back to the file
+     */
     // Update ForgetPassword file after processing requests
     private void updateRequestsFile(List<ForgetPassword> requests) {
         try (FileWriter writer = new FileWriter(FORGET_PASSWORD_FILE, false)) {
@@ -188,6 +242,11 @@ public class ForgetPasswordController {
         }
     }
 
+    /**
+     * Writes a new forget password request to the forget password file.
+     * 
+     * @param request the request to write to the file
+     */
     // Write a forget password request to the file
     private void writeRequestToFile(ForgetPassword request) {
         try (FileWriter writer = new FileWriter(FORGET_PASSWORD_FILE, true)) {

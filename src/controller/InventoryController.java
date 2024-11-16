@@ -12,12 +12,21 @@ import java.util.Scanner;
 import utility.FileUtils;
 import utility.PrintUtils;
 
+/**
+ * Controller class for managing the inventory of medicines in a hospital management system.
+ * This class provides functionality to display, add, update, remove medicines, and manage 
+ * replenishment requests. Medicines are persisted in a file for long-term storage.
+ */
 public class InventoryController {
 
     private List<Medicine> medicines;
     private static final String MEDICINE_FILE = "data/medicine.txt";
     private static final String MEDICINE_REPLENISHMENT_REQUESTS = "data/medicineReplenishmentRequests.txt";
 
+    /**
+     * Constructs an InventoryController instance and initializes the medicines list
+     * by loading data from a file.
+     */
     // Constructor to initialize the inventory controller and load medicines from file
     public InventoryController() {
         this.medicines = new ArrayList<>();
@@ -25,6 +34,9 @@ public class InventoryController {
     }
 
     // Load medicines from the file into the medicines list
+    /**
+     * Loads the list of medicines from a file and initializes the inventory.
+     */
     private void loadMedicinesFromFile() {
         try (BufferedReader reader = new BufferedReader(new FileReader(MEDICINE_FILE))) {
             String line;
@@ -40,6 +52,9 @@ public class InventoryController {
     }
 
     // Save the current list of medicines to the file
+    /**
+     * Saves the current state of the medicines list to the file.
+     */
     private void saveMedicinesToFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(MEDICINE_FILE))) {
             for (Medicine medicine : medicines) {
@@ -70,6 +85,10 @@ public class InventoryController {
     }
 
     // Display the current inventory of medicines
+    /**
+     * Displays the current inventory of medicines with details such as 
+     * Medicine ID, Name, Type, Description, Stock Level, Low Stock Level, and Status.
+     */
     public void displayInventory() {
         System.out.println("\n╔════════════════════════════════════════╗");
         System.out.println("║                Inventory               ║");
@@ -95,6 +114,12 @@ public class InventoryController {
     }
 
     // Add a new medicine to the inventory
+    /**
+     * Allows the user to add a new medicine to the inventory. User input is validated for
+     * constraints such as name length, description length, and numerical limits.
+     *
+     * @param scanner the Scanner instance used for user input.
+     */
     public void addMedicine(Scanner scanner) {
         System.out.println("\n╔════════════════════════════════════════╗");
         System.out.println("║              Add Medicine              ║");
@@ -143,6 +168,12 @@ public class InventoryController {
     }
 
     // Update an existing medicine in the inventory
+    /**
+     * Updates the details of an existing medicine in the inventory. 
+     * Allows modifications to name, description, stock level, low stock level, and type.
+     *
+     * @param scanner the Scanner instance used for user input.
+     */
     public void updateMedicine(Scanner scanner) {
         System.out.println("\n╔════════════════════════════════════════╗");
         System.out.println("║             Update Medicine            ║");
@@ -194,7 +225,11 @@ public class InventoryController {
         }
     }
 
-    // Remove a medicine from the inventory
+    /**
+     * Removes a medicine from the inventory based on its index.
+     *
+     * @param scanner the Scanner instance used for user input.
+     */
     public void removeMedicine(Scanner scanner) {
         System.out.println("\n╔════════════════════════════════════════╗");
         System.out.println("║             Remove Medicine            ║");
@@ -211,6 +246,10 @@ public class InventoryController {
     }
 
     // Approve replenishment requests for low stock medicines
+    /**
+     * Approves replenishment requests for medicines with low stock levels. 
+     * Updates the stock levels based on approved replenishment amounts.
+     */
     public void approveReplenishmentRequests() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("\n╔════════════════════════════════════════╗");
@@ -301,8 +340,12 @@ public class InventoryController {
             System.out.println("Error reading medicine replenishment request file: " + e.getMessage());
         }
     }
-
-    // Update the stock level of a medicine in the file
+    
+    /**
+     * Updates the stock level of a medicine in the file after approval of replenishment requests.
+     *
+     * @param updatedMedicine the Medicine object with updated stock level.
+     */
     private void updateMedicineStockInFile(Medicine updatedMedicine) {
         List<String> fileContent = new ArrayList<>();
 
@@ -331,7 +374,12 @@ public class InventoryController {
         }
     }
 
-    // Check and display medicines with low stock levels
+    // Update the stock level of a medicine in the file
+    /**
+     * Checks and returns a list of medicines with stock levels below their low stock threshold.
+     *
+     * @return a List of medicines with low stock.
+     */
     public List<Medicine> checkLowStock() {
         System.out.println("\n╔════════════════════════════════════════╗");
         System.out.println("║         Check Low Stock Medicine       ║");
@@ -371,7 +419,10 @@ public class InventoryController {
         return lowStockMedicines;
     }
 
-    // Submit a replenishment request for a medicine
+    /**
+     * Submits a replenishment request for a specific medicine.
+     * Reads the medicine ID and requested amount from the user and updates the requests file.
+     */
     public void requestReplenishment() {
         System.out.println("\n╔════════════════════════════════════════╗");
         System.out.println("║       Submit Replenishment Request     ║");
@@ -426,6 +477,11 @@ public class InventoryController {
     }
 
     // Find a medicine by its ID
+    /**
+     * Generates a new unique Medicine ID based on the highest existing ID in the file.
+     *
+     * @return a unique Medicine ID.
+     */
     public Medicine findMedicineById(String medicineId) {
         for (Medicine medicine : medicines) {
             if (medicine.getMedicineId().equals(medicineId)) {

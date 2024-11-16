@@ -7,13 +7,23 @@ import java.util.List;
 import java.util.Scanner;
 import utility.PrintUtils;
 
+/**
+ * The PrescriptionController class handles operations related to prescriptions, including
+ * updating prescription statuses, managing medicine stock levels, and retrieving prescription details.
+ * This class interacts with files to store and retrieve data.
+ */
+
 public class PrescriptionController {
 
     private static final String APPOINTMENT_OUTCOME_FILE = "data/appointmentOutcome.txt";
     private static final String PRESCRIPTION_FILE = "data/prescription.txt";
     private static final String MEDICINE_FILE = "data/medicine.txt";
 
-    // Update the status of a specific prescription and adjust the medicine stock level
+    /**
+     * Updates the status of a specific prescription and adjusts the medicine stock level.
+     * Displays pending prescriptions for a given appointment ID, allows the user to select one,
+     * and updates its status to "DISPENSED" if stock is sufficient.
+     */
     public void updatePrescriptionStatus() {
         System.out.println("\n╔════════════════════════════════════════╗");
         System.out.println("║       Update Prescription Status       ║");
@@ -71,6 +81,12 @@ public class PrescriptionController {
     }
 
     // Retrieve pending prescriptions associated with a specific appointment ID
+    /**
+     * Retrieves a list of pending prescriptions associated with a specific appointment ID.
+     *
+     * @param appointmentId The ID of the appointment.
+     * @return A list of pending prescriptions for the given appointment ID.
+     */
     private List<Prescription> getPendingPrescriptions(String appointmentId) {
         List<Prescription> prescriptions = new ArrayList<>();
         try (BufferedReader outcomeReader = new BufferedReader(new FileReader(APPOINTMENT_OUTCOME_FILE))) {
@@ -94,6 +110,12 @@ public class PrescriptionController {
         return prescriptions;
     }
 
+    /**
+     * Retrieves a specific prescription by its ID.
+     *
+     * @param prescriptionId The ID of the prescription to retrieve.
+     * @return The Prescription object if found; otherwise, null.
+     */
     // Retrieve a specific prescription by its ID
     private Prescription getPrescription(String prescriptionId) {
         try (BufferedReader prescriptionReader = new BufferedReader(new FileReader(PRESCRIPTION_FILE))) {
@@ -112,6 +134,12 @@ public class PrescriptionController {
     }
 
     // Retrieve the stock level of a specific medicine
+    /**
+     * Retrieves the stock level of a specific medicine.
+     *
+     * @param medicineId The ID of the medicine.
+     * @return The stock level of the medicine, or 0 if not found.
+     */
     private int getStockLevel(String medicineId) {
         try (BufferedReader reader = new BufferedReader(new FileReader(MEDICINE_FILE))) {
             String line;
@@ -128,6 +156,14 @@ public class PrescriptionController {
     }
 
     // Update content in a file by ID and field index
+    /**
+     * Updates a specific field in a file for a given record ID.
+     *
+     * @param filePath   The path to the file to update.
+     * @param id         The ID of the record to update.
+     * @param newValue   The new value to set in the specified field.
+     * @param fieldIndex The index of the field to update (0-based).
+     */
     private void updateFileContent(String filePath, String id, String newValue, int fieldIndex) {
         List<String> lines = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
@@ -154,6 +190,12 @@ public class PrescriptionController {
     }
 
     // Retrieve the name of a specific medicine by its ID
+    /**
+     * Retrieves the name of a specific medicine by its ID.
+     *
+     * @param medicineId The ID of the medicine.
+     * @return The name of the medicine, or "Unknown Medicine" if not found.
+     */
     private String getMedicineName(String medicineId) {
         try (BufferedReader reader = new BufferedReader(new FileReader(MEDICINE_FILE))) {
             String line;

@@ -9,8 +9,37 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * The {@code BillController} class provides methods for creating, viewing, updating, 
+ * and paying bills for a hospital management system. It interacts with the {@code Bill} 
+ * entity and performs file operations to manage bill records.
+ *
+ * <p>Features include:
+ * <ul>
+ *     <li>Creating a new bill.</li>
+ *     <li>Viewing and updating pending bills.</li>
+ *     <li>Viewing and paying bills for a specific patient.</li>
+ * </ul>
+ *
+ * <p>Dependencies:
+ * <ul>
+ *     <li>{@code FileUtils}: Utility class for file operations.</li>
+ *     <li>{@code PrintUtils}: Utility class for printing and pausing output.</li>
+ *     <li>{@code Bill}: Entity class representing a bill.</li>
+ * </ul>
+ */
+
 public class BillController {
 
+
+    /**
+     * Creates a new bill with the given appointment ID and patient ID.
+     * The bill is saved to the specified file path.
+     *
+     * @param FILE_PATH   the path to the file where the bill will be stored
+     * @param appointmentId the ID of the appointment associated with the bill
+     * @param patientId     the ID of the patient associated with the bill
+     */
     public static void createBill(String FILE_PATH, String appointmentId, String patientId) {
         Bill bill = new Bill(appointmentId, patientId);
         String data = appointmentId + "|" + patientId + "|" + bill.getStatus() + "|" + String.format("%.2f", bill.getCost()) + "|" + bill.getDatetime();
@@ -19,6 +48,10 @@ public class BillController {
         FileUtils.writeToFile(FILE_PATH, data);
     }
 
+    /**
+     * Displays and updates the status of pending bills.
+     * Allows the user to select a bill and update its cost and status.
+     */
     public static void viewAndUpdatePendingBills() {
         String FILE_PATH = "data/bill.txt";
         File file = new File(FILE_PATH);
@@ -106,6 +139,12 @@ public class BillController {
         PrintUtils.pause();
     }
 
+    /**
+     * Displays bills categorized by their status for a specific patient.
+     * Allows the user to select and pay billed bills.
+     *
+     * @param patientId the ID of the patient whose bills will be viewed and paid
+     */
     public static void viewAndPayBills(String patientId) {
         String FILE_PATH = "data/bill.txt";
         File file = new File(FILE_PATH);
