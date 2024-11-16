@@ -16,6 +16,13 @@ public class ForgetPassword {
         this.requestDateTime = LocalDateTime.now(); // Captures current date and time
     }
 
+    // Constructor for loading requests from file
+    public ForgetPassword(String userId, String message, LocalDateTime requestDateTime) {
+        this.userId = userId;
+        this.message = message;
+        this.requestDateTime = requestDateTime;
+    }
+
     // Displays the details of the forget password request
     public void displayRequestDetails() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");

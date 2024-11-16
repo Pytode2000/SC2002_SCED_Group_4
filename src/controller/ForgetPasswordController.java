@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -122,8 +123,9 @@ public class ForgetPasswordController {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] fields = line.split("\\|");
-                if (fields.length >= 3) {
-                    requests.add(new ForgetPassword(fields[0], fields[1]));
+                if (fields.length == 3) { // Ensure correct number of fields
+                    requests.add(new ForgetPassword(fields[0], fields[1], LocalDateTime.parse(fields[2], DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")) // Date/Time
+                    ));
                 }
             }
         } catch (IOException e) {
@@ -229,9 +231,10 @@ public class ForgetPasswordController {
      */
     // Update ForgetPassword file after processing requests
     private void updateRequestsFile(List<ForgetPassword> requests) {
-        try (FileWriter writer = new FileWriter(FORGET_PASSWORD_FILE, false)) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        try (FileWriter writer = new FileWriter(FORGET_PASSWORD_FILE, false)) { // Overwrite the file
             for (ForgetPassword request : requests) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                // Write each request back to the file without changing the date/time
                 writer.write(String.format("%s|%s|%s%n",
                         request.getUserId(),
                         request.getMessage(),
