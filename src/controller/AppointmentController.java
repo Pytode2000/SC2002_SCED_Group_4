@@ -1316,8 +1316,7 @@ public class AppointmentController {
                 fields[9] = "-";
             } else {
                 fields[2] = "-";
-                fields[3] = "-";
-                fields[4] = "-";
+                fields[6] = "Appointment request declined";
                 fields[5] = "AVAILABLE";
             }
 
