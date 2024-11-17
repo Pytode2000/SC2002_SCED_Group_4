@@ -17,8 +17,8 @@ import java.util.Scanner;
 public class PharmacistMenu implements MenuInterface {
 
     private final Pharmacist pharmacist;
-    private final InventoryController inventoryController = new InventoryController();
-    private final AppointmentOutcomeController appointmentOutcomeController = new AppointmentOutcomeController();
+    private InventoryController inventoryController;
+    private final AppointmentOutcomeController appointmentOutcomeController;
     public static final String ANSI_TRUE_LIGHT_PURPLE = "\u001B[38;2;221;160;221m"; // Light Purple (#DDA0DD)
 
     /**
@@ -29,6 +29,8 @@ public class PharmacistMenu implements MenuInterface {
     // Constructor initializes the pharmacist instance.
     public PharmacistMenu(Pharmacist pharmacist) {
         this.pharmacist = pharmacist;
+        this.inventoryController = new InventoryController();
+        this.appointmentOutcomeController = new AppointmentOutcomeController();
     }
 
     /**
@@ -71,6 +73,7 @@ public class PharmacistMenu implements MenuInterface {
                     break;
                 case "3":
                     // Display current medication inventory
+                    inventoryController = new InventoryController();
                     inventoryController.displayInventory();
                     break;
                 case "4":
