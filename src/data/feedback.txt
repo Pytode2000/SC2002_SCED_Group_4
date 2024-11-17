@@ -1,3 +1,4 @@
 PA00002|DR00003|3|Bad doctor, too rude.
 PA00002|DR00005|10|-
 PA00003|DR00003|1|Bad doctor, rude
+PA00002|DR00005|10|good professor
