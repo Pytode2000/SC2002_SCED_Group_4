@@ -4,6 +4,8 @@
 The Hospital Management System (HMS) is a command-line application developed for the SC2002 Object-Oriented Design & Programming course. 
 The project applies OOP principles to model and manage key hospital operations, including patient records, appointments, staff, and billing.  
 
+Presentation Slides: https://tinyurl.com/y6729zch
+
 ---
 
 ## **Table of Contents**  
